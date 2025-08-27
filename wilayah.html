@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DapurMBG - Wilayah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .progress-circle {
+            transform: rotate(-90deg);
+        }
+        .progress-circle circle {
+            fill: none;
+            stroke-width: 12;
+            stroke-linecap: round;
+        }
+        .progress-bg {
+            stroke: #e5e7eb;
+        }
+        .progress-bar {
+            stroke: #3b82f6;
+            stroke-dasharray: 251.2;
+            stroke-dashoffset: 52.75;
+            transition: stroke-dashoffset 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="flex items-center justify-between px-6 py-4">
+            <div class="flex items-center space-x-8">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-utensils text-gray-600"></i>
+                    <h1 class="text-xl font-semibold text-gray-800">DapurMBG</h1>
+                </div>
+                <nav class="flex space-x-6">
+                    <a href="index.html" class="text-gray-500 hover:text-gray-700">Dashboard</a>
+                    <a href="wilayah.html" class="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Wilayah</a>
+                </nav>
+            </div>
+            <div class="flex items-center space-x-4">
+                <i class="fas fa-bell text-gray-400"></i>
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm text-gray-600">Admin</span>
+                    <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                        <span class="text-white text-sm font-medium">A</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <!-- Left Sidebar -->
+        <aside class="w-80 bg-white shadow-sm min-h-screen">
+            <div class="p-6">
+                <!-- Region Selector -->
+                <div class="mb-6">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <select class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-blue-600">
+                            <option>Surabaya</option>
+                            <option>Solo</option>
+                            <option>Magelang</option>
+                            <option>Kupang</option>
+                        </select>
+                        <select class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600">
+                            <option>Dapur Rungkut</option>
+                            <option>Dapur Gubeng</option>
+                            <option>Dapur Wonokromo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Riwayat Section -->
+                <div class="mb-6">
+                    <h3 class="text-sm font-medium text-gray-800 mb-4">Riwayat</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                                    <span class="text-white text-xs font-bold">04</span>
+                                </div>
+                                <span class="text-sm font-medium">79%</span>
+                            </div>
+                            <i class="fas fa-arrow-up text-green-500 text-xs"></i>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-gray-400 rounded-lg flex items-center justify-center">
+                                    <span class="text-white text-xs font-bold">03</span>
+                                </div>
+                                <span class="text-sm font-medium">78%</span>
+                            </div>
+                            <i class="fas fa-arrow-up text-green-500 text-xs"></i>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-gray-400 rounded-lg flex items-center justify-center">
+                                    <span class="text-white text-xs font-bold">02</span>
+                                </div>
+                                <span class="text-sm font-medium">74%</span>
+                            </div>
+                            <i class="fas fa-arrow-up text-green-500 text-xs"></i>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-gray-400 rounded-lg flex items-center justify-center">
+                                    <span class="text-white text-xs font-bold">01</span>
+                                </div>
+                                <span class="text-sm font-medium">72%</span>
+                            </div>
+                            <i class="fas fa-arrow-up text-green-500 text-xs"></i>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-gray-400 rounded-lg flex items-center justify-center">
+                                    <span class="text-white text-xs font-bold">31</span>
+                                </div>
+                                <span class="text-sm font-medium">71%</span>
+                            </div>
+                            <i class="fas fa-arrow-up text-green-500 text-xs"></i>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-gray-400 rounded-lg flex items-center justify-center">
+                                    <span class="text-white text-xs font-bold">30</span>
+                                </div>
+                                <span class="text-sm font-medium">68%</span>
+                            </div>
+                            <i class="fas fa-arrow-up text-green-500 text-xs"></i>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-gray-400 rounded-lg flex items-center justify-center">
+                                    <span class="text-white text-xs font-bold">29</span>
+                                </div>
+                                <span class="text-sm font-medium">67%</span>
+                            </div>
+                            <i class="fas fa-arrow-up text-green-500 text-xs"></i>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-gray-400 rounded-lg flex items-center justify-center">
+                                    <span class="text-white text-xs font-bold">28</span>
+                                </div>
+                                <span class="text-sm font-medium">65%</span>
+                            </div>
+                            <i class="fas fa-arrow-up text-green-500 text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex items-center justify-between text-sm">
+                    <button class="text-gray-400">Prev</button>
+                    <div class="flex space-x-2">
+                        <button class="w-6 h-6 bg-blue-500 text-white rounded text-xs">1</button>
+                        <button class="w-6 h-6 text-gray-400 rounded text-xs">2</button>
+                    </div>
+                    <button class="text-blue-500">Next</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <div class="grid grid-cols-2 gap-6 mb-6">
+                <!-- Akumulasi Progress -->
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-6">Akumulasi Progres</h3>
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="relative">
+                            <svg class="progress-circle w-40 h-40">
+                                <circle cx="80" cy="80" r="60" class="progress-bg"></circle>
+                                <circle cx="80" cy="80" r="60" class="progress-bar"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="text-center">
+                                    <div class="text-3xl font-bold text-blue-600">79%</div>
+                                    <div class="text-sm text-gray-500">dari akumulasi</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-center text-sm text-gray-600">Tercapai akumulasi 79 Juli 2024 - 4 Agustl</p>
+                </div>
+
+                <!-- Perkembangan Pembangunan Chart -->
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Perkembangan Pembangunan</h3>
+                        <select class="text-sm border border-gray-300 rounded px-2 py-1">
+                            <option>Semua</option>
+                        </select>
+                    </div>
+                    <div class="h-48">
+                        <canvas id="progressChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Section -->
+            <div class="bg-white rounded-lg p-6 shadow-sm mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <span class="text-sm text-gray-500">Target</span>
+                        <span class="ml-4 text-blue-600 font-medium">Minggu 7</span>
+                        <span class="text-blue-600 font-bold">87.5 %</span>
+                    </div>
+                </div>
+                
+                <!-- Timeline -->
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-4 h-4 bg-blue-500 rounded-full"></div>
+                        <div class="w-8 h-0.5 bg-blue-500"></div>
+                        <div class="w-4 h-4 bg-blue-500 rounded-full"></div>
+                        <div class="w-8 h-0.5 bg-blue-500"></div>
+                        <div class="w-4 h-4 bg-blue-500 rounded-full"></div>
+                        <div class="w-8 h-0.5 bg-blue-500"></div>
+                        <div class="w-4 h-4 bg-blue-500 rounded-full"></div>
+                        <div class="w-8 h-0.5 bg-blue-500"></div>
+                        <div class="w-4 h-4 bg-blue-500 rounded-full"></div>
+                        <div class="w-8 h-0.5 bg-blue-500"></div>
+                        <div class="w-4 h-4 bg-blue-500 rounded-full"></div>
+                        <div class="w-8 h-0.5 bg-gray-300"></div>
+                        <div class="w-4 h-4 bg-gray-300 rounded-full"></div>
+                    </div>
+                    <div class="flex space-x-4">
+                        <button class="w-6 h-6 bg-gray-200 rounded text-xs">7</button>
+                        <button class="w-6 h-6 bg-gray-200 rounded text-xs">8</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Media Gallery Section -->
+            <div class="bg-white rounded-lg p-6 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex space-x-6">
+                        <span class="text-blue-600 font-medium border-b-2 border-blue-600">Foto (42)</span>
+                        <span class="text-gray-500">Video (14)</span>
+                        <span class="text-gray-500">Dokumen (14)</span>
+                    </div>
+                </div>
+                
+                <!-- Photo Grid -->
+                <div class="grid grid-cols-4 gap-4">
+                    <div class="bg-gray-200 rounded-lg h-24 flex items-center justify-center">
+                        <i class="fas fa-image text-gray-400"></i>
+                    </div>
+                    <div class="bg-gray-200 rounded-lg h-24 flex items-center justify-center">
+                        <i class="fas fa-image text-gray-400"></i>
+                    </div>
+                    <div class="bg-gray-200 rounded-lg h-24 flex items-center justify-center">
+                        <i class="fas fa-image text-gray-400"></i>
+                    </div>
+                    <div class="bg-gray-200 rounded-lg h-24 flex items-center justify-center">
+                        <i class="fas fa-image text-gray-400"></i>
+                    </div>
+                    <div class="bg-gray-200 rounded-lg h-24 flex items-center justify-center">
+                        <i class="fas fa-image text-gray-400"></i>
+                    </div>
+                    <div class="bg-gray-200 rounded-lg h-24 flex items-center justify-center">
+                        <i class="fas fa-image text-gray-400"></i>
+                    </div>
+                    <div class="bg-gray-200 rounded-lg h-24 flex items-center justify-center">
+                        <i class="fas fa-image text-gray-400"></i>
+                    </div>
+                    <div class="bg-gray-200 rounded-lg h-24 flex items-center justify-center">
+                        <i class="fas fa-image text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="w-80 bg-white shadow-sm min-h-screen">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-6">Catatan</h3>
+
+                <!-- Notes -->
+                <div class="space-y-4">
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <p class="text-sm text-gray-700 mb-2">Operasional terganggu karena cuaca buruk. Perlu penyesuaian jadwal kerja.</p>
+                    </div>
+
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <p class="text-sm text-gray-700 mb-2">Tim konstruksi bekerja sesuai target harian tanpa kendala berarti.</p>
+                    </div>
+
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <p class="text-sm text-gray-700 mb-2">Pengiriman material tertunda akibat gangguan distribusi. Perlu penyesuaian timeline.</p>
+                    </div>
+
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <p class="text-sm text-gray-700 mb-2">Struktur utama dapur selesai dikerjakan dan dalam kondisi baik.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t py-4">
+        <div class="px-6">
+            <p class="text-sm text-gray-500">© 2024 Copyright Badan Gizi Nasional. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize the progress chart
+        const ctx = document.getElementById('progressChart').getContext('2d');
+        const progressChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['22 Jun', '23 Jun', '24 Jun', '25 Jun', '26 Jun', '27 Jun', '28 Jun', '29 Jun', '30 Jun', '1 Jul', '2 Jul', '3 Jul', '4 Jul'],
+                datasets: [{
+                    label: 'Progress',
+                    data: [65, 68, 70, 72, 74, 76, 78, 79, 80, 81, 82, 83, 84],
+                    borderColor: '#8b5cf6',
+                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 60,
+                        max: 90,
+                        grid: {
+                            display: true,
+                            color: '#f3f4f6'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
