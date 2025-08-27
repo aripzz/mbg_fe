@@ -82,17 +82,7 @@
                 </div>
               </div>
               <!-- Timeline -->
-              <div class="flex items-center space-x-2 mb-4 w-full">
-                <div class="flex items-center flex-1 space-x-2">
-                  <div v-for="n in 8" :key="n" class="flex items-center flex-1 space-x-2">
-                    <div
-                      class="h-8 w-8 bg-blue-500 flex items-center justify-center text-white text-sm font-bold rounded">
-                      {{ n }}</div>
-                    <div :class="n <= 7 ? 'h-1 bg-blue-500 flex-1' : 'h-1 bg-gray-200 flex-1'">
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <Timeline :totalSteps="8" :currentStep="7" :percent="87.6" />
             </div>
           </div>
           <div className="col-span-3 row-span-3 col-start-10">
@@ -165,6 +155,7 @@ import ProgressCircle from "@/components/ProgressCircle.vue";
 import RegionCard from "@/components/RegionCard.vue";
 import ActivityItem from "@/components/ActivityItem.vue";
 import MediaGallery from "@/components/MediaGallery.vue";
+import Timeline from "@/components/Timeline.vue";
 
 export default {
   name: "Dashboard",
@@ -175,6 +166,7 @@ export default {
     RegionCard,
     ActivityItem,
     MediaGallery,
+    Timeline,
   },
   data() {
     return {
