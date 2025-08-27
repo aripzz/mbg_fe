@@ -44,6 +44,25 @@
                 <div class="font-medium text-gray-900">{{ userInfo.username || 'Admin' }}</div>
                 <div class="text-sm text-gray-500 mt-1">{{ userInfo.email || 'admin@dapurmbg.com' }}</div>
               </div>
+              <router-link to="/tambah-dapur"
+                class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                role="menuitem">
+                <i class="fas fa-plus-circle mr-2 text-gray-400"></i>
+                Tambah Dapur
+              </router-link>
+              <router-link to="/tambah-user"
+                class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                role="menuitem">
+                <i class="fas fa-user-plus mr-2 text-gray-400"></i>
+                Tambah User
+              </router-link>
+              <router-link to="/pengaturan"
+                class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                role="menuitem">
+                <i class="fas fa-cog mr-2 text-gray-400"></i>
+                Pengaturan
+              </router-link>
+              <div class="border-t border-gray-100 my-1"></div>
               <button @click="handleLogout"
                 class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
                 role="menuitem">
