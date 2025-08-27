@@ -9,13 +9,25 @@
           <!-- Region Selector -->
           <div class="mb-6">
             <div class="flex items-center space-x-2 mb-4">
-              <select v-model="selectedRegion"
-                class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-blue-600">
-                <option v-for="region in regions" :key="region" :value="region">{{ region }}</option>
+              <select
+                v-model="selectedRegion"
+                class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-blue-600"
+              >
+                <option v-for="region in regions" :key="region" :value="region">
+                  {{ region }}
+                </option>
               </select>
-              <select v-model="selectedKitchen"
-                class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600">
-                <option v-for="kitchen in kitchens" :key="kitchen" :value="kitchen">{{ kitchen }}</option>
+              <select
+                v-model="selectedKitchen"
+                class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600"
+              >
+                <option
+                  v-for="kitchen in kitchens"
+                  :key="kitchen"
+                  :value="kitchen"
+                >
+                  {{ kitchen }}
+                </option>
               </select>
             </div>
           </div>
@@ -27,7 +39,9 @@
             <!-- Loading State for History -->
             <div v-if="loading" class="space-y-3">
               <div v-for="n in 5" :key="n" class="animate-pulse">
-                <div class="flex items-center justify-between p-3 bg-gray-200 rounded-lg">
+                <div
+                  class="flex items-center justify-between p-3 bg-gray-200 rounded-lg"
+                >
                   <div class="flex items-center space-x-3">
                     <div class="w-8 h-8 bg-gray-300 rounded-lg"></div>
                     <div class="w-12 h-4 bg-gray-300 rounded"></div>
@@ -39,21 +53,37 @@
 
             <!-- History Data -->
             <div v-else class="space-y-3">
-              <div v-for="(history, index) in historyData" :key="history.day"
+              <div
+                v-for="(history, index) in historyData"
+                :key="history.day"
                 class="flex items-center justify-between p-3 rounded-lg"
-                :class="index === 0 ? 'bg-blue-50 border-l-4 border-blue-500' : 'bg-gray-50'">
+                :class="
+                  index === 0
+                    ? 'bg-blue-50 border-l-4 border-blue-500'
+                    : 'bg-gray-50'
+                "
+              >
                 <div class="flex items-center space-x-3">
-                  <div class="w-8 h-8 rounded-lg flex items-center justify-center"
-                    :class="index === 0 ? 'bg-blue-500' : 'bg-gray-400'">
-                    <span class="text-white text-xs font-bold">{{ history.day }}</span>
+                  <div
+                    class="w-8 h-8 rounded-lg flex items-center justify-center"
+                    :class="index === 0 ? 'bg-blue-500' : 'bg-gray-400'"
+                  >
+                    <span class="text-white text-xs font-bold">{{
+                      history.day
+                    }}</span>
                   </div>
-                  <span class="text-sm font-medium">{{ history.percentage }}%</span>
+                  <span class="text-sm font-medium"
+                    >{{ history.percentage }}%</span
+                  >
                 </div>
                 <i class="fas fa-arrow-up text-green-500 text-xs"></i>
               </div>
 
               <!-- Empty state for history -->
-              <div v-if="historyData.length === 0" class="p-4 bg-gray-50 rounded-lg text-center">
+              <div
+                v-if="historyData.length === 0"
+                class="p-4 bg-gray-50 rounded-lg text-center"
+              >
                 <i class="fas fa-history text-gray-400 text-2xl mb-2"></i>
                 <p class="text-sm text-gray-500">No history data available</p>
               </div>
@@ -62,18 +92,37 @@
 
           <!-- Pagination -->
           <div class="flex items-center justify-between text-sm">
-            <button @click="prevPage" :disabled="currentPage === 1" class="text-gray-400"
-              :class="{ 'cursor-not-allowed': currentPage === 1 }">
+            <button
+              @click="prevPage"
+              :disabled="currentPage === 1"
+              class="text-gray-400"
+              :class="{ 'cursor-not-allowed': currentPage === 1 }"
+            >
               Prev
             </button>
             <div class="flex space-x-2">
-              <button v-for="page in totalPages" :key="page" @click="currentPage = page" class="w-6 h-6 rounded text-xs"
-                :class="currentPage === page ? 'bg-blue-500 text-white' : 'text-gray-400'">
+              <button
+                v-for="page in totalPages"
+                :key="page"
+                @click="currentPage = page"
+                class="w-6 h-6 rounded text-xs"
+                :class="
+                  currentPage === page
+                    ? 'bg-blue-500 text-white'
+                    : 'text-gray-400'
+                "
+              >
                 {{ page }}
               </button>
             </div>
-            <button @click="nextPage" :disabled="currentPage === totalPages" class="text-blue-500"
-              :class="{ 'text-gray-400 cursor-not-allowed': currentPage === totalPages }">
+            <button
+              @click="nextPage"
+              :disabled="currentPage === totalPages"
+              class="text-blue-500"
+              :class="{
+                'text-gray-400 cursor-not-allowed': currentPage === totalPages,
+              }"
+            >
               Next
             </button>
           </div>
@@ -82,18 +131,35 @@
 
       <!-- Main Content -->
       <main class="flex-1 p-6">
-        <div class="grid grid-cols-2 gap-6 mb-6">
-          <!-- Akumulasi Progress -->
-          <div class="bg-white rounded-lg p-6 shadow-sm">
-            <h3 class="text-lg font-semibold text-gray-800 mb-6">Akumulasi Progres</h3>
-            <div class="flex items-center justify-center mb-4">
-              <ProgressCircle :percentage="79" label="dari akumulasi" :size="160" :stroke-width="12" :large="true" />
+        <div class="bg-white rounded-lg p-6 shadow-sm">
+          <h3 class="text-lg font-semibold text-gray-800 mb-6">
+            Akumulasi Progres
+          </h3>
+
+          <div class="flex items-center justify-center mb-4 relative">
+            <ProgressCircle :value="progressPercentage" />
+
+            <!-- Perbedaan (+/-) -->
+            <div
+              v-if="progressDifference !== 0"
+              class="absolute bottom-6 text-sm flex items-center justify-center w-full"
+            >
+              <span
+                :class="
+                  progressDifference > 0 ? 'text-green-600' : 'text-red-600'
+                "
+                class="font-medium flex items-center"
+              >
+                <span v-if="progressDifference > 0">▲</span>
+                <span v-else>▼</span>
+                {{ Math.abs(progressDifference) }}
+              </span>
             </div>
-            <p class="text-center text-sm text-gray-600">Tercapai akumulasi 79 Juli 2024 - 4 Agustl</p>
           </div>
 
-          <!-- Perkembangan Pembangunan Chart -->
-          <ProgressChart />
+          <p class="text-center text-sm text-gray-600">
+            Terakhir diupdate {{ lastUpdated }}
+          </p>
         </div>
 
         <!-- Timeline Section -->
@@ -109,11 +175,21 @@
           <!-- Timeline -->
           <div class="flex items-center space-x-2 mb-4 w-full">
             <div class="flex items-center flex-1 space-x-2">
-              <div v-for="n in 8" :key="n" class="flex items-center flex-1 space-x-2">
-                <div class="h-8 w-8 bg-blue-500 flex items-center justify-center text-white text-sm font-bold rounded">
-                  {{ n }}</div>
-                <div :class="n <= 7 ? 'h-1 bg-blue-500 flex-1' : 'h-1 bg-gray-200 flex-1'">
+              <div
+                v-for="n in 8"
+                :key="n"
+                class="flex items-center flex-1 space-x-2"
+              >
+                <div
+                  class="h-8 w-8 bg-blue-500 flex items-center justify-center text-white text-sm font-bold rounded"
+                >
+                  {{ n }}
                 </div>
+                <div
+                  :class="
+                    n <= 7 ? 'h-1 bg-blue-500 flex-1' : 'h-1 bg-gray-200 flex-1'
+                  "
+                ></div>
               </div>
             </div>
           </div>
@@ -123,8 +199,13 @@
         <div class="grid grid-cols-2 gap-6">
           <!-- Media Gallery Column -->
           <div>
-            <MediaGallery :show-counts="true" :photos-count="42" :videos-count="14" :documents-count="14"
-              :show-view-all="false" />
+            <MediaGallery
+              :show-counts="true"
+              :photos-count="42"
+              :videos-count="14"
+              :documents-count="14"
+              :show-view-all="false"
+            />
           </div>
 
           <!-- Notes Column -->
@@ -134,12 +215,18 @@
               <div class="flex justify-between items-center mb-6">
                 <h3 class="text-lg font-semibold text-gray-800">Catatan</h3>
                 <div class="flex items-center space-x-2">
-                  <button @click="prevPage" :disabled="currentPage === 1"
-                    class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200 disabled:opacity-50">
+                  <button
+                    @click="prevPage"
+                    :disabled="currentPage === 1"
+                    class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200 disabled:opacity-50"
+                  >
                     <i class="fas fa-chevron-left"></i>
                   </button>
-                  <button @click="nextPage" :disabled="currentPage === totalPages"
-                    class="w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50">
+                  <button
+                    @click="nextPage"
+                    :disabled="currentPage === totalPages"
+                    class="w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+                  >
                     <i class="fas fa-chevron-right"></i>
                   </button>
                 </div>
@@ -147,25 +234,39 @@
 
               <!-- Loading State -->
               <div v-if="loading" class="flex items-center justify-center py-8">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                <div
+                  class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"
+                ></div>
                 <span class="ml-2 text-sm text-gray-600">Loading...</span>
               </div>
 
               <!-- Error State -->
-              <div v-else-if="error" class="p-4 bg-red-50 rounded-lg border border-red-200">
+              <div
+                v-else-if="error"
+                class="p-4 bg-red-50 rounded-lg border border-red-200"
+              >
                 <div class="flex items-center">
                   <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
                   <span class="text-sm text-red-700">{{ error }}</span>
                 </div>
-                <button @click="refreshData" class="mt-2 text-sm text-red-600 hover:text-red-800 underline">
+                <button
+                  @click="refreshData"
+                  class="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+                >
                   Try Again
                 </button>
               </div>
 
               <!-- Notes -->
               <div v-else class="space-y-0">
-                <div v-for="note in notes" :key="note.id" class="pt-2 pb-2 border-t flex flex-col items-start">
-                  <p class="text-sm text-[#333333] leading-relaxed">{{ note.text }}</p>
+                <div
+                  v-for="note in notes"
+                  :key="note.id"
+                  class="pt-2 pb-2 border-t flex flex-col items-start"
+                >
+                  <p class="text-sm text-[#333333] leading-relaxed">
+                    {{ note.text }}
+                  </p>
                   <div class="flex items-center justify-center">
                     <div class="text-xs text-[#CCD2E3]">
                       {{ note.date }} {{ note.time }}
@@ -173,15 +274,16 @@
                   </div>
                 </div>
                 <!-- Empty state -->
-                <div v-if="notes.length === 0" class="p-4 bg-gray-50 rounded-lg text-center">
+                <div
+                  v-if="notes.length === 0"
+                  class="p-4 bg-gray-50 rounded-lg text-center"
+                >
                   <i class="fas fa-sticky-note text-gray-400 text-2xl mb-2"></i>
                   <p class="text-sm text-gray-500">No notes available</p>
                 </div>
               </div>
             </div>
           </div>
-
-
         </div>
       </main>
     </div>
@@ -191,112 +293,112 @@
 </template>
 
 <script>
-import Header from '@/components/Header.vue'
-import Footer from '@/components/Footer.vue'
-import ProgressCircle from '@/components/ProgressCircle.vue'
-import ProgressChart from '@/components/ProgressChart.vue'
-import MediaGallery from '@/components/MediaGallery.vue'
-import ApiService from '@/services/api.js'
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
+import ProgressCircle from "@/components/ProgressCircle.vue";
+import ProgressChart from "@/components/ProgressChart.vue";
+import MediaGallery from "@/components/MediaGallery.vue";
+import ApiService from "@/services/api.js";
 
 export default {
-  name: 'Wilayah',
+  name: "Wilayah",
   components: {
     Header,
     Footer,
     ProgressCircle,
     ProgressChart,
-    MediaGallery
+    MediaGallery,
   },
   data() {
     return {
-      selectedRegion: 'Surabaya',
-      selectedKitchen: 'Dapur Rungkut',
+      selectedRegion: "Surabaya",
+      selectedKitchen: "Dapur Rungkut",
       currentPage: 1,
       totalPages: 1,
-      regions: ['Surabaya', 'Solo', 'Magelang', 'Kupang'],
-      kitchens: ['Dapur Rungkut', 'Dapur Gubeng', 'Dapur Wonokromo'],
+      regions: ["Surabaya", "Solo", "Magelang", "Kupang"],
+      kitchens: ["Dapur Rungkut", "Dapur Gubeng", "Dapur Wonokromo"],
       historyData: [],
       notes: [
         {
           id: 1,
-          text: 'Operasional terganggu karena cuaca buruk. Perlu penyesuaian jadwal kerja.',
-          author: 'Budi Santoso',
-          date: '2024-08-04',
-          time: '14:30',
-          category: 'Cuaca',
-          priority: 'high',
-          tags: ['cuaca', 'jadwal', 'penyesuaian']
+          text: "Operasional terganggu karena cuaca buruk. Perlu penyesuaian jadwal kerja.",
+          author: "Budi Santoso",
+          date: "2024-08-04",
+          time: "14:30",
+          category: "Cuaca",
+          priority: "high",
+          tags: ["cuaca", "jadwal", "penyesuaian"],
         },
         {
           id: 2,
-          text: 'Tim konstruksi bekerja sesuai target harian tanpa kendala berarti.',
-          author: 'Siti Nurhaliza',
-          date: '2024-08-04',
-          time: '09:15',
-          category: 'Progres',
-          priority: 'medium',
-          tags: ['konstruksi', 'target', 'harian']
+          text: "Tim konstruksi bekerja sesuai target harian tanpa kendala berarti.",
+          author: "Siti Nurhaliza",
+          date: "2024-08-04",
+          time: "09:15",
+          category: "Progres",
+          priority: "medium",
+          tags: ["konstruksi", "target", "harian"],
         },
         {
           id: 3,
-          text: 'Pengiriman material tertunda akibat gangguan distribusi. Perlu penyesuaian timeline.',
-          author: 'Ahmad Rahman',
-          date: '2024-08-03',
-          time: '16:45',
-          category: 'Logistik',
-          priority: 'high',
-          tags: ['material', 'distribusi', 'timeline']
+          text: "Pengiriman material tertunda akibat gangguan distribusi. Perlu penyesuaian timeline.",
+          author: "Ahmad Rahman",
+          date: "2024-08-03",
+          time: "16:45",
+          category: "Logistik",
+          priority: "high",
+          tags: ["material", "distribusi", "timeline"],
         },
         {
           id: 4,
-          text: 'Struktur utama dapur selesai dikerjakan dan dalam kondisi baik.',
-          author: 'Dewi Lestari',
-          date: '2024-08-03',
-          time: '11:20',
-          category: 'Struktur',
-          priority: 'low',
-          tags: ['struktur', 'selesai', 'kualitas']
+          text: "Struktur utama dapur selesai dikerjakan dan dalam kondisi baik.",
+          author: "Dewi Lestari",
+          date: "2024-08-03",
+          time: "11:20",
+          category: "Struktur",
+          priority: "low",
+          tags: ["struktur", "selesai", "kualitas"],
         },
         {
           id: 5,
-          text: 'Inspeksi keamanan dilakukan pagi ini. Semua area dalam kondisi aman.',
-          author: 'Rizky Pratama',
-          date: '2024-08-03',
-          time: '08:00',
-          category: 'Keamanan',
-          priority: 'medium',
-          tags: ['inspeksi', 'keamanan', 'area']
+          text: "Inspeksi keamanan dilakukan pagi ini. Semua area dalam kondisi aman.",
+          author: "Rizky Pratama",
+          date: "2024-08-03",
+          time: "08:00",
+          category: "Keamanan",
+          priority: "medium",
+          tags: ["inspeksi", "keamanan", "area"],
         },
         {
           id: 6,
-          text: 'Pemasangan instalasi listrik untuk area dapur sedang berlangsung. Estimasi selesai 2 hari.',
-          author: 'Maya Sari',
-          date: '2024-08-02',
-          time: '15:30',
-          category: 'Instalasi',
-          priority: 'medium',
-          tags: ['listrik', 'instalasi', 'estimasi']
+          text: "Pemasangan instalasi listrik untuk area dapur sedang berlangsung. Estimasi selesai 2 hari.",
+          author: "Maya Sari",
+          date: "2024-08-02",
+          time: "15:30",
+          category: "Instalasi",
+          priority: "medium",
+          tags: ["listrik", "instalasi", "estimasi"],
         },
         {
           id: 7,
-          text: 'Quality control check untuk pondasi selesai dengan hasil memuaskan.',
-          author: 'Teguh Kurniawan',
-          date: '2024-08-02',
-          time: '10:00',
-          category: 'QC',
-          priority: 'low',
-          tags: ['quality', 'pondasi', 'hasil']
+          text: "Quality control check untuk pondasi selesai dengan hasil memuaskan.",
+          author: "Teguh Kurniawan",
+          date: "2024-08-02",
+          time: "10:00",
+          category: "QC",
+          priority: "low",
+          tags: ["quality", "pondasi", "hasil"],
         },
         {
           id: 8,
-          text: 'Meeting dengan kontraktor untuk review progress mingguan. Semua target tercapai.',
-          author: 'Linda Wijaya',
-          date: '2024-08-01',
-          time: '13:00',
-          category: 'Meeting',
-          priority: 'medium',
-          tags: ['meeting', 'kontraktor', 'review']
-        }
+          text: "Meeting dengan kontraktor untuk review progress mingguan. Semua target tercapai.",
+          author: "Linda Wijaya",
+          date: "2024-08-01",
+          time: "13:00",
+          category: "Meeting",
+          priority: "medium",
+          tags: ["meeting", "kontraktor", "review"],
+        },
       ],
       loading: false,
       error: null,
@@ -308,130 +410,137 @@ export default {
         limit: 10,
         currentRowsCount: 0,
         next_page: null,
-        prev_page: null
+        prev_page: null,
+      },
+    };
+  },
+  computed: {
+    history() {
+      // ambil data pertama dari historyData
+      if (this.historyData.length > 0) {
+        return this.historyData[0];
       }
-    }
+      return { percentage: 0 }; // fallback kalau kosong
+    },
+
+    progressPercentage() {
+      return this.history?.percentage ?? 0;
+    },
   },
   async mounted() {
-    await this.fetchProgressData()
-    await this.loadRegions()
-    await this.loadKitchens()
+    await this.fetchProgressData();
+    await this.loadRegions();
+    await this.loadKitchens();
   },
   watch: {
     selectedRegion() {
-      this.loadKitchens()
+      this.loadKitchens();
     },
     currentPage() {
-      this.fetchProgressData()
-    }
+      this.fetchProgressData();
+    },
   },
   methods: {
     async fetchProgressData() {
-      this.loading = true
-      this.error = null
+      this.loading = true;
+      this.error = null;
 
       try {
-        const response = await ApiService.getProgressDapur(this.currentPage, 10)
+        const response = await ApiService.getProgressDapur(
+          this.currentPage,
+          10
+        );
 
-        if (response.status === 'success') {
-          this.apiData = response.data
-          this.pagination = response.pagination
-          this.totalPages = response.pagination.totalPages || 1
+        // Asumsi struktur response API:
+        // {
+        //   status: "success",
+        //   data: [
+        //     { id: 1, date: "2025-08-25", progress_percentage: 72 },
+        //     { id: 2, date: "2025-08-26", progress_percentage: 74 }
+        //   ],
+        //   pagination: { total: 50, page: 1, totalPages: 5 }
+        // }
 
-          // Transform API data to match component structure
-          this.transformApiData(response.data)
+        if (response.status === "success" && Array.isArray(response.data)) {
+          this.apiData = response.data;
+          this.pagination = response.pagination || {};
+          this.totalPages = this.pagination.totalPages || 1;
+
+          // Transform API data ke historyData
+          this.historyData = response.data.map((item, index) => {
+            const day = item.createdAt
+              ? new Date(item.createdAt).getDate().toString().padStart(2, "0")
+              : String(index + 1).padStart(2, "0");
+
+            return {
+              id: item.id || index,
+              day,
+              percentage: item.progress ?? 0,
+            };
+          });
         } else {
-          throw new Error('API response status is not success')
+          throw new Error("API response invalid atau kosong");
         }
       } catch (error) {
-        console.error('Error fetching progress data:', error)
-        this.error = error.message
-
-        // Fallback to static data if API fails
-        this.loadFallbackData()
+        console.error("Error fetching progress data:", error);
+        this.error = error.message;
+        this.loadFallbackData();
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
 
-    // transformApiData(data) {
-    //   // Transform API data to historyData format
-    //   if (data && data.length > 0) {
-    //     this.historyData = data.map((item, index) => ({
-    //       day: String(index + 1).padStart(2, '0'),
-    //       percentage: item.progress_percentage || Math.floor(Math.random() * 20) + 70,
-    //       id: item.id || index
-    //     }))
-
-    //     // Transform to notes format if there are notes in the API data
-    //     this.notes = data.filter(item => item.notes).map((item, index) => ({
-    //       id: item.id || index,
-    //       text: item.notes || item.description || 'No notes available'
-    //     }))
-    //   } else {
-    //     // If no data from API, use fallback
-    //     this.loadFallbackData()
-    //   }
-    // },
-
     loadFallbackData() {
-      // Fallback static data when API is empty or fails
       this.historyData = [
-        { day: '04', percentage: 79 },
-        { day: '03', percentage: 78 },
-        { day: '02', percentage: 74 },
-        { day: '01', percentage: 72 },
-        { day: '31', percentage: 71 },
-        { day: '30', percentage: 68 },
-        { day: '29', percentage: 67 },
-        { day: '28', percentage: 65 }
-      ]
-
-      // this.notes = 
+        { id: 1, day: "04", percentage: 79 },
+        { id: 2, day: "03", percentage: 78 },
+        { id: 3, day: "02", percentage: 74 },
+        { id: 4, day: "01", percentage: 72 },
+      ];
     },
 
     async loadRegions() {
       try {
-        const response = await ApiService.getRegions()
-        if (response.status === 'success') {
-          this.regions = response.data
+        const response = await ApiService.getRegions();
+        if (response.status === "success") {
+          this.regions = response.data;
         }
       } catch (error) {
-        console.error('Error loading regions:', error)
+        console.error("Error loading regions:", error);
         // Keep default regions if API fails
       }
     },
 
     async loadKitchens() {
       try {
-        const response = await ApiService.getKitchens(this.selectedRegion)
-        if (response.status === 'success') {
-          this.kitchens = response.data
-          this.selectedKitchen = this.kitchens[0] || 'Dapur Rungkut'
+        const response = await ApiService.getKitchens(this.selectedRegion);
+        if (response.status === "success") {
+          this.kitchens = response.data;
+          this.selectedKitchen = this.kitchens[0] || "Dapur Rungkut";
         }
       } catch (error) {
-        console.error('Error loading kitchens:', error)
+        console.error("Error loading kitchens:", error);
         // Keep default kitchens if API fails
       }
     },
 
     async prevPage() {
       if (this.currentPage > 1) {
-        this.currentPage--
-        await this.fetchProgressData()
+        this.currentPage--;
+        await this.fetchProgressData();
       }
     },
 
     async nextPage() {
       if (this.currentPage < this.totalPages) {
-        this.currentPage++
-        await this.fetchProgressData()
+        this.currentPage++;
+        await this.fetchProgressData();
       }
     },
 
     async refreshData() {
-      await this.fetchProgressData()
-    }
-  }
-}
+      await this.fetchProgressData();
+    },
+  },
+};
 </script>
