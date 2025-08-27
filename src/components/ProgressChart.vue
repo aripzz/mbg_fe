@@ -22,7 +22,8 @@ import {
   PointElement,
   LineController,
   CategoryScale,
-  LinearScale
+  LinearScale,
+  Filler
 } from 'chart.js'
 
 // Daftarkan komponen yang dipakai
@@ -34,7 +35,8 @@ ChartJS.register(
   PointElement,
   LineController,
   CategoryScale,
-  LinearScale
+  LinearScale,
+  Filler
 )
 
 export default {
