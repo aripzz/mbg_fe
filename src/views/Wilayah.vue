@@ -2,58 +2,42 @@
   <div>
     <Header />
 
-    <div class="flex">
-      <!-- Left Sidebar -->
-      <aside class="w-80 bg-white shadow-sm min-h-screen">
-        <div class="p-6">
-          <!-- Region Selector -->
-          <div class="mb-6">
-            <div class="flex items-center space-x-2 mb-4">
-              <select
-                v-model="selectedRegion"
-                class="w-20 bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-blue-600"
-              >
-                <option v-for="region in regions" :key="region" :value="region">
-                  {{ region }}
-                </option>
-              </select>
-              <select
-                v-model="selectedKitchen"
-                class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600"
-              >
-                <option
-                  v-for="kitchen in kitchens"
-                  :key="kitchen"
-                  :value="kitchen"
-                >
-                  {{ kitchen }}
-                </option>
-              </select>
-              <select
-                v-model="selectedKitchen"
-                class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600"
-              >
-                <option
-                  v-for="kitchen in kitchens"
-                  :key="kitchen"
-                  :value="kitchen"
-                >
-                  {{ kitchen }}
-                </option>
-              </select>
-            </div>
-          </div>
+    <div class="">
 
-          <!-- Riwayat Section -->
+      <div className="grid grid-cols-1 grid-rows-1 gap-4">
+        <div>
+          <div class="flex items-center space-x-2 mb-4">
+            <select v-model="selectedRegion"
+              class="w-20 bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-blue-600">
+              <option v-for="region in regions" :key="region" :value="region">
+                {{ region }}
+              </option>
+            </select>
+            <select v-model="selectedKitchen"
+              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600">
+              <option v-for="kitchen in kitchens" :key="kitchen" :value="kitchen">
+                {{ kitchen }}
+              </option>
+            </select>
+            <select v-model="selectedKitchen"
+              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600">
+              <option v-for="kitchen in kitchens" :key="kitchen" :value="kitchen">
+                {{ kitchen }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-8 grid-rows-6 gap-4">
+        <div className="col-span-2 row-span-6 bg-white p-6">
           <div class="mb-6">
             <h3 class="text-sm font-medium text-gray-800 mb-4">Riwayat</h3>
 
             <!-- Loading State for History -->
             <div v-if="loading" class="space-y-3">
               <div v-for="n in 5" :key="n" class="animate-pulse">
-                <div
-                  class="flex items-center justify-between p-3 bg-gray-200 rounded-lg"
-                >
+                <div class="flex items-center justify-between p-3 bg-gray-200 rounded-lg">
                   <div class="flex items-center space-x-3">
                     <div class="w-8 h-8 bg-gray-300 rounded-lg"></div>
                     <div class="w-12 h-4 bg-gray-300 rounded"></div>
@@ -65,171 +49,93 @@
 
             <!-- History Data -->
             <div v-else class="space-y-3">
-              <div
-                v-for="(history, index) in historyData"
-                :key="history.day"
-                class="flex items-center justify-between p-3 rounded-lg"
-                :class="
-                  index === 0
-                    ? 'bg-blue-50 border-l-4 border-blue-500'
-                    : 'bg-gray-50'
-                "
-              >
+              <div v-for="(history, index) in historyData" :key="history.day"
+                class="flex items-center justify-between p-3 rounded-lg" :class="index === 0
+                  ? 'bg-blue-50 border-l-4 border-blue-500'
+                  : 'bg-gray-50'
+                  ">
                 <div class="flex items-center space-x-3">
-                  <div
-                    class="w-8 h-8 rounded-lg flex items-center justify-center"
-                    :class="index === 0 ? 'bg-blue-500' : 'bg-gray-400'"
-                  >
+                  <div class="w-8 h-8 rounded-lg flex items-center justify-center"
+                    :class="index === 0 ? 'bg-blue-500' : 'bg-gray-400'">
                     <span class="text-white text-xs font-bold">{{
                       history.day
                     }}</span>
                   </div>
-                  <span class="text-sm font-medium"
-                    >{{ history.percentage }}%</span
-                  >
+                  <span class="text-sm font-medium">{{ history.percentage }}%</span>
                 </div>
                 <i class="fas fa-arrow-up text-green-500 text-xs"></i>
               </div>
 
               <!-- Empty state for history -->
-              <div
-                v-if="historyData.length === 0"
-                class="p-4 bg-gray-50 rounded-lg text-center"
-              >
+              <div v-if="historyData.length === 0" class="p-4 bg-gray-50 rounded-lg text-center">
                 <i class="fas fa-history text-gray-400 text-2xl mb-2"></i>
                 <p class="text-sm text-gray-500">No history data available</p>
               </div>
             </div>
           </div>
-
-          <!-- Pagination -->
-          <div class="flex items-center justify-between text-sm">
-            <button
-              @click="prevPage"
-              :disabled="currentPage === 1"
-              class="text-gray-400"
-              :class="{ 'cursor-not-allowed': currentPage === 1 }"
-            >
-              Prev
-            </button>
-            <div class="flex space-x-2">
-              <button
-                v-for="page in totalPages"
-                :key="page"
-                @click="currentPage = page"
-                class="w-6 h-6 rounded text-xs"
-                :class="
-                  currentPage === page
-                    ? 'bg-blue-500 text-white'
-                    : 'text-gray-400'
-                "
-              >
-                {{ page }}
-              </button>
-            </div>
-            <button
-              @click="nextPage"
-              :disabled="currentPage === totalPages"
-              class="text-blue-500"
-              :class="{
-                'text-gray-400 cursor-not-allowed': currentPage === totalPages,
-              }"
-            >
-              Next
-            </button>
-          </div>
         </div>
-      </aside>
-
-      <!-- Main Content -->
-      <main class="flex-1 p-6">
-        <div class="grid grid-cols-2 gap-6 mb-6">
-          <!-- Akumulasi Progress -->
+        <div className="col-span-2 row-span-2 col-start-3">
           <div class="bg-white rounded-lg p-6 shadow-sm">
             <h3 class="text-lg font-semibold text-gray-800 mb-6">
               Akumulasi Progres
             </h3>
             <div class="flex items-center justify-center mb-4">
-              <CircleWilayah
-                :value="progressPercentage"
-                :difference="progressDifference"
-                :lastUpdate="lastUpdated"
-              />
+              <CircleWilayah :value="progressPercentage" :difference="progressDifference" :lastUpdate="lastUpdated" />
             </div>
             <p class="text-center text-sm text-gray-600">
               Tercapai akumulasi 1 Agustus - 31Agustus 2025
             </p>
           </div>
-
-          <!-- Perkembangan Pembangunan Chart -->
+        </div>
+        <div className="col-span-4 row-span-2 col-start-5">
+          <!-- Perkembangan Pembangunan -->
           <ProgressChart />
         </div>
-
-        <!-- Timeline Section -->
-        <div class="rounded-lg p-6 mb-6">
-          <div class="flex items-center justify-between mb-4">
-            <div>
-              <span class="text-sm text-gray-500">Target</span>
-              <span class="ml-4 text-blue-600 font-medium">Minggu </span>
-              <span class="text-blue-600 font-bold">87.5 %</span>
+        <div className="col-span-6 col-start-3 row-start-3">
+          <!-- target -->
+          <div class="rounded-lg p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <span class="text-sm text-gray-500">Target</span>
+                <span class="ml-4 text-blue-600 font-medium">Minggu </span>
+                <span class="text-blue-600 font-bold">87.5 %</span>
+              </div>
             </div>
-          </div>
 
-          <!-- Timeline -->
-          <div class="flex items-center space-x-2 mb-4 w-full">
-            <div class="flex items-center flex-1 space-x-2">
-              <div
-                v-for="n in 8"
-                :key="n"
-                class="flex items-center flex-1 space-x-2"
-              >
-                <div
-                  class="h-8 w-8 bg-blue-500 flex items-center justify-center text-white text-sm font-bold rounded"
-                >
-                  {{ n }}
+            <!-- Timeline -->
+            <div class="flex items-center space-x-2 mb-4 w-full">
+              <div class="flex items-center flex-1 space-x-2">
+                <div v-for="n in 8" :key="n" class="flex items-center flex-1 space-x-2">
+                  <div
+                    class="h-8 w-8 bg-blue-500 flex items-center justify-center text-white text-sm font-bold rounded">
+                    {{ n }}
+                  </div>
+                  <div :class="n <= 7 ? 'h-1 bg-blue-500 flex-1' : 'h-1 bg-gray-200 flex-1'
+                    "></div>
                 </div>
-                <div
-                  :class="
-                    n <= 7 ? 'h-1 bg-blue-500 flex-1' : 'h-1 bg-gray-200 flex-1'
-                  "
-                ></div>
               </div>
             </div>
           </div>
         </div>
-
-        <!-- Media Gallery and Notes Section -->
-        <div class="grid grid-cols-2 gap-6">
-          <!-- Media Gallery Column -->
-          <div>
-            <MediaGallery
-              :show-counts="true"
-              :photos-count="42"
-              :videos-count="14"
-              :documents-count="14"
-              :show-view-all="false"
-            />
-          </div>
-
-          <!-- Notes Column -->
+        <div className="col-span-3 row-span-3 col-start-3 row-start-4">
+          <!-- foto -->
+          <MediaGallery :show-counts="true" :photos-count="42" :videos-count="14" :documents-count="14"
+            :show-view-all="false" />
+        </div>
+        <div className="col-span-3 row-span-3 col-start-6 row-start-4">
+          <!-- note -->
           <div class="bg-white shadow-sm rounded-lg">
             <div class="p-6">
               <!-- Header + Pagination -->
               <div class="flex justify-between items-center mb-6">
                 <h3 class="text-lg font-semibold text-gray-800">Catatan</h3>
                 <div class="flex items-center space-x-2">
-                  <button
-                    @click="prevPage"
-                    :disabled="currentPage === 1"
-                    class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200 disabled:opacity-50"
-                  >
+                  <button @click="prevPage" :disabled="currentPage === 1"
+                    class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200 disabled:opacity-50">
                     <i class="fas fa-chevron-left"></i>
                   </button>
-                  <button
-                    @click="nextPage"
-                    :disabled="currentPage === totalPages"
-                    class="w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-                  >
+                  <button @click="nextPage" :disabled="currentPage === totalPages"
+                    class="w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50">
                     <i class="fas fa-chevron-right"></i>
                   </button>
                 </div>
@@ -237,36 +143,24 @@
 
               <!-- Loading State -->
               <div v-if="loading" class="flex items-center justify-center py-8">
-                <div
-                  class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"
-                ></div>
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                 <span class="ml-2 text-sm text-gray-600">Loading...</span>
               </div>
 
               <!-- Error State -->
-              <div
-                v-else-if="error"
-                class="p-4 bg-red-50 rounded-lg border border-red-200"
-              >
+              <div v-else-if="error" class="p-4 bg-red-50 rounded-lg border border-red-200">
                 <div class="flex items-center">
                   <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
                   <span class="text-sm text-red-700">{{ error }}</span>
                 </div>
-                <button
-                  @click="refreshData"
-                  class="mt-2 text-sm text-red-600 hover:text-red-800 underline"
-                >
+                <button @click="refreshData" class="mt-2 text-sm text-red-600 hover:text-red-800 underline">
                   Try Again
                 </button>
               </div>
 
               <!-- Notes -->
               <div v-else class="space-y-0">
-                <div
-                  v-for="note in notes"
-                  :key="note.id"
-                  class="pt-2 pb-2 border-t flex flex-col items-start"
-                >
+                <div v-for="note in notes" :key="note.id" class="pt-2 pb-2 border-t flex flex-col items-start">
                   <p class="text-sm text-[#333333] leading-relaxed">
                     {{ note.text }}
                   </p>
@@ -277,10 +171,7 @@
                   </div>
                 </div>
                 <!-- Empty state -->
-                <div
-                  v-if="notes.length === 0"
-                  class="p-4 bg-gray-50 rounded-lg text-center"
-                >
+                <div v-if="notes.length === 0" class="p-4 bg-gray-50 rounded-lg text-center">
                   <i class="fas fa-sticky-note text-gray-400 text-2xl mb-2"></i>
                   <p class="text-sm text-gray-500">No notes available</p>
                 </div>
@@ -288,7 +179,9 @@
             </div>
           </div>
         </div>
-      </main>
+      </div>
+
+
     </div>
 
     <Footer />
