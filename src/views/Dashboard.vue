@@ -38,7 +38,13 @@
 
           <!-- Map Area (col-5) -->
           <div class="col-span-5 text-center">
-            <img src="/asset/peta.svg" class="w-full h-full" alt="Map" />
+            <div class="w-full h-full bg-gray-200 rounded-lg overflow-hidden">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3956.1234567890123!2d112.7184!3d-7.4478!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7807c5a8b4b4b4%3A0x1234567890abcdef!2sAlun-Alun%20Sidoarjo!5e0!3m2!1sid!2sid!4v1234567890123!5m2!1sid!2sid&markers=color:red%7Clabel:F%7C-7.4478,112.7184"
+                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade">
+              </iframe>
+            </div>
           </div>
         </div>
 

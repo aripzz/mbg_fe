@@ -9,11 +9,11 @@
 
       <nav class="flex space-x-6">
         <router-link to="/dashboard" class="text-gray-500 hover:text-gray-700"
-          :class="{ 'text-blue-600 font-medium border-b-2 border-blue-600 pb-1': $route.name === 'Dashboard' }">
+          :class="{ 'text-[#022A44] font-bold border-b-2 border-[#022A44] pb-1': $route.name === 'Dashboard' }">
           Dashboard
         </router-link>
         <router-link to="/wilayah" class="text-gray-500 hover:text-gray-700"
-          :class="{ 'text-blue-600 font-medium border-b-2 border-blue-600 pb-1': $route.name === 'Wilayah' }">
+          :class="{ 'text-[#022A44] font-bold border-b-2 border-[#022A44] pb-1': $route.name === 'Wilayah' }">
           Wilayah
         </router-link>
       </nav>
