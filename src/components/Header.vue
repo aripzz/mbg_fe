@@ -7,53 +7,51 @@
           <h1 class="text-xl font-semibold text-gray-800">DapurMBG</h1>
         </div>
         <nav class="flex space-x-6">
-          <router-link 
-            to="/dashboard" 
-            class="text-gray-500 hover:text-gray-700"
-            :class="{ 'text-blue-600 font-medium border-b-2 border-blue-600 pb-1': $route.name === 'Dashboard' }"
-          >
+          <router-link to="/dashboard" class="text-gray-500 hover:text-gray-700"
+            :class="{ 'text-blue-600 font-medium border-b-2 border-blue-600 pb-1': $route.name === 'Dashboard' }">
             Dashboard
           </router-link>
-          <router-link 
-            to="/wilayah" 
-            class="text-gray-500 hover:text-gray-700"
-            :class="{ 'text-blue-600 font-medium border-b-2 border-blue-600 pb-1': $route.name === 'Wilayah' }"
-          >
+          <router-link to="/wilayah" class="text-gray-500 hover:text-gray-700"
+            :class="{ 'text-blue-600 font-medium border-b-2 border-blue-600 pb-1': $route.name === 'Wilayah' }">
             Wilayah
           </router-link>
         </nav>
       </div>
       <div class="flex items-center space-x-4">
-        <i class="fas fa-bell text-gray-400"></i>
+        <i class="fas fa-bell text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"></i>
         <div class="relative">
-          <button 
-            @click="showUserMenu = !showUserMenu"
-            class="flex items-center space-x-2 focus:outline-none"
-          >
+          <button @click.stop="toggleUserMenu"
+            class="flex items-center space-x-2 focus:outline-none hover:opacity-80 transition-opacity"
+            :aria-expanded="showUserMenu" aria-haspopup="true">
             <span class="text-sm text-gray-600">{{ userInfo.username || 'Admin' }}</span>
-            <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+            <div
+              class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center ring-2 ring-offset-2 ring-red-500 ring-offset-white">
               <span class="text-white text-sm font-medium">{{ userInitial }}</span>
             </div>
-            <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+            <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform duration-200"
+              :class="{ 'rotate-180': showUserMenu }"></i>
           </button>
-          
+
           <!-- User Dropdown Menu -->
-          <div 
-            v-if="showUserMenu"
-            class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border"
-          >
-            <div class="px-4 py-2 text-sm text-gray-700 border-b">
-              <div class="font-medium">{{ userInfo.username || 'Admin' }}</div>
-              <div class="text-gray-500">{{ userInfo.email || 'admin@dapurmbg.com' }}</div>
+          <transition enter-active-class="transition ease-out duration-100"
+            enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100"
+            leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100"
+            leave-to-class="transform opacity-0 scale-95">
+            <div v-if="showUserMenu"
+              class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-1 z-50 border border-gray-200"
+              role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button">
+              <div class="px-4 py-3 border-b border-gray-100">
+                <div class="font-medium text-gray-900">{{ userInfo.username || 'Admin' }}</div>
+                <div class="text-sm text-gray-500 mt-1">{{ userInfo.email || 'admin@dapurmbg.com' }}</div>
+              </div>
+              <button @click="handleLogout"
+                class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                role="menuitem">
+                <i class="fas fa-sign-out-alt mr-2 text-gray-400"></i>
+                Logout
+              </button>
             </div>
-            <button
-              @click="handleLogout"
-              class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            >
-              <i class="fas fa-sign-out-alt mr-2"></i>
-              Logout
-            </button>
-          </div>
+          </transition>
         </div>
       </div>
     </div>
@@ -99,9 +97,14 @@ export default {
         this.userInfo = { username: 'Admin' }
       }
     },
-    
+
+    toggleUserMenu() {
+      this.showUserMenu = !this.showUserMenu
+    },
+
     async handleLogout() {
       try {
+        this.showUserMenu = false
         await ApiService.logout()
         this.$router.push('/login')
       } catch (error) {
@@ -111,7 +114,7 @@ export default {
         this.$router.push('/login')
       }
     },
-    
+
     handleClickOutside(event) {
       if (!this.$el.contains(event.target)) {
         this.showUserMenu = false
