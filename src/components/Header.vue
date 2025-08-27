@@ -22,11 +22,11 @@
         <i class="fas fa-bell text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"></i>
         <div class="relative">
           <button @click.stop="toggleUserMenu"
-            class="flex items-center space-x-2 focus:outline-none hover:opacity-80 transition-opacity"
+            class="flex items-center focus:outline-none hover:opacity-80 transition-opacity"
             :aria-expanded="showUserMenu" aria-haspopup="true">
-            <span class="text-sm text-gray-600">{{ userInfo.username || 'Admin' }}</span>
+            <span class="text-sm mr-[10px] text-gray-600">{{ userInfo.username || 'Admin' }}</span>
             <div
-              class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center ring-2 ring-offset-2 ring-red-500 ring-offset-white">
+              class="w-6 h-6 bg-red-500 mr-[10px] rounded-full flex items-center justify-center ring-2 ring-offset-2 ring-red-500 ring-offset-white">
               <span class="text-white text-sm font-medium">{{ userInitial }}</span>
             </div>
             <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform duration-200"
