@@ -94,13 +94,8 @@ class ApiService {
   }
 
   // You can add more API methods here as needed
-  async getRegions() {
-    // This would be another API endpoint for regions
-    // For now, return static data
-    return {
-      status: 'success',
-      data: ['Surabaya', 'Solo', 'Magelang', 'Kupang']
-    }
+  async getRegions(page = 1, limit = 20) {
+    return this.request(`/dynamic/m_prov?page=${page}&limit=${limit}`)
   }
 
   async getKitchens(region) {

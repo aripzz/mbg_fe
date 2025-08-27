@@ -11,10 +11,22 @@
             <div class="flex items-center space-x-2 mb-4">
               <select
                 v-model="selectedRegion"
-                class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-blue-600"
+                class="w-20 bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-blue-600"
               >
                 <option v-for="region in regions" :key="region" :value="region">
                   {{ region }}
+                </option>
+              </select>
+              <select
+                v-model="selectedKitchen"
+                class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600"
+              >
+                <option
+                  v-for="kitchen in kitchens"
+                  :key="kitchen"
+                  :value="kitchen"
+                >
+                  {{ kitchen }}
                 </option>
               </select>
               <select
@@ -131,35 +143,26 @@
 
       <!-- Main Content -->
       <main class="flex-1 p-6">
-        <div class="bg-white rounded-lg p-6 shadow-sm">
-          <h3 class="text-lg font-semibold text-gray-800 mb-6">
-            Akumulasi Progres
-          </h3>
-
-          <div class="flex items-center justify-center mb-4 relative">
-            <ProgressCircle :value="progressPercentage" />
-
-            <!-- Perbedaan (+/-) -->
-            <div
-              v-if="progressDifference !== 0"
-              class="absolute bottom-6 text-sm flex items-center justify-center w-full"
-            >
-              <span
-                :class="
-                  progressDifference > 0 ? 'text-green-600' : 'text-red-600'
-                "
-                class="font-medium flex items-center"
-              >
-                <span v-if="progressDifference > 0">▲</span>
-                <span v-else>▼</span>
-                {{ Math.abs(progressDifference) }}
-              </span>
+        <div class="grid grid-cols-2 gap-6 mb-6">
+          <!-- Akumulasi Progress -->
+          <div class="bg-white rounded-lg p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-gray-800 mb-6">
+              Akumulasi Progres
+            </h3>
+            <div class="flex items-center justify-center mb-4">
+              <CircleWilayah
+                :value="progressPercentage"
+                :difference="progressDifference"
+                :lastUpdate="lastUpdated"
+              />
             </div>
+            <p class="text-center text-sm text-gray-600">
+              Tercapai akumulasi 1 Agustus - 31Agustus 2025
+            </p>
           </div>
 
-          <p class="text-center text-sm text-gray-600">
-            Terakhir diupdate {{ lastUpdated }}
-          </p>
+          <!-- Perkembangan Pembangunan Chart -->
+          <ProgressChart />
         </div>
 
         <!-- Timeline Section -->
@@ -295,7 +298,8 @@
 <script>
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
-import ProgressCircle from "@/components/ProgressCircle.vue";
+import CircleWilayah from "@/components/CircleWilayah.vue";
+// import ProgressCircle from "@/components/ProgressCircle.vue";
 import ProgressChart from "@/components/ProgressChart.vue";
 import MediaGallery from "@/components/MediaGallery.vue";
 import ApiService from "@/services/api.js";
@@ -305,14 +309,16 @@ export default {
   components: {
     Header,
     Footer,
-    ProgressCircle,
+    // ProgressCircle,
     ProgressChart,
     MediaGallery,
+    CircleWilayah,
   },
   data() {
     return {
       selectedRegion: "Surabaya",
       selectedKitchen: "Dapur Rungkut",
+      selectedKota: "Surabaya",
       currentPage: 1,
       totalPages: 1,
       regions: ["Surabaya", "Solo", "Magelang", "Kupang"],
@@ -416,15 +422,44 @@ export default {
   },
   computed: {
     history() {
-      // ambil data pertama dari historyData
+      // ambil data terbaru (index 0 = terbaru)
       if (this.historyData.length > 0) {
         return this.historyData[0];
       }
-      return { percentage: 0 }; // fallback kalau kosong
+      return { percentage: 0, day: null }; // fallback
     },
 
     progressPercentage() {
       return this.history?.percentage ?? 0;
+    },
+
+    progressDifference() {
+      if (this.historyData.length >= 2) {
+        return this.historyData[0].percentage - this.historyData[1].percentage;
+      }
+      return 0;
+    },
+
+    lastUpdated() {
+      if (this.apiData && this.apiData.length > 0) {
+        // jika API ada field createdAt / date
+        const last = this.apiData[0].createdAt || this.apiData[0].date;
+        if (last) {
+          const d = new Date(last);
+          return (
+            d.toLocaleDateString("id-ID", {
+              day: "2-digit",
+              month: "long",
+              year: "numeric",
+            }) +
+            " " +
+            d.toLocaleTimeString("id-ID", { hour12: false })
+          );
+        }
+      }
+
+      // fallback manual
+      return "05 Juli 2025 16:22:01";
     },
   },
   async mounted() {
@@ -502,12 +537,16 @@ export default {
     async loadRegions() {
       try {
         const response = await ApiService.getRegions();
-        if (response.status === "success") {
-          this.regions = response.data;
+
+        if (response.status === "success" && Array.isArray(response.data)) {
+          // hanya ambil field "nama"
+          this.regions = response.data.map((item) => item.nama);
+        } else {
+          throw new Error("Data regions tidak valid");
         }
       } catch (error) {
         console.error("Error loading regions:", error);
-        // Keep default regions if API fails
+        // keep default regions kalau gagal
       }
     },
 
