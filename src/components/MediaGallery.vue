@@ -2,7 +2,6 @@
   <div class="bg-white rounded-lg p-6 w-[100%] shadow-sm">
     <div class="flex items-center justify-between mb-4">
       <div class="flex space-x-6">
-        <span v-if="showViewAll" class="text-sm text-gray-500">Lihat Semua</span>
         <button @click="activeTab = 'foto'"
           :class="activeTab === 'foto' ? 'text-blue-600 font-medium border-b-2 border-blue-600' : 'text-gray-500'">
           Foto{{ showCounts ? ` (${photosCount})` : '' }}
