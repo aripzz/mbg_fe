@@ -1,36 +1,57 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-    <div class="sm:mx-auto sm:w-full sm:max-w-md">
-      <div class="flex justify-center">
-        <i class="fas fa-utensils text-blue-600 text-4xl"></i>
+  <div class="min-h-screen flex">
+    <!-- Left Section -->
+    <div class="hidden md:flex w-[80%] bg-blue-50 flex-col justify-center items-center p-12">
+      <div class="max-w-md">
+        <h2 class="text-sm text-gray-600">Sistem Kontrol Terpadu</h2>
+        <h1 class="mt-2 text-3xl font-bold text-gray-900">
+          Pembangunan Dapur MBG
+        </h1>
+        <p class="mt-4 text-gray-600 text-sm leading-relaxed">
+          Akses dashboard untuk memantau progres pembangunan, mencatat aktivitas harian, 
+          dan memastikan semuanya berjalan sesuai rencana.
+        </p>
       </div>
-      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-        DapurMBG
-      </h2>
-      <p class="mt-2 text-center text-sm text-gray-600">
-        Masuk ke dashboard Badan Gizi Nasional
+
+      <!-- Ilustrasi -->
+      <div class="mt-8">
+        <img src="/asset/ilustrasi_login.svg" alt="Dashboard Illustration" class="w-full max-w-lg">
+      </div>
+
+      <!-- Footer -->
+      <p class="mt-8 text-xs text-gray-500">
+        © 2025 Copyright Badan Gizi Nasional. All Rights Reserved
       </p>
     </div>
 
-    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-      <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+    <!-- Right Section -->
+    <div class="flex w-full md:w-1/2 bg-white flex-col justify-center px-8 py-12">
+      <div class="flex flex-col items-center">
+        <!-- Logo -->
+        <img src="/asset/logo_bgn.png" alt="Logo BGN" class="w-20 h-20 mb-4">
+
+        <!-- Form Title -->
+        <h2 class="text-2xl font-bold text-gray-900">Login</h2>
+        <p class="mt-2 text-sm text-gray-600">
+          Silakan masuk untuk mengakses sistem dan memulai aktivitas kerja Anda.
+        </p>
+      </div>
+
+      <!-- Form -->
+      <div class="mt-8 mx-auto w-full max-w-sm">
         <form class="space-y-6" @submit.prevent="handleLogin">
-          <!-- Username Field -->
+          <!-- Username -->
           <div>
-            <label for="username" class="block text-sm font-medium text-gray-700">
-              Username
-            </label>
+            <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
             <div class="mt-1 relative">
               <input
                 id="username"
-                name="username"
                 type="text"
-                autocomplete="username"
-                required
                 v-model="form.username"
                 :disabled="loading"
-                class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                :class="{ 'bg-gray-100': loading }"
+                required
+                class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md 
+                       placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Masukkan username"
               />
               <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
@@ -39,90 +60,54 @@
             </div>
           </div>
 
-          <!-- Password Field -->
+          <!-- Password -->
           <div>
-            <label for="password" class="block text-sm font-medium text-gray-700">
-              Password
-            </label>
+            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
             <div class="mt-1 relative">
               <input
                 id="password"
-                name="password"
                 :type="showPassword ? 'text' : 'password'"
-                autocomplete="current-password"
-                required
                 v-model="form.password"
                 :disabled="loading"
-                class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                :class="{ 'bg-gray-100': loading }"
+                required
+                class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md 
+                       placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Masukkan password"
               />
               <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                <button
-                  type="button"
-                  @click="showPassword = !showPassword"
-                  class="text-gray-400 hover:text-gray-600 focus:outline-none"
-                >
+                <button type="button" @click="showPassword = !showPassword" 
+                        class="text-gray-400 hover:text-gray-600 focus:outline-none">
                   <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                 </button>
               </div>
             </div>
           </div>
 
-          <!-- Error Message -->
-          <div v-if="error" class="rounded-md bg-red-50 p-4">
-            <div class="flex">
-              <div class="flex-shrink-0">
-                <i class="fas fa-exclamation-circle text-red-400"></i>
-              </div>
-              <div class="ml-3">
-                <h3 class="text-sm font-medium text-red-800">
-                  Login Gagal
-                </h3>
-                <div class="mt-2 text-sm text-red-700">
-                  <p>{{ error }}</p>
-                </div>
-              </div>
-            </div>
+          <!-- Error -->
+          <div v-if="error" class="rounded-md bg-red-50 p-4 text-sm text-red-700">
+            {{ error }}
           </div>
 
-          <!-- Submit Button -->
-          <div>
-            <button
-              type="submit"
-              :disabled="loading || !form.username || !form.password"
-              class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                <i v-if="loading" class="fas fa-spinner fa-spin text-blue-500 group-hover:text-blue-400"></i>
-                <i v-else class="fas fa-lock text-blue-500 group-hover:text-blue-400"></i>
-              </span>
-              {{ loading ? 'Memproses...' : 'Masuk' }}
-            </button>
-          </div>
+          <!-- Submit -->
+          <button
+            type="submit"
+            :disabled="loading || !form.username || !form.password"
+            class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium 
+                   rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 
+                   focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <i v-if="loading" class="fas fa-spinner fa-spin mr-2"></i>
+            {{ loading ? 'Memproses...' : 'Login' }}
+          </button>
         </form>
 
-        <!-- Additional Info -->
-        <div class="mt-6">
-          <div class="relative">
-            <div class="absolute inset-0 flex items-center">
-              <div class="w-full border-t border-gray-300" />
-            </div>
-            <div class="relative flex justify-center text-sm">
-              <span class="px-2 bg-white text-gray-500">
-                Sistem Manajemen Dapur
-              </span>
-            </div>
-          </div>
+        <!-- Lupa Password -->
+        <div class="mt-4 text-center">
+          <a href="#" class="text-sm text-blue-600 hover:underline">
+            Lupa Password? Klik Di sini
+          </a>
         </div>
       </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="mt-8 text-center">
-      <p class="text-xs text-gray-500">
-        © 2024 Badan Gizi Nasional. All Rights Reserved.
-      </p>
     </div>
   </div>
 </template>
@@ -134,58 +119,31 @@ export default {
   name: 'Login',
   data() {
     return {
-      form: {
-        username: '',
-        password: ''
-      },
+      form: { username: '', password: '' },
       loading: false,
       error: null,
       showPassword: false
-    }
-  },
-  mounted() {
-    // Check if user is already logged in
-    if (this.isAuthenticated()) {
-      this.$router.push('/dashboard')
     }
   },
   methods: {
     async handleLogin() {
       this.loading = true
       this.error = null
-
       try {
         const response = await ApiService.login(this.form.username, this.form.password)
-        
-        if (response.status === 'success' && response.data && response.data.token) {
-          // Store token and user info
+        if (response.status === 'success' && response.data?.token) {
           localStorage.setItem('auth_token', response.data.token)
-          localStorage.setItem('user_info', JSON.stringify({
-            id: response.data.user.id,
-            username: response.data.user.username,
-            createdAt: response.data.user.createdAt,
-            updatedAt: response.data.user.updatedAt
-          }))
-          
-          // Update API service token
+          localStorage.setItem('user_info', JSON.stringify(response.data.user))
           ApiService.setToken(response.data.token)
-          
-          // Redirect to dashboard
           this.$router.push('/dashboard')
         } else {
-          throw new Error(response.message || 'Login gagal. Silakan coba lagi.')
+          throw new Error(response.message || 'Login gagal.')
         }
-      } catch (error) {
-        console.error('Login error:', error)
-        this.error = error.message || 'Terjadi kesalahan saat login. Silakan coba lagi.'
+      } catch (err) {
+        this.error = err.message
       } finally {
         this.loading = false
       }
-    },
-
-    isAuthenticated() {
-      const token = localStorage.getItem('auth_token')
-      return !!token
     }
   }
 }

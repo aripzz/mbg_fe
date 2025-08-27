@@ -1,25 +1,39 @@
 <template>
-  <div class="relative">
-    <svg :class="circleClass" :width="size" :height="size">
-      <circle 
-        :cx="center" 
-        :cy="center" 
-        :r="radius" 
-        class="progress-bg"
-      ></circle>
-      <circle 
-        :cx="center" 
-        :cy="center" 
-        :r="radius" 
-        class="progress-bar"
-        :style="{ strokeDashoffset: dashOffset }"
-      ></circle>
+  <div class="relative w-32 h-32">
+    <svg class="w-full h-full transform -rotate-90">
+      <!-- Track -->
+      <circle
+        class="text-blue-300"
+        stroke="currentColor"
+        fill="transparent"
+        stroke-width="10"
+        cx="64"
+        cy="64"
+        r="54"
+      />
+      <!-- Progress -->
+      <circle
+        class="text-yellow-400 transition-all duration-700 ease-out"
+        stroke="currentColor"
+        fill="transparent"
+        stroke-width="10"
+        stroke-linecap="round"
+        :stroke-dasharray="circumference"
+        :stroke-dashoffset="dashOffset"
+        cx="64"
+        cy="64"
+        r="54"
+      />
     </svg>
-    <div class="absolute inset-0 flex items-center justify-center">
-      <div class="text-center">
-        <div :class="percentageClass">{{ percentage }}%</div>
-        <div :class="labelClass">{{ label }}</div>
-      </div>
+
+    <!-- Percentage & Label -->
+    <div class="absolute inset-0 flex flex-col items-center justify-center">
+      <p class="text-xl font-bold text-white">
+        {{ percentage }}%
+      </p>
+      <span class="text-[11px] leading-tight text-blue-100">
+        Diupdate <br /> {{ updatedAt }}
+      </span>
     </div>
   </div>
 </template>
@@ -32,44 +46,20 @@ export default {
       type: Number,
       required: true
     },
-    label: {
+    updatedAt: {
       type: String,
-      default: 'Target'
-    },
-    size: {
-      type: Number,
-      default: 128
-    },
-    strokeWidth: {
-      type: Number,
-      default: 8
-    },
-    large: {
-      type: Boolean,
-      default: false
+      default: '05 Juli 2025'
     }
   },
   computed: {
-    center() {
-      return this.size / 2
-    },
     radius() {
-      return (this.size - this.strokeWidth) / 2
+      return 54
     },
     circumference() {
       return 2 * Math.PI * this.radius
     },
     dashOffset() {
       return this.circumference - (this.percentage / 100) * this.circumference
-    },
-    circleClass() {
-      return this.large ? 'progress-circle-large' : 'progress-circle'
-    },
-    percentageClass() {
-      return this.large ? 'text-3xl font-bold text-blue-600' : 'text-2xl font-bold'
-    },
-    labelClass() {
-      return this.large ? 'text-sm text-gray-500' : 'text-xs opacity-80'
     }
   }
 }
