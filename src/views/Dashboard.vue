@@ -49,8 +49,8 @@
         </div>
 
 
-        <div className="grid grid-cols-12 grid-rows-3 gap-4">
-          <div className="col-span-2">
+        <div className="grid grid-cols-12 grid-rows-3 gap-4 ">
+          <div className="col-span-2 bg-white p-4 shadow-sm">
             <div class="space-y-4 mb-6">
               <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-600 font-bold">Status</span>
@@ -88,7 +88,7 @@
           <div className="col-span-3 row-span-3 col-start-10">
             <!-- catatan -->
             <div className="col-span-2 row-span-5 col-start-4">
-              <div class="p-1">
+              <div class="p-4 bg-white shadow-sm">
                 <div class="flex items-center justify-between mb-6">
                   <span class="text-sm text-gray-500">Catatan</span>
                   <span class="text-sm text-gray-500">Lihat Semua</span>
@@ -124,7 +124,7 @@
             </div>
           </div>
           <div className="col-span-3 row-span-2 row-start-2">
-            <div>
+            <div class="bg-white rounded-lg p-4">
               <div class="flex justify-between items-center mb-4">
                 <h3 class="font-medium text-gray-800">Aktivitas</h3>
                 <span class="text-sm text-gray-500">Lihat Semua</span>
