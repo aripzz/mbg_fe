@@ -9,20 +9,50 @@ import Login from './views/Login.vue'
 import Dashboard from './views/Dashboard.vue'
 import Wilayah from './views/Wilayah.vue'
 
+// // Authentication guard
+// const requireAuth = (to, from, next) => {
+//   if (ApiService.isAuthenticated()) {
+//     next()
+//   } else {
+//     next('/login')
+//   }
+// }
+
+// // Guest guard (redirect to dashboard if already logged in)
+// const requireGuest = (to, from, next) => {
+//   if (ApiService.isAuthenticated()) {
+//     next('/dashboard')
+//   } else {
+//     next()
+//   }
+// }
+
 // Authentication guard
 const requireAuth = (to, from, next) => {
-  if (ApiService.isAuthenticated()) {
+  console.log('[requireAuth] Checking access to:', to.fullPath)
+  const isAuth = ApiService.isAuthenticated()
+  console.log('[requireAuth] isAuthenticated =', isAuth)
+
+  if (isAuth) {
+    console.log('[requireAuth] Access granted to', to.fullPath)
     next()
   } else {
+    console.warn('[requireAuth] Access denied. Redirecting to /login')
     next('/login')
   }
 }
 
 // Guest guard (redirect to dashboard if already logged in)
 const requireGuest = (to, from, next) => {
-  if (ApiService.isAuthenticated()) {
+  console.log('[requireGuest] Checking guest access to:', to.fullPath)
+  const isAuth = ApiService.isAuthenticated()
+  console.log('[requireGuest] isAuthenticated =', isAuth)
+
+  if (isAuth) {
+    console.log('[requireGuest] Already logged in. Redirecting to /dashboard')
     next('/dashboard')
   } else {
+    console.log('[requireGuest] Guest allowed for', to.fullPath)
     next()
   }
 }
@@ -55,6 +85,8 @@ const routes = [
   }
 ]
 
+
+
 // Create router
 const router = createRouter({
   history: createWebHistory(),
@@ -63,14 +95,19 @@ const router = createRouter({
 
 // Global navigation guard
 router.beforeEach((to, from, next) => {
-  // Check if token exists but might be expired
   const token = localStorage.getItem('auth_token')
-  if (token && !ApiService.isAuthenticated()) {
-    // Token exists but service says not authenticated, clear it
+  console.log('[beforeEach]', { from: from.fullPath, to: to.fullPath, token })
+  
+  const auth = ApiService.isAuthenticated()
+  console.log('[beforeEach] isAuthenticated =', auth)
+
+  if (token && !auth) {
+    console.warn('[beforeEach] Clearing token, because isAuthenticated() = false')
     ApiService.clearAuth()
   }
   next()
 })
+
 
 // Create and mount app
 const app = createApp(App)

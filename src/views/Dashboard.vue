@@ -63,22 +63,19 @@
           </div>
 
           <!-- Map Area -->
-          <div class="text-center w-full">
-            <img src="/asset/peta.svg" class="h-48 mx-auto" alt="Map" />
+          <div class="text-center w-full h-full">
+            <img src="/asset/peta.svg" class="h-full w-full" alt="Map" />
           </div>
         </div>
 
-
-
-
-        <!-- //coba -->
+        <!-- Target -->
         <div className="grid grid-cols-5 grid-rows-5 gap-4">
           <div className="col-span-3 row-span-3">
             <div class="bg-white rounded-lg p-6 shadow-sm mb-6 h-25">
               <div class="flex items-center justify-between mb-4">
                 <div>
                   <span class="text-sm text-gray-500">Target</span>
-                  <span class="ml-4 text-blue-600 font-medium">Minggu 7</span>
+                  <span class="m-4 text-blue-600 font-medium">Minggu 7</span>
                   <span class="text-blue-600 font-bold">87.6 %</span>
                 </div>
                 <div class="flex items-center space-x-2">
@@ -86,6 +83,7 @@
                   <i class="fas fa-plus text-gray-400"></i>
                 </div>
               </div>
+              
 
               <!-- Timeline -->
               <div class="flex items-center space-x-4 mb-4">
@@ -106,6 +104,7 @@
               </div>
             </div>
           </div>
+          
           <div className="col-span-2 row-span-5 col-start-4">
             <div class="p-6">
               <div class="flex items-center justify-between mb-6">

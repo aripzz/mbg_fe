@@ -15,25 +15,26 @@
 <script>
 import {
   Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
   Title,
   Tooltip,
   Legend,
-  Filler
+  LineElement,
+  PointElement,
+  LineController,
+  CategoryScale,
+  LinearScale
 } from 'chart.js'
 
+// Daftarkan komponen yang dipakai
 ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
   Title,
   Tooltip,
   Legend,
-  Filler
+  LineElement,
+  PointElement,
+  LineController,
+  CategoryScale,
+  LinearScale
 )
 
 export default {

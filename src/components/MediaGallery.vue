@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg p-6 shadow-sm">
+  <div class="bg-white rounded-lg p-6 w-[60%] shadow-sm">
     <div class="flex items-center justify-between mb-4">
       <div class="flex space-x-6">
         <span v-if="showViewAll" class="text-sm text-gray-500">Lihat Semua</span>
