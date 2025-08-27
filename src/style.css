@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for progress circles */
+.progress-circle {
+  transform: rotate(-90deg);
+}
+
+.progress-circle circle {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+
+.progress-bg {
+  stroke: #e5e7eb;
+}
+
+.progress-bar {
+  stroke: #3b82f6;
+  stroke-dasharray: 251.2;
+  stroke-dashoffset: 62.8;
+  transition: stroke-dashoffset 0.5s ease-in-out;
+}
+
+/* Custom styles for wilayah page progress circle */
+.progress-circle-large {
+  transform: rotate(-90deg);
+}
+
+.progress-circle-large circle {
+  fill: none;
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+
+.progress-circle-large .progress-bg {
+  stroke: #e5e7eb;
+}
+
+.progress-circle-large .progress-bar {
+  stroke: #3b82f6;
+  stroke-dasharray: 377;
+  stroke-dashoffset: 79.17;
+  transition: stroke-dashoffset 0.5s ease-in-out;
+}
