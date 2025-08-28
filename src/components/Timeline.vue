@@ -1,5 +1,5 @@
 <template>
-    <div class="relative w-full py-8">
+    <div class="relative w-full ">
         <!-- Horizontal line -->
         <div class="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 transform -translate-y-1/2"></div>
 

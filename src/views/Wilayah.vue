@@ -42,7 +42,9 @@
       </div>
 
       <div className="grid grid-cols-8 grid-rows-6 gap-4">
-        <div className="col-span-2 row-span-6 bg-white p-6">
+        <div
+          className="col-span-2 row-span-6 bg-white p-6 h-[85%] rounded-lg shadow-sm"
+        >
           <div class="mb-6">
             <h3 class="text-sm font-medium text-gray-800 mb-4">Riwayat</h3>
 
@@ -146,7 +148,7 @@
                 :lastUpdate="lastUpdated"
               />
               <p v-if="lastUpdate" class="text-xs text-gray-500 mt-4">
-                Terakhir diupdate {{lastUpdate }}
+                Terakhir diupdate {{ lastUpdate }}
               </p>
             </div>
             <p class="text-center text-sm text-gray-600">
@@ -173,17 +175,19 @@
                   Minggu {{ historyData.length }}
                 </span>
                 <span class="text-blue-600 font-bold">
-                  {{ historyData[historyData.length - 1]?.percentage || 0 }} %
+                  {{ Number(historyData[historyData.length - 1]?.percentage).toFixed(0) || 0 }} %
                 </span>
               </div>
             </div>
 
             <!-- Timeline -->
-            <Timeline
-              :totalSteps="historyData.length"
-              :currentStep="historyData.length - 1"
-              :percent="historyData[historyData.length - 1]?.percentage || 0"
-            />
+            <div class="pr-4">
+              <Timeline
+                :totalSteps="historyData.length"
+                :currentStep="historyData.length - 1"
+                :percent="historyData[historyData.length - 1]?.percentage || 0"
+              />
+            </div>
           </div>
         </div>
 
@@ -322,88 +326,7 @@ export default {
       historyData: [],
       labels: ["Data 1", "Data 2", "Data 3"],
       values: [15, 6, 40],
-      notes: [
-        {
-          id: 1,
-          text: "Operasional terganggu karena cuaca buruk. Perlu penyesuaian jadwal kerja.",
-          author: "Budi Santoso",
-          date: "2024-08-04",
-          time: "14:30",
-          category: "Cuaca",
-          priority: "high",
-          tags: ["cuaca", "jadwal", "penyesuaian"],
-        },
-        {
-          id: 2,
-          text: "Tim konstruksi bekerja sesuai target harian tanpa kendala berarti.",
-          author: "Siti Nurhaliza",
-          date: "2024-08-04",
-          time: "09:15",
-          category: "Progres",
-          priority: "medium",
-          tags: ["konstruksi", "target", "harian"],
-        },
-        {
-          id: 3,
-          text: "Pengiriman material tertunda akibat gangguan distribusi. Perlu penyesuaian timeline.",
-          author: "Ahmad Rahman",
-          date: "2024-08-03",
-          time: "16:45",
-          category: "Logistik",
-          priority: "high",
-          tags: ["material", "distribusi", "timeline"],
-        },
-        {
-          id: 4,
-          text: "Struktur utama dapur selesai dikerjakan dan dalam kondisi baik.",
-          author: "Dewi Lestari",
-          date: "2024-08-03",
-          time: "11:20",
-          category: "Struktur",
-          priority: "low",
-          tags: ["struktur", "selesai", "kualitas"],
-        },
-        {
-          id: 5,
-          text: "Inspeksi keamanan dilakukan pagi ini. Semua area dalam kondisi aman.",
-          author: "Rizky Pratama",
-          date: "2024-08-03",
-          time: "08:00",
-          category: "Keamanan",
-          priority: "medium",
-          tags: ["inspeksi", "keamanan", "area"],
-        },
-        {
-          id: 6,
-          text: "Pemasangan instalasi listrik untuk area dapur sedang berlangsung. Estimasi selesai 2 hari.",
-          author: "Maya Sari",
-          date: "2024-08-02",
-          time: "15:30",
-          category: "Instalasi",
-          priority: "medium",
-          tags: ["listrik", "instalasi", "estimasi"],
-        },
-        {
-          id: 7,
-          text: "Quality control check untuk pondasi selesai dengan hasil memuaskan.",
-          author: "Teguh Kurniawan",
-          date: "2024-08-02",
-          time: "10:00",
-          category: "QC",
-          priority: "low",
-          tags: ["quality", "pondasi", "hasil"],
-        },
-        {
-          id: 8,
-          text: "Meeting dengan kontraktor untuk review progress mingguan. Semua target tercapai.",
-          author: "Linda Wijaya",
-          date: "2024-08-01",
-          time: "13:00",
-          category: "Meeting",
-          priority: "medium",
-          tags: ["meeting", "kontraktor", "review"],
-        },
-      ],
+      notes: [],
       loading: false,
       error: null,
       apiData: null,
@@ -528,11 +451,20 @@ export default {
         // ambil data progress per dapur
         const response = await ApiService.getProgressDapur(
           this.currentPage,
-          10,
+          8,
+          this.selectedKitchenId
+        );
+
+        const responses = await ApiService.getProgressDapurCatatan(
+          this.currentPage,
+          4,
           this.selectedKitchenId
         );
 
         let data = response.data || [];
+        let datas = responses.data || [];
+
+        console.log("Fetched progress data:", datas); // debug
 
         // kalau backend belum filter by id_dapur → filter manual
         if (this.selectedKitchenId) {
@@ -560,7 +492,7 @@ export default {
         });
 
         // mapping ke notes
-        this.notes = data.map((item, index) => {
+        this.notes = datas.map((item, index) => {
           const dateObj = item.createdAt ? new Date(item.createdAt) : null;
 
           return {

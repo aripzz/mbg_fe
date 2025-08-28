@@ -116,8 +116,17 @@ class ApiService {
   //   return this.request(`/dynamic/t_progress_dapur?page=${page}&limit=${limit}`)
   // }
 
-  async getProgressDapur(page = 1, limit = 10, id_dapur = null) {
-    let url = `/dynamic/t_progress_dapur?page=${page}&limit=${limit}`;
+  async getProgressDapur(page = 1, limit = 8, id_dapur = null) {
+    let url = `/dynamic/t_progress_dapur?page=${page}&paginate=${limit}`;
+    if (id_dapur) {
+      url += `&where=id_dapur=${id_dapur}`;
+    }
+    console.log("API Request URL:", url); // debug
+    return this.request(url);
+  }
+
+  async getProgressDapurCatatan(page = 1, limit = 4, id_dapur = null) {
+    let url = `/dynamic/t_progress_dapur?page=${page}&paginate=${limit}`;
     if (id_dapur) {
       url += `&where=id_dapur=${id_dapur}`;
     }
