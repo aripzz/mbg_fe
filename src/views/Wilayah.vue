@@ -6,34 +6,25 @@
       <div className="grid grid-cols-1 grid-rows-1 gap-4">
         <div>
           <div class="flex items-center space-x-2 m-4">
-            <select
-              v-model="selectedRegion"
+            <select v-model="selectedRegion"
               class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-600"
-            >
-              <option disabled value="">Pilih Provinsi</option>
-              <option v-for="region in regions" :key="region" :value="region">
-                {{ region }}
+              :disabled="loadingRegions">
+              <option disabled value="">{{ loadingRegions ? 'Loading...' : 'Pilih Provinsi' }}</option>
+              <option v-for="region in regions" :key="region.id" :value="region.id">
+                {{ region.nama }}
               </option>
             </select>
-            <select
-              v-model="selectedCity"
-              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600"
-            >
+            <select v-model="selectedCity"
+              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600">
               <option disabled value="">Pilih Kota</option>
               <option v-for="city in citys" :key="city" :value="city">
                 {{ city }}
               </option>
             </select>
-            <select
-              v-model="selectedKitchenId"
-              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600"
-            >
+            <select v-model="selectedKitchenId"
+              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600">
               <option disabled value="">Pilih Dapur</option>
-              <option
-                v-for="kitchen in kitchens"
-                :key="kitchen.id"
-                :value="kitchen.id"
-              >
+              <option v-for="kitchen in kitchens" :key="kitchen.id" :value="kitchen.id">
                 {{ kitchen.nama }}
               </option>
             </select>
@@ -42,18 +33,14 @@
       </div>
 
       <div className="grid grid-cols-8 grid-rows-6 gap-4">
-        <div
-          className="col-span-2 row-span-6 bg-white p-6 h-[85%] rounded-lg shadow-sm"
-        >
+        <div className="col-span-2 row-span-6 bg-white p-6 h-[85%] rounded-lg shadow-sm">
           <div class="mb-6">
             <h3 class="text-sm font-medium text-gray-800 mb-4">Riwayat</h3>
 
             <!-- Loading State -->
             <div v-if="loading" class="space-y-3">
               <div v-for="n in 5" :key="n" class="animate-pulse">
-                <div
-                  class="flex items-center justify-between p-3 bg-gray-200 rounded-lg"
-                >
+                <div class="flex items-center justify-between p-3 bg-gray-200 rounded-lg">
                   <div class="flex items-center space-x-3">
                     <div class="w-8 h-8 bg-gray-300 rounded-lg"></div>
                     <div class="w-12 h-4 bg-gray-300 rounded"></div>
@@ -65,18 +52,16 @@
 
             <!-- History Data -->
             <div v-else class="space-y-3">
-              <div
-                v-for="(history, index) in sortedHistory"
-                :key="history.day + index"
-                class="flex items-center justify-between p-2 bg-white rounded-xl shadow-md space-x-4"
-              >
+              <div v-for="(history, index) in sortedHistory" :key="history.day + index"
+                class="flex items-center justify-between p-2 bg-white rounded-xl shadow-md space-x-4">
                 <div
-                  class="flex-shrink-0 flex flex-col items-center justify-center w-14 h-14 bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-gray-700 dark:border-gray-600"
-                >
-                  <span
-                    class="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400"
-                  >
-                    Jul
+                  class="flex-shrink-0 flex flex-col items-center justify-center w-14 h-14 bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+                  <span class="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
+                    {{ history.createdAt
+                      ? new Date(history.createdAt).toLocaleDateString("id-ID", {
+                        month: "short",
+                      })
+                      : `Hari ${history.id}` }}
                   </span>
                   <span class="text-xl font-bold text-gray-900 dark:text-white">
                     {{ history.day }}
@@ -89,46 +74,28 @@
                   </p>
                 </div>
 
-                <div
-                  class="flex-shrink-0 flex items-center px-3 py-1 bg-[#00B1320D] w-[50px] rounded-md"
-                >
+                <div class="flex-shrink-0 flex items-center px-3 py-1 bg-[#00B1320D] w-[50px] rounded-md">
                   <img src="/asset/up.png" />
-                  <span
-                    class="text-sm font-semibold text-green-600 dark:text-green-300"
-                  >
+                  <span class="text-sm font-semibold text-green-600 dark:text-green-300">
                     +{{
                       sortedHistory[index + 1]?.percentage !== undefined
                         ? (
-                            history.percentage -
-                            sortedHistory[index + 1].percentage
-                          ).toFixed(0)
+                          history.percentage -
+                          sortedHistory[index + 1].percentage
+                        ).toFixed(0)
                         : 0
                     }}
                   </span>
                 </div>
                 <button
-                  class="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 focus:outline-none dark:text-gray-500 dark:hover:text-gray-300"
-                >
-                  <svg
-                    class="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M9 5l7 7-7 7"
-                    ></path>
+                  class="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 focus:outline-none dark:text-gray-500 dark:hover:text-gray-300">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                   </svg>
                 </button>
               </div>
-              <div
-                v-if="historyData.length === 0"
-                class="p-4 bg-gray-50 rounded-lg text-center"
-              >
+              <div v-if="historyData.length === 0" class="p-4 bg-gray-50 rounded-lg text-center">
                 <i class="fas fa-history text-gray-400 text-2xl mb-2"></i>
                 <p class="text-sm text-gray-500">No history data available</p>
               </div>
@@ -141,12 +108,8 @@
               Akumulasi Progres
             </h3>
             <div class="flex items-center justify-center">
-              <CircleWilayah
-                v-if="historyData.length"
-                :value="Number(historyData[0].percentage).toFixed(0)"
-                :difference="Number(progressDifference).toFixed(0)"
-                :lastUpdate="lastUpdated"
-              />
+              <CircleWilayah v-if="historyData.length" :value="Number(historyData[0].percentage).toFixed(0)"
+                :difference="Number(progressDifference).toFixed(0)" :lastUpdate="lastUpdated" />
               <p v-if="lastUpdate" class="text-xs text-gray-500 mt-4">
                 Terakhir diupdate {{ lastUpdate }}
               </p>
@@ -158,12 +121,8 @@
         </div>
         <div className="col-span-4 row-span-2 col-start-5">
           <!-- Perkembangan Pembangunan -->
-          <ProgressChart
-            v-if="chartValues.length && chartLabels.length"
-            :labels="chartLabels"
-            :values="chartValues"
-            :last-updated="lastUpdated"
-          />
+          <ProgressChart v-if="chartValues.length && chartLabels.length" :labels="chartLabels" :values="chartValues"
+            :last-updated="lastUpdated" />
         </div>
         <div class="col-span-6 col-start-3 row-start-3">
           <!-- target -->
@@ -187,24 +146,17 @@
 
             <!-- Timeline -->
             <div class="pr-4">
-              <Timeline
-                :totalSteps="historyData.length"
-                :currentStep="historyData.length - 1"
-                :percent="historyData[historyData.length - 1]?.percentage || 0"
-              />
+              <Timeline :totalSteps="historyData.length" :currentStep="historyData.length - 1"
+                :percent="historyData[historyData.length - 1]?.percentage || 0" />
             </div>
           </div>
         </div>
 
         <div className="col-span-3 row-span-3 col-start-3 row-start-4">
           <!-- foto -->
-          <MediaGallery
-            :show-counts="true"
-            :photos-count="mediaCounts.photos"
-            :videos-count="mediaCounts.videos"
-            :documents-count="mediaCounts.documents"
-            :show-view-all="false"
-          />
+          <MediaGallery :show-counts="true" :photos="mediaData.photos" :videos="mediaData.videos"
+            :documents="mediaData.documents" :photos-count="mediaCounts.photos" :videos-count="mediaCounts.videos"
+            :documents-count="mediaCounts.documents" :show-view-all="false" />
         </div>
         <div className="col-span-3 row-span-3 col-start-6 row-start-4">
           <!-- note -->
@@ -214,18 +166,12 @@
               <div class="flex justify-between items-center mb-6">
                 <h3 class="text-lg font-semibold text-gray-800">Catatan</h3>
                 <div class="flex items-center space-x-2">
-                  <button
-                    @click="prevPage"
-                    :disabled="currentPage === 1"
-                    class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200 disabled:opacity-50"
-                  >
+                  <button @click="prevPage" :disabled="currentPage === 1"
+                    class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200 disabled:opacity-50">
                     <i class="fas fa-chevron-left"></i>
                   </button>
-                  <button
-                    @click="nextPage"
-                    :disabled="currentPage === totalPages"
-                    class="w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-                  >
+                  <button @click="nextPage" :disabled="currentPage === totalPages"
+                    class="w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50">
                     <i class="fas fa-chevron-right"></i>
                   </button>
                 </div>
@@ -233,36 +179,24 @@
 
               <!-- Loading State -->
               <div v-if="loading" class="flex items-center justify-center py-8">
-                <div
-                  class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"
-                ></div>
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                 <span class="ml-2 text-sm text-gray-600">Loading...</span>
               </div>
 
               <!-- Error State -->
-              <div
-                v-else-if="error"
-                class="p-4 bg-red-50 rounded-lg border border-red-200"
-              >
+              <div v-else-if="error" class="p-4 bg-red-50 rounded-lg border border-red-200">
                 <div class="flex items-center">
                   <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
                   <span class="text-sm text-red-700">{{ error }}</span>
                 </div>
-                <button
-                  @click="refreshData"
-                  class="mt-2 text-sm text-red-600 hover:text-red-800 underline"
-                >
+                <button @click="refreshData" class="mt-2 text-sm text-red-600 hover:text-red-800 underline">
                   Try Again
                 </button>
               </div>
 
               <!-- Notes -->
               <div v-else class="space-y-0">
-                <div
-                  v-for="note in notes"
-                  :key="note.id"
-                  class="pt-2 pb-2 border-t flex flex-col items-start"
-                >
+                <div v-for="note in notes" :key="note.id" class="pt-2 pb-2 border-t flex flex-col items-start">
                   <p class="text-sm text-[#333333] leading-relaxed">
                     {{ note.text }}
                   </p>
@@ -273,10 +207,7 @@
                   </div>
                 </div>
                 <!-- Empty state -->
-                <div
-                  v-if="notes.length === 0"
-                  class="p-4 bg-gray-50 rounded-lg text-center"
-                >
+                <div v-if="notes.length === 0" class="p-4 bg-gray-50 rounded-lg text-center">
                   <i class="fas fa-sticky-note text-gray-400 text-2xl mb-2"></i>
                   <p class="text-sm text-gray-500">No notes available</p>
                 </div>
@@ -327,6 +258,10 @@ export default {
       totalPages: 1,
       citys: [],
       regions: [],
+      loadingRegions: false,
+      regionsError: null,
+      loadingCities: false,
+      citiesError: null,
       kitchens: [],
       historyData: [],
       labels: ["Data 1", "Data 2", "Data 3"],
@@ -339,6 +274,11 @@ export default {
         photos: 0,
         videos: 0,
         documents: 0,
+      },
+      mediaData: {
+        photos: [],
+        videos: [],
+        documents: [],
       },
       loadingMedia: false,
       pagination: {
@@ -372,9 +312,9 @@ export default {
       return this.historyData.map((item) =>
         item.createdAt
           ? new Date(item.createdAt).toLocaleDateString("id-ID", {
-              day: "2-digit",
-              month: "short",
-            })
+            day: "2-digit",
+            month: "short",
+          })
           : `Hari ${item.id}`
       );
     },
@@ -442,7 +382,7 @@ export default {
     await this.loadRegions();
     await this.loadCity();
     await this.loadKitchens();
-    await this.fetchMediaByDapur(this.selectedKitchenId);
+    // await this.fetchMediaByDapur();
   },
   watch: {
     selectedRegion() {
@@ -480,10 +420,32 @@ export default {
           this.selectedKitchenId
         );
 
+        const reponsImage = await ApiService.getImageByDapurID(
+          this.selectedKitchenId,
+          this.currentPage,
+          4,
+        );
+
+        const reponsDoc = await ApiService.getDocByDapurID(
+          this.selectedKitchenId,
+          this.currentPage,
+          4,
+        );
+
+        const reponsVidio = await ApiService.getVideoByDapurID(
+          this.selectedKitchenId,
+          this.currentPage,
+          4,
+        );
+
         let data = response.data || [];
         let datas = responses.data || [];
+        let dataImage = reponsImage.data || [];
+        let dataDoc = reponsDoc.data || [];
+        let dataVideo = reponsVidio.data || [];
 
-        console.log("Fetched progress data:", datas); // debug
+        // console.log("Fetched progress data:", datas); // debug
+        // console.log("Fetched progress dataImage:", dataImage); // debug
 
         // kalau backend belum filter by id_dapur → filter manual
         if (this.selectedKitchenId) {
@@ -519,19 +481,33 @@ export default {
             text: item.catatan || "-", // asumsi backend ada field catatan
             date: dateObj
               ? dateObj.toLocaleDateString("id-ID", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                })
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })
               : "-",
             time: dateObj
               ? dateObj.toLocaleTimeString("id-ID", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
+                hour: "2-digit",
+                minute: "2-digit",
+              })
               : "-",
           };
         });
+
+        // mapping ke mediaCounts
+        this.mediaCounts = {
+          photos: dataImage.length || 0,
+          videos: dataVideo.length || 0,
+          documents: dataDoc.length || 0,
+        };
+
+        // mapping ke mediaData
+        this.mediaData = {
+          photos: dataImage || [],
+          videos: dataVideo || [],
+          documents: dataDoc || [],
+        };
       } catch (error) {
         console.error("Error fetching progress data:", error);
         this.error = error.message;
@@ -546,65 +522,57 @@ export default {
       }
     },
 
-    async fetchMediaByDapur(id_dapur) {
-      this.loadingMedia = true;
-      try {
-        const response = await ApiService.getImageByDapurID(id_dapur, 1, 100);
-        const files = response.data || [];
-
-        // reset count
-        this.mediaCounts = { photos: 0, videos: 0, documents: 0 };
-
-        files.forEach((item) => {
-          const type = item.type || item.mime || ""; // tergantung field backend
-          if (type.includes("image")) {
-            this.mediaCounts.photos++;
-          } else if (type.includes("video")) {
-            this.mediaCounts.videos++;
-          } else if (type.includes("pdf") || type.includes("doc")) {
-            this.mediaCounts.documents++;
-          }
-        });
-      } catch (err) {
-        console.error("Failed to fetch media:", err);
-      } finally {
-        this.loadingMedia = false;
-      }
-    },
-
     loadFallbackData() {
       this.historyData = [];
     },
 
     async loadRegions() {
+      this.loadingRegions = true;
+      this.regionsError = null;
+
       try {
         const response = await ApiService.getRegions();
+        console.log("Regions API response:", response); // Debug log
 
         if (response.status === "success" && Array.isArray(response.data)) {
-          // hanya ambil field "nama"
-          this.regions = response.data.map((item) => item.nama);
+          // Store the full region objects instead of just the names
+          this.regions = response.data;
         } else {
           throw new Error("Data regions tidak valid");
         }
       } catch (error) {
         console.error("Error loading regions:", error);
-        // keep default regions kalau gagal
+        this.regionsError = error.message;
+        this.regions = []; // Clear regions on error
+      } finally {
+        this.loadingRegions = false;
       }
     },
 
     async loadCity() {
+      if (!this.selectedRegion) {
+        this.citys = [];
+        return;
+      }
+
+      this.loadingCities = true;
+      this.citiesError = null;
+
       try {
-        const response = await ApiService.getCitys();
+        const response = await ApiService.getCities(this.selectedRegion);
+        console.log("Cities API response:", response); // Debug log
 
         if (response.status === "success" && Array.isArray(response.data)) {
-          // hanya ambil field "nama"
-          this.citys = response.data.map((item) => item.nama);
+          this.citys = response.data;
         } else {
-          throw new Error("Data city tidak valid");
+          throw new Error("Data cities tidak valid");
         }
       } catch (error) {
-        console.error("Error loading city:", error);
-        // keep default city kalau gagal
+        console.error("Error loading cities:", error);
+        this.citiesError = error.message;
+        this.citys = []; // Clear cities on error
+      } finally {
+        this.loadingCities = false;
       }
     },
 

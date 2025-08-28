@@ -111,11 +111,6 @@ class ApiService {
     }
   }
 
-  // Get progress data for dapur
-  // async getProgressDapur(page = 1, limit = 10) {
-  //   return this.request(`/dynamic/t_progress_dapur?page=${page}&limit=${limit}`)
-  // }
-
   async getProgressDapur(page = 1, limit = 8, id_dapur = null) {
     let url = `/dynamic/t_progress_dapur?page=${page}&paginate=${limit}`;
     if (id_dapur) {
@@ -134,7 +129,7 @@ class ApiService {
     return this.request(url);
   }
 
-  async getDocByDapurID(id_dapur = "", page = 1, limit = 20) {
+  async getDocByDapurID(id_dapur = null, page = 1, limit = 20) {
     return this.request(
       `/dynamic/t_progress_doc?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}&page=${page}&limit=${limit}`
     );
@@ -146,7 +141,7 @@ class ApiService {
     );
   }
 
-  async getVideoByDapurID(id_dapur = "", page = 1, limit = 20) {
+  async getVideoByDapurID(id_dapur = null, page = 1, limit = 20) {
     return this.request(
       `/dynamic/t_progress_video?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}&page=${page}&limit=${limit}`
     );
@@ -157,8 +152,12 @@ class ApiService {
     return this.request(`/dynamic/m_prov?page=${page}&limit=${limit}`);
   }
 
-  async getCitys(page = 1, limit = 20) {
-    return this.request(`/dynamic/m_kota?page=${page}&limit=${limit}`);
+  async getCities(regionId = null, page = 1, limit = 20) {
+    let url = `/dynamic/m_kota?page=${page}&limit=${limit}`;
+    if (regionId) {
+      url += `&where=id_prov=${regionId}`;
+    }
+    return this.request(url);
   }
 
   async getKitchens(page = 1, limit = 20) {
