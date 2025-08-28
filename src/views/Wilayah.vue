@@ -6,34 +6,24 @@
       <div className="grid grid-cols-1 grid-rows-1 gap-4">
         <div>
           <div class="flex items-center space-x-2 m-4">
-            <select
-              v-model="selectedRegion"
-              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-600"
-            >
+            <select v-model="selectedRegion"
+              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-600">
               <option disabled value="">Pilih Provinsi</option>
               <option v-for="region in regions" :key="region" :value="region">
                 {{ region }}
               </option>
             </select>
-            <select
-              v-model="selectedCity"
-              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600"
-            >
+            <select v-model="selectedCity"
+              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600">
               <option disabled value="">Pilih Kota</option>
               <option v-for="city in citys" :key="city" :value="city">
                 {{ city }}
               </option>
             </select>
-            <select
-              v-model="selectedKitchenId"
-              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600"
-            >
+            <select v-model="selectedKitchenId"
+              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600">
               <option disabled value="">Pilih Dapur</option>
-              <option
-                v-for="kitchen in kitchens"
-                :key="kitchen.id"
-                :value="kitchen.id"
-              >
+              <option v-for="kitchen in kitchens" :key="kitchen.id" :value="kitchen.id">
                 {{ kitchen.nama }}
               </option>
             </select>
@@ -49,9 +39,7 @@
             <!-- Loading State -->
             <div v-if="loading" class="space-y-3">
               <div v-for="n in 5" :key="n" class="animate-pulse">
-                <div
-                  class="flex items-center justify-between p-3 bg-gray-200 rounded-lg"
-                >
+                <div class="flex items-center justify-between p-3 bg-gray-200 rounded-lg">
                   <div class="flex items-center space-x-3">
                     <div class="w-8 h-8 bg-gray-300 rounded-lg"></div>
                     <div class="w-12 h-4 bg-gray-300 rounded"></div>
@@ -63,37 +51,39 @@
 
             <!-- History Data -->
             <div v-else class="space-y-3">
-              <div
-                v-for="(history, index) in sortedHistory"
-                :key="history.day + index"
-                class="flex items-center justify-between p-3 rounded-lg"
-                :class="
-                  index === 0
-                    ? 'bg-blue-50 border-l-4 border-blue-500'
-                    : 'bg-gray-50'
-                "
-              >
-                <div class="flex items-center space-x-3">
-                  <div
-                    class="w-8 h-8 rounded-lg flex items-center justify-center"
-                    :class="index === 0 ? 'bg-blue-500' : 'bg-gray-400'"
-                  >
-                    <span class="text-white text-xs font-bold">
-                      {{ history.day }}
-                    </span>
-                  </div>
-                  <span class="text-sm font-medium">
-                    {{ history.percentage }}%
+              <div v-for="(history, index) in sortedHistory" :key="history.day + index"
+                class="flex items-center justify-between p-2 bg-white rounded-xl shadow-md space-x-4">
+                <div
+                  class="flex-shrink-0 flex flex-col items-center justify-center w-14 h-14 bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+                  <span class="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
+                    Jul
+                  </span>
+                  <span class="text-xl font-bold text-gray-900 dark:text-white">
+                    {{ history.day }}
                   </span>
                 </div>
-                <i class="fas fa-arrow-up text-green-500 text-xs"></i>
-              </div>
 
-              <!-- Empty state -->
-              <div
-                v-if="historyData.length === 0"
-                class="p-4 bg-gray-50 rounded-lg text-center"
-              >
+                <div class="flex-1 text-center">
+                  <p class="text-3xl font-bold text-gray-950">
+                    {{ Number(history.percentage).toFixed(0) }}%
+                  </p>
+                </div>
+
+                <div class="flex-shrink-0 flex items-center px-3 py-1 bg-[#00B1320D] w-[50px] rounded-md">
+                  <img src="/asset/up.png" />
+                  <span class="text-sm font-semibold text-green-600 dark:text-green-300">
+                    +{{ index > 0 ? (history.percentage - sortedHistory[index - 1].percentage).toFixed(0) : '0' }}
+                  </span>
+                </div>
+                <button
+                  class="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 focus:outline-none dark:text-gray-500 dark:hover:text-gray-300">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </button>
+              </div>
+              <div v-if="historyData.length === 0" class="p-4 bg-gray-50 rounded-lg text-center">
                 <i class="fas fa-history text-gray-400 text-2xl mb-2"></i>
                 <p class="text-sm text-gray-500">No history data available</p>
               </div>
@@ -101,17 +91,13 @@
           </div>
         </div>
         <div className="col-span-2 row-span-2 col-start-3">
-          <div class="bg-white rounded-lg p-6 shadow-sm">
+          <div class="bg-white rounded-lg p-4 shadow-sm">
             <h3 class="text-lg font-semibold text-gray-800 mb-6">
               Akumulasi Progres
             </h3>
-            <div class="flex items-center justify-center mb-4">
-              <CircleWilayah
-                v-if="historyData.length"
-                :value="historyData[historyData.length - 1].percentage"
-                :difference="progressDifference"
-                :lastUpdate="lastUpdated"
-              />
+            <div class="flex items-center justify-center">
+              <CircleWilayah v-if="historyData.length" :value="historyData[historyData.length - 1].percentage"
+                :difference="progressDifference" :lastUpdate="lastUpdated" />
               <p v-if="lastUpdate" class="text-xs text-gray-500 mt-4">
                 Terakhir diupdate {{ lastUpdate }}
               </p>
@@ -123,16 +109,12 @@
         </div>
         <div className="col-span-4 row-span-2 col-start-5">
           <!-- Perkembangan Pembangunan -->
-          <ProgressChart
-            v-if="values.length && labels.length"
-            :labels="labels"
-            :values="values"
-            :last-updated="lastUpdated"
-          />
+          <ProgressChart v-if="values.length && labels.length" :labels="labels" :values="values"
+            :last-updated="lastUpdated" />
         </div>
         <div class="col-span-6 col-start-3 row-start-3">
           <!-- target -->
-          <div class="rounded-lg p-6 mb-6">
+          <div class="rounded-lg">
             <div class="flex items-center justify-between mb-4">
               <div>
                 <span class="text-sm text-gray-500">Target</span>
@@ -146,59 +128,15 @@
             </div>
 
             <!-- Timeline -->
-            <div class="flex items-center w-full relative">
-              <!-- Garis abu-abu background -->
-              <div
-                class="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 -translate-y-1/2"
-              ></div>
-
-              <!-- Garis progress -->
-              <div
-                class="absolute top-1/2 left-0 h-1 bg-blue-500 -translate-y-1/2 transition-all duration-700"
-                :style="{
-                  width:
-                    (historyData[historyData.length - 1]?.percentage || 0) +
-                    '%',
-                }"
-              ></div>
-
-              <!-- Titik berdasarkan historyData -->
-              <div
-                v-for="(item, i) in historyData"
-                :key="i"
-                class="relative flex flex-col items-center"
-                :style="{
-                  left: item.percentage + '%',
-                  position: 'absolute',
-                  transform: 'translateX(-50%)',
-                }"
-              >
-                <div
-                  class="h-8 w-8 flex items-center justify-center text-white text-xs font-bold rounded-full shadow-md"
-                  :class="
-                    item.percentage <=
-                    (historyData[historyData.length - 1]?.percentage || 0)
-                      ? 'bg-blue-500'
-                      : 'bg-gray-300'
-                  "
-                >
-                  {{ item.percentage }}%
-                </div>
-                <span class="text-xs text-gray-500 mt-2">{{ item.day }}</span>
-              </div>
-            </div>
+            <Timeline :totalSteps="historyData.length" :currentStep="historyData.length - 1"
+              :percent="historyData[historyData.length - 1]?.percentage || 0" />
           </div>
         </div>
 
         <div className="col-span-3 row-span-3 col-start-3 row-start-4">
           <!-- foto -->
-          <MediaGallery
-            :show-counts="true"
-            :photos-count="42"
-            :videos-count="14"
-            :documents-count="14"
-            :show-view-all="false"
-          />
+          <MediaGallery :show-counts="true" :photos-count="42" :videos-count="14" :documents-count="14"
+            :show-view-all="false" />
         </div>
         <div className="col-span-3 row-span-3 col-start-6 row-start-4">
           <!-- note -->
@@ -208,18 +146,12 @@
               <div class="flex justify-between items-center mb-6">
                 <h3 class="text-lg font-semibold text-gray-800">Catatan</h3>
                 <div class="flex items-center space-x-2">
-                  <button
-                    @click="prevPage"
-                    :disabled="currentPage === 1"
-                    class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200 disabled:opacity-50"
-                  >
+                  <button @click="prevPage" :disabled="currentPage === 1"
+                    class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200 disabled:opacity-50">
                     <i class="fas fa-chevron-left"></i>
                   </button>
-                  <button
-                    @click="nextPage"
-                    :disabled="currentPage === totalPages"
-                    class="w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-                  >
+                  <button @click="nextPage" :disabled="currentPage === totalPages"
+                    class="w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50">
                     <i class="fas fa-chevron-right"></i>
                   </button>
                 </div>
@@ -227,36 +159,24 @@
 
               <!-- Loading State -->
               <div v-if="loading" class="flex items-center justify-center py-8">
-                <div
-                  class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"
-                ></div>
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                 <span class="ml-2 text-sm text-gray-600">Loading...</span>
               </div>
 
               <!-- Error State -->
-              <div
-                v-else-if="error"
-                class="p-4 bg-red-50 rounded-lg border border-red-200"
-              >
+              <div v-else-if="error" class="p-4 bg-red-50 rounded-lg border border-red-200">
                 <div class="flex items-center">
                   <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
                   <span class="text-sm text-red-700">{{ error }}</span>
                 </div>
-                <button
-                  @click="refreshData"
-                  class="mt-2 text-sm text-red-600 hover:text-red-800 underline"
-                >
+                <button @click="refreshData" class="mt-2 text-sm text-red-600 hover:text-red-800 underline">
                   Try Again
                 </button>
               </div>
 
               <!-- Notes -->
               <div v-else class="space-y-0">
-                <div
-                  v-for="note in notes"
-                  :key="note.id"
-                  class="pt-2 pb-2 border-t flex flex-col items-start"
-                >
+                <div v-for="note in notes" :key="note.id" class="pt-2 pb-2 border-t flex flex-col items-start">
                   <p class="text-sm text-[#333333] leading-relaxed">
                     {{ note.text }}
                   </p>
@@ -267,10 +187,7 @@
                   </div>
                 </div>
                 <!-- Empty state -->
-                <div
-                  v-if="notes.length === 0"
-                  class="p-4 bg-gray-50 rounded-lg text-center"
-                >
+                <div v-if="notes.length === 0" class="p-4 bg-gray-50 rounded-lg text-center">
                   <i class="fas fa-sticky-note text-gray-400 text-2xl mb-2"></i>
                   <p class="text-sm text-gray-500">No notes available</p>
                 </div>
@@ -292,6 +209,7 @@ import CircleWilayah from "@/components/CircleWilayah.vue";
 // import ProgressCircle from "@/components/ProgressCircle.vue";
 import ProgressChart from "@/components/ProgressChart.vue";
 import MediaGallery from "@/components/MediaGallery.vue";
+import Timeline from "@/components/Timeline.vue";
 import ApiService from "@/services/api.js";
 
 export default {
@@ -303,6 +221,7 @@ export default {
     ProgressChart,
     MediaGallery,
     CircleWilayah,
+    Timeline,
   },
   props: {
     historyData: {
@@ -575,12 +494,12 @@ export default {
 
           this.lastUpdated = latest.createdAt
             ? new Date(latest.createdAt).toLocaleString("id-ID", {
-                day: "2-digit",
-                month: "long",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })
+              day: "2-digit",
+              month: "long",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })
             : "-";
         } else {
           this.progressPercentage = 0;
@@ -597,16 +516,16 @@ export default {
             text: item.catatan || "-", // asumsi backend ada field catatan
             date: dateObj
               ? dateObj.toLocaleDateString("id-ID", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                })
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })
               : "-",
             time: dateObj
               ? dateObj.toLocaleTimeString("id-ID", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
+                hour: "2-digit",
+                minute: "2-digit",
+              })
               : "-",
           };
         });

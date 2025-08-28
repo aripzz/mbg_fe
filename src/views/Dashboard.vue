@@ -79,7 +79,7 @@
                 </div>
               </div>
               <!-- Timeline -->
-              <Timeline :totalSteps="8" :currentStep="7" :percent="87.6" />
+              0
             </div>
           </div>
           <div className="col-span-3 row-span-3 col-start-10">
