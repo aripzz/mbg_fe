@@ -19,7 +19,7 @@
         <i class="fas fa-arrow-up text-green-500 text-xs"></i>
       </div>
     </div>
-    <div class="text-[12px] text-[#CCD2E3] mt-1">05 Juli 2025 16:20:21</div>
+    <div class="ml-3 text-[12px] text-[#CCD2E3] mt-1">05 Juli 2025 16:20:21</div>
   </div>
 
 </template>

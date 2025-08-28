@@ -12,8 +12,8 @@
             <div v-for="n in totalSteps" :key="n" class="flex flex-col items-center">
                 <!-- Number box -->
                 <div :class="[
-                    'h-10 w-10 mt-3 flex items-center justify-center text-white text-sm font-bold border-2 rounded-md',
-                    n <= currentStep ? 'bg-blue-500 border-blue-500' : 'bg-white border-[#047BFF] text-[#047BFF]'
+                    'h-10 w-10 mt-3 flex items-center justify-center text-sm font-bold border-2 rounded-md',
+                    n <= currentStep ? 'bg-blue-500 border-blue-500 text-white' : 'bg-white border-[#047BFF] text-[#047BFF]'
                 ]">
                     {{ n }}
                 </div>
