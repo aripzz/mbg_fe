@@ -378,7 +378,7 @@ export default {
 
     sortedHistory() {
       // copy array biar tidak mutasi asli, lalu reverse
-      return this.historyData.slice().reverse();
+      return this.historyData.slice();
     },
 
     progressPercentage() {
@@ -480,33 +480,7 @@ export default {
           };
         });
 
-        // ambil data terbaru berdasarkan createdAt
-        if (this.historyData.length > 0) {
-          const sorted = [...this.historyData].sort(
-            (a, b) => new Date(a.createdAt) - new Date(b.createdAt) // urut ASC
-          );
-
-          const earliest = sorted[0]; // data paling awal
-          const latest = sorted[sorted.length - 1]; // data terbaru
-
-          // isi untuk CircleWilayah
-          this.progressPercentage = latest.percentage;
-          this.progressDifference = latest.percentage - earliest.percentage;
-
-          this.lastUpdated = latest.createdAt
-            ? new Date(latest.createdAt).toLocaleString("id-ID", {
-              day: "2-digit",
-              month: "long",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-            : "-";
-        } else {
-          this.progressPercentage = 0;
-          this.progressDifference = 0;
-          this.lastUpdated = "-";
-        }
+       
 
         // mapping ke notes
         this.notes = data.map((item, index) => {
