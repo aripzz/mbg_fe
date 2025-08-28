@@ -72,8 +72,8 @@
                 <div class="flex-shrink-0 flex items-center px-3 py-1 bg-[#00B1320D] w-[50px] rounded-md">
                   <img src="/asset/up.png" />
                   <span class="text-sm font-semibold text-green-600 dark:text-green-300">
-                    +{{ index > 0 ? (history.percentage - sortedHistory[index - 1].percentage).toFixed(0) : '0' }}
-                  </span>
+                    +{{ index <= sortedHistory.length ? (history.percentage - sortedHistory[index +
+                      1].percentage).toFixed(0) : '0' }} </span>
                 </div>
                 <button
                   class="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 focus:outline-none dark:text-gray-500 dark:hover:text-gray-300">
@@ -96,8 +96,7 @@
               Akumulasi Progres
             </h3>
             <div class="flex items-center justify-center">
-              <CircleWilayah v-if="historyData.length"
-                :value="Number(historyData[historyData.length - 1].percentage).toFixed(0)"
+              <CircleWilayah v-if="historyData.length" :value="Number(historyData[0].percentage).toFixed(0)"
                 :difference="Number(progressDifference).toFixed(0)" :lastUpdate="Number(lastUpdated).toFixed(0)" />
               <p v-if="lastUpdate" class="text-xs text-gray-500 mt-4">
                 Terakhir diupdate {{ Number(lastUpdate).toFixed(0) }}
@@ -391,12 +390,12 @@ export default {
       );
     },
 
-    // progressDifference() {
-    //   if (this.historyData.length >= 2) {
-    //     return this.historyData[0].percentage - this.historyData[1].percentage;
-    //   }
-    //   return 0;
-    // },
+    progressDifference() {
+      if (this.historyData.length >= 2) {
+        return this.historyData[0].percentage - this.historyData[1].percentage;
+      }
+      return 0;
+    },
 
     lastUpdated() {
       if (this.apiData && this.apiData.length > 0) {
@@ -480,7 +479,7 @@ export default {
           };
         });
 
-       
+
 
         // mapping ke notes
         this.notes = data.map((item, index) => {
