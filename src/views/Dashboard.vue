@@ -35,22 +35,19 @@
               <RegionCard v-for="region in regions" :key="region.name" :region="region" />
             </div>
           </div>
-
           <!-- Map Area (col-5) -->
           <div class="col-span-5 text-center">
             <div class="w-full h-full bg-gray-200 rounded-lg overflow-hidden">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3956.1234567890123!2d112.7184!3d-7.4478!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7807c5a8b4b4b4%3A0x1234567890abcdef!2sAlun-Alun%20Sidoarjo!5e0!3m2!1sid!2sid!4v1234567890123!5m2!1sid!2sid&markers=color:red%7Clabel:F%7C-7.4478,112.7184"
-                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade">
-              </iframe>
+              <GMapMap :center="center" :zoom="7" map-type-id="terrain" style="width: 100%; height: 380px">
+                <GMapMarker :key="marker.id" v-for="marker in markers" :position="marker.position" />
+              </GMapMap>
             </div>
           </div>
         </div>
 
 
-        <div className="grid grid-cols-12 grid-rows-3 gap-4">
-          <div className="col-span-2">
+        <div className="grid grid-cols-12 grid-rows-3 gap-4 ">
+          <div className="col-span-2 bg-white p-4 shadow-sm">
             <div class="space-y-4 mb-6">
               <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-600 font-bold">Status</span>
@@ -82,23 +79,13 @@
                 </div>
               </div>
               <!-- Timeline -->
-              <div class="flex items-center space-x-2 mb-4 w-full">
-                <div class="flex items-center flex-1 space-x-2">
-                  <div v-for="n in 8" :key="n" class="flex items-center flex-1 space-x-2">
-                    <div
-                      class="h-8 w-8 bg-blue-500 flex items-center justify-center text-white text-sm font-bold rounded">
-                      {{ n }}</div>
-                    <div :class="n <= 7 ? 'h-1 bg-blue-500 flex-1' : 'h-1 bg-gray-200 flex-1'">
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <Timeline :totalSteps="8" :currentStep="7" :percent="87.6" />
             </div>
           </div>
           <div className="col-span-3 row-span-3 col-start-10">
             <!-- catatan -->
             <div className="col-span-2 row-span-5 col-start-4">
-              <div class="p-1">
+              <div class="p-4 bg-white shadow-sm">
                 <div class="flex items-center justify-between mb-6">
                   <span class="text-sm text-gray-500">Catatan</span>
                   <span class="text-sm text-gray-500">Lihat Semua</span>
@@ -134,7 +121,7 @@
             </div>
           </div>
           <div className="col-span-3 row-span-2 row-start-2">
-            <div>
+            <div class="bg-white rounded-lg p-4">
               <div class="flex justify-between items-center mb-4">
                 <h3 class="font-medium text-gray-800">Aktivitas</h3>
                 <span class="text-sm text-gray-500">Lihat Semua</span>
@@ -165,6 +152,7 @@ import ProgressCircle from "@/components/ProgressCircle.vue";
 import RegionCard from "@/components/RegionCard.vue";
 import ActivityItem from "@/components/ActivityItem.vue";
 import MediaGallery from "@/components/MediaGallery.vue";
+import Timeline from "@/components/Timeline.vue";
 
 export default {
   name: "Dashboard",
@@ -175,9 +163,25 @@ export default {
     RegionCard,
     ActivityItem,
     MediaGallery,
+    Timeline,
   },
   data() {
     return {
+      center: { lat: -7.4462496, lng: 112.7177856 },
+      markers: [
+        {
+          id: 'dfsldjl3r',
+          position: {
+            lat: -7.2462496, lng: 112.6177856,
+          },
+        },
+        {
+          id: 'dfsldjl3r',
+          position: {
+            lat: -7.4462496, lng: 112.7177856,
+          },
+        }
+      ],
       regions: [
         { name: "Solo", percentage: 73 },
         { name: "Surabaya", percentage: 79 },

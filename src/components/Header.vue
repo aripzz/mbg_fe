@@ -1,4 +1,7 @@
 <template>
+  <AddKitchenModal :is-open="isModalOpen" @close="closeModal" @save="handleSave" />
+  <AddUserModal :is-open="isModalOpenUser" @close="closeModalUser" @save="handleSaveUser" />
+
   <header class="bg-white shadow-sm border-b">
     <div class="flex items-center justify-between px-6 py-4">
       <div class="flex items-center space-x-2">
@@ -22,11 +25,11 @@
         <i class="fas fa-bell text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"></i>
         <div class="relative">
           <button @click.stop="toggleUserMenu"
-            class="flex items-center space-x-2 focus:outline-none hover:opacity-80 transition-opacity"
+            class="flex items-center focus:outline-none hover:opacity-80 transition-opacity"
             :aria-expanded="showUserMenu" aria-haspopup="true">
-            <span class="text-sm text-gray-600">{{ userInfo.username || 'Admin' }}</span>
+            <span class="text-sm mr-[10px] text-gray-600">{{ userInfo.username || 'Admin' }}</span>
             <div
-              class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center ring-2 ring-offset-2 ring-red-500 ring-offset-white">
+              class="w-6 h-6 bg-red-500 mr-[10px] rounded-full flex items-center justify-center ring-2 ring-offset-2 ring-red-500 ring-offset-white">
               <span class="text-white text-sm font-medium">{{ userInitial }}</span>
             </div>
             <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform duration-200"
@@ -44,6 +47,22 @@
                 <div class="font-medium text-gray-900">{{ userInfo.username || 'Admin' }}</div>
                 <div class="text-sm text-gray-500 mt-1">{{ userInfo.email || 'admin@dapurmbg.com' }}</div>
               </div>
+              <button @click="isModalOpen = true"
+                class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                <i class="fas fa-plus-circle mr-2 text-gray-400"></i> Tambah Dapur
+              </button>
+              <button @click="isModalOpenUser = true"
+                class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                <i class="fas fa-user-plus mr-2 text-gray-400"></i>
+                Tambah User
+              </button>
+              <router-link to="/pengaturan"
+                class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                role="menuitem">
+                <i class="fas fa-cog mr-2 text-gray-400"></i>
+                Pengaturan
+              </router-link>
+              <div class="border-t border-gray-100 my-1"></div>
               <button @click="handleLogout"
                 class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
                 role="menuitem">
@@ -59,14 +78,22 @@
 </template>
 
 <script>
+import AddKitchenModal from './AddKitchenModal.vue';
+import AddUserModal from './AddUserModal.vue';
 import ApiService from '@/services/api.js'
 
 export default {
   name: 'Header',
+  components: {
+    AddKitchenModal,
+    AddUserModal
+  },
   data() {
     return {
       showUserMenu: false,
-      userInfo: {}
+      userInfo: {},
+      isModalOpen: false,
+      isModalOpenUser: false,
     }
   },
   computed: {
@@ -114,11 +141,29 @@ export default {
         this.$router.push('/login')
       }
     },
-
     handleClickOutside(event) {
       if (!this.$el.contains(event.target)) {
         this.showUserMenu = false
       }
+    },
+    closeModal() {
+      this.isModalOpen = false
+    },
+    closeModalUser() {
+      this.isModalOpenUser = false
+    },
+    handleSaveUser(userData) {
+      console.log('Data user yang disimpan:', userData);
+      this.closeModalUser()
+    },
+    handleSave(kitchenData) {
+      console.log('Data dapur yang disimpan:', kitchenData);
+      // Di sini Anda bisa memanggil API untuk menyimpan data ke database
+      // Misalnya:
+      // saveKitchenToApi(kitchenData).then(() => { ... });
+
+      // Close modal after saving
+      this.closeModal()
     }
   }
 }

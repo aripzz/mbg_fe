@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg p-6 w-[100%] shadow-sm">
+  <div class="bg-white rounded-lg p-4 w-[100%] shadow-sm">
     <div class="flex items-center justify-between mb-4">
       <div class="flex space-x-6">
         <button @click="activeTab = 'foto'"
