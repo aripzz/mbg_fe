@@ -116,8 +116,12 @@
         </div>
         <div className="col-span-4 row-span-2 col-start-5">
           <!-- Perkembangan Pembangunan -->
-          <ProgressChart v-if="chartValues.length && chartLabels.length" :labels="chartLabels" :values="chartValues"
-            :last-updated="lastUpdated" />
+          <ProgressChart
+            v-if="chartValues.length && chartLabels.length"
+            :labels="chartLabels"
+            :values="chartValues"
+            :last-updated="lastUpdated"
+          />
         </div>
         <div class="col-span-6 col-start-3 row-start-3">
           <!-- target -->
@@ -129,7 +133,12 @@
                   Minggu {{ historyData.length }}
                 </span>
                 <span class="text-blue-600 font-bold">
-                  {{ Number(historyData[historyData.length - 1]?.percentage).toFixed(0) || 0 }} %
+                  {{
+                    Number(
+                      historyData[historyData.length - 1]?.percentage
+                    ).toFixed(0) || 0
+                  }}
+                  %
                 </span>
               </div>
             </div>
@@ -283,7 +292,14 @@ export default {
     },
 
     chartLabels() {
-      return this.historyData.map((h) => h.day);
+      return this.historyData.map((item) =>
+        item.createdAt
+          ? new Date(item.createdAt).toLocaleDateString("id-ID", {
+              day: "2-digit",
+              month: "short",
+            })
+          : `Hari ${item.id}`
+      );
     },
 
     chartValues() {
