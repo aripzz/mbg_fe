@@ -134,6 +134,24 @@ class ApiService {
     return this.request(url);
   }
 
+  async getDocByDapurID(id_dapur = "", page = 1, limit = 20) {
+    return this.request(
+      `/dynamic/t_progress_doc?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}&page=${page}&limit=${limit}`
+    );
+  }
+
+  async getImageByDapurID(id_dapur = "", page = 1, limit = 20) {
+    return this.request(
+      `/dynamic/t_progress_image?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}&page=${page}&limit=${limit}`
+    );
+  }
+
+  async getVideoByDapurID(id_dapur = "", page = 1, limit = 20) {
+    return this.request(
+      `/dynamic/t_progress_video?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}&page=${page}&limit=${limit}`
+    );
+  }
+
   // You can add more API methods here as needed
   async getRegions(page = 1, limit = 20) {
     return this.request(`/dynamic/m_prov?page=${page}&limit=${limit}`);
