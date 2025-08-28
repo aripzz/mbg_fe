@@ -18,7 +18,7 @@
               class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600">
               <option disabled value="">Pilih Kota</option>
               <option v-for="city in citys" :key="city" :value="city">
-                {{ city }}
+                {{ city.m_area.nama }}
               </option>
             </select>
             <select v-model="selectedKitchenId"
@@ -256,6 +256,8 @@ export default {
       selectedCity: "",
       currentPage: 1,
       totalPages: 1,
+      currentPageNote: 1,
+      totalPagesNote: 1,
       citys: [],
       regions: [],
       loadingRegions: false,
@@ -378,16 +380,19 @@ export default {
     },
   },
   async mounted() {
-    await this.fetchProgressData();
     await this.loadRegions();
     await this.loadCity();
-    await this.loadKitchens();
-    // await this.fetchMediaByDapur();
   },
   watch: {
     selectedRegion() {
+      this.selectedCity = "";
+      this.selectedKitchenId = "";
       this.loadCity();
       this.loadKitchens();
+    },
+    selectedCity(newCity) {
+      this.selectedKitchenId = "";
+      this.loadKitchens(newCity ? newCity.id : null);
     },
     currentPage() {
       this.fetchProgressData();
@@ -402,124 +407,221 @@ export default {
     },
   },
   methods: {
-    async fetchProgressData() {
-      this.loading = true;
-      this.error = null;
-
+    // Fetch progress data per dapur
+    async fetchProgressDapur() {
       try {
-        // ambil data progress per dapur
         const response = await ApiService.getProgressDapur(
           this.currentPage,
           8,
           this.selectedKitchenId
         );
+        return response;
+      } catch (error) {
+        console.error("Error fetching progress dapur:", error);
+        throw error;
+      }
+    },
 
-        const responses = await ApiService.getProgressDapurCatatan(
-          this.currentPage,
+    // Fetch notes/catatan data
+    async fetchProgressNotes() {
+      try {
+        const response = await ApiService.getProgressDapurCatatan(
+          this.currentPageNote,
           4,
           this.selectedKitchenId
         );
+        return response;
+      } catch (error) {
+        console.error("Error fetching progress notes:", error);
+        throw error;
+      }
+    },
 
-        const reponsImage = await ApiService.getImageByDapurID(
+    // Fetch images data
+    async fetchMediaImages() {
+      try {
+        const response = await ApiService.getImageByDapurID(
           this.selectedKitchenId,
           this.currentPage,
           4,
         );
+        return response;
+      } catch (error) {
+        console.error("Error fetching media images:", error);
+        throw error;
+      }
+    },
 
-        const reponsDoc = await ApiService.getDocByDapurID(
+    // Fetch documents data
+    async fetchMediaDocuments() {
+      try {
+        const response = await ApiService.getDocByDapurID(
           this.selectedKitchenId,
           this.currentPage,
           4,
         );
+        return response;
+      } catch (error) {
+        console.error("Error fetching media documents:", error);
+        throw error;
+      }
+    },
 
-        const reponsVidio = await ApiService.getVideoByDapurID(
+    // Fetch videos data
+    async fetchMediaVideos() {
+      try {
+        const response = await ApiService.getVideoByDapurID(
           this.selectedKitchenId,
           this.currentPage,
           4,
         );
+        return response;
+      } catch (error) {
+        console.error("Error fetching media videos:", error);
+        throw error;
+      }
+    },
 
-        let data = response.data || [];
-        let datas = responses.data || [];
-        let dataImage = reponsImage.data || [];
-        let dataDoc = reponsDoc.data || [];
-        let dataVideo = reponsVidio.data || [];
+    // Process progress data and map to historyData
+    processProgressData(data) {
+      let filteredData = data || [];
 
-        // console.log("Fetched progress data:", datas); // debug
-        // console.log("Fetched progress dataImage:", dataImage); // debug
+      if (this.selectedKitchenId) {
+        filteredData = filteredData.filter(
+          (item) => item.id_dapur === this.selectedKitchenId
+        );
+      }
 
-        // kalau backend belum filter by id_dapur → filter manual
-        if (this.selectedKitchenId) {
-          data = data.filter(
-            (item) => item.id_dapur === this.selectedKitchenId
-          );
-        }
+      this.apiData = filteredData;
 
-        this.apiData = data;
-        this.pagination = response.pagination || {};
+      // mapping ke historyData
+      this.historyData = filteredData.map((item, index) => {
+        const day = item.createdAt
+          ? new Date(item.createdAt).getDate().toString().padStart(2, "0")
+          : String(index + 1).padStart(2, "0");
+
+        return {
+          id: item.id || index,
+          day,
+          percentage: Number(item.progress ?? 0), // number, bukan string
+          createdAt: item.createdAt || null,
+        };
+      });
+    },
+
+    // Process notes data and map to notes
+    processNotesData(data) {
+      const notesData = data || [];
+
+      this.notes = notesData.map((item, index) => {
+        const dateObj = item.createdAt ? new Date(item.createdAt) : null;
+
+        return {
+          id: item.id || index,
+          text: item.catatan || "-", // asumsi backend ada field catatan
+          date: dateObj
+            ? dateObj.toLocaleDateString("id-ID", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })
+            : "-",
+          time: dateObj
+            ? dateObj.toLocaleTimeString("id-ID", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+            : "-",
+        };
+      });
+    },
+
+    // Process media data and map to mediaCounts and mediaData
+    processMediaData(imageData, docData, videoData) {
+      const dataImage = imageData || [];
+      const dataDoc = docData || [];
+      const dataVideo = videoData || [];
+
+      // mapping ke mediaCounts
+      this.mediaCounts = {
+        photos: dataImage.length || 0,
+        videos: dataVideo.length || 0,
+        documents: dataDoc.length || 0,
+      };
+
+      // mapping ke mediaData
+      this.mediaData = {
+        photos: dataImage || [],
+        videos: dataVideo || [],
+        documents: dataDoc || [],
+      };
+    },
+
+    // Reset all data to initial state
+    resetAllData() {
+      this.apiData = [];
+      this.historyData = [];
+      this.notes = [];
+      this.mediaCounts = {
+        photos: 0,
+        videos: 0,
+        documents: 0,
+      };
+      this.mediaData = {
+        photos: [],
+        videos: [],
+        documents: [],
+      };
+      this.progressPercentage = 0;
+      this.progressDifference = 0;
+      this.lastUpdated = "-";
+    },
+
+    // Main function to orchestrate all data fetching
+    async fetchAllData() {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        // Fetch all data concurrently for better performance
+        const [
+          progressResponse,
+          notesResponse,
+          // imagesResponse,
+          // documentsResponse,
+          // videosResponse
+        ] = await Promise.all([
+          this.fetchProgressDapur(),
+          this.fetchProgressNotes(),
+          // this.fetchMediaImages(),
+          // this.fetchMediaDocuments(),
+          // this.fetchMediaVideos()
+        ]);
+
+        // Set pagination info from progress response
+        this.pagination = progressResponse.pagination || {};
         this.totalPages = this.pagination.totalPages || 1;
 
-        // mapping ke historyData
-        this.historyData = data.map((item, index) => {
-          const day = item.createdAt
-            ? new Date(item.createdAt).getDate().toString().padStart(2, "0")
-            : String(index + 1).padStart(2, "0");
-
-          return {
-            id: item.id || index,
-            day,
-            percentage: Number(item.progress ?? 0), // number, bukan string
-            createdAt: item.createdAt || null,
-          };
-        });
-
-        // mapping ke notes
-        this.notes = datas.map((item, index) => {
-          const dateObj = item.createdAt ? new Date(item.createdAt) : null;
-
-          return {
-            id: item.id || index,
-            text: item.catatan || "-", // asumsi backend ada field catatan
-            date: dateObj
-              ? dateObj.toLocaleDateString("id-ID", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })
-              : "-",
-            time: dateObj
-              ? dateObj.toLocaleTimeString("id-ID", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })
-              : "-",
-          };
-        });
-
-        // mapping ke mediaCounts
-        this.mediaCounts = {
-          photos: dataImage.length || 0,
-          videos: dataVideo.length || 0,
-          documents: dataDoc.length || 0,
-        };
-
-        // mapping ke mediaData
-        this.mediaData = {
-          photos: dataImage || [],
-          videos: dataVideo || [],
-          documents: dataDoc || [],
-        };
+        // Process all the fetched data
+        this.processProgressData(progressResponse.data);
+        this.processNotesData(notesResponse.data);
+        this.processMediaData(
+          imagesResponse.data,
+          documentsResponse.data,
+          videosResponse.data
+        );
       } catch (error) {
-        console.error("Error fetching progress data:", error);
+        console.error("Error fetching all data:", error);
         this.error = error.message;
-        this.apiData = [];
-        this.historyData = [];
-        this.notes = [];
-        this.progressPercentage = 0;
-        this.progressDifference = 0;
-        this.lastUpdated = "-";
+        this.resetAllData();
       } finally {
         this.loading = false;
       }
+    },
+
+    // Legacy method for backward compatibility - now calls fetchAllData
+    async fetchProgressData() {
+      await this.fetchAllData();
     },
 
     loadFallbackData() {
@@ -552,6 +654,8 @@ export default {
     async loadCity() {
       if (!this.selectedRegion) {
         this.citys = [];
+        this.selectedCity = ""; // Reset selected city
+        this.loadKitchens(); // Load all kitchens when no region selected
         return;
       }
 
@@ -559,7 +663,7 @@ export default {
       this.citiesError = null;
 
       try {
-        const response = await ApiService.getCities(this.selectedRegion);
+        const response = await ApiService.getCities(this.selectedRegion.id);
         console.log("Cities API response:", response); // Debug log
 
         if (response.status === "success" && Array.isArray(response.data)) {
@@ -576,16 +680,12 @@ export default {
       }
     },
 
-    async loadKitchens() {
+    async loadKitchens(cityId = null) {
       try {
-        const response = await ApiService.getKitchens();
+        const response = await ApiService.getKitchens(cityId.id);
 
         if (response.status === "success" && Array.isArray(response.data)) {
-          // simpan objek { id, nama }
-          this.kitchens = response.data.map((item) => ({
-            id: item.id,
-            nama: item.nama,
-          }));
+          this.kitchens = response.data;
         } else {
           throw new Error("Data kitchen tidak valid");
         }
@@ -595,16 +695,16 @@ export default {
     },
 
     async prevPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--;
-        await this.fetchProgressData();
+      if (this.currentPageNote > 1) {
+        this.currentPageNote--;
+        await this.fetchProgressNotes();
       }
     },
 
     async nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++;
-        await this.fetchProgressData();
+      if (this.currentPageNote < this.totalPagesNote) {
+        this.currentPageNote++;
+        await this.fetchProgressNotes();
       }
     },
 
