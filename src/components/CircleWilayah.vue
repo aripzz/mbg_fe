@@ -82,8 +82,13 @@ export default {
     circumference() {
       return 2 * Math.PI * this.radius;
     },
+    progressValue() {
+      return Math.min(100, Math.max(0, this.value));
+    },
     progressOffset() {
-      return this.circumference - (this.value / 100) * this.circumference;
+      return (
+        this.circumference - (this.progressValue / 100) * this.circumference
+      );
     },
   },
 };

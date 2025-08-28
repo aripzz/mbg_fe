@@ -89,22 +89,30 @@ class ApiService {
   }
 
   // Get progress data for dapur
-  async getProgressDapur(page = 1, limit = 10) {
-    return this.request(`/dynamic/t_progress_dapur?page=${page}&limit=${limit}`)
+  // async getProgressDapur(page = 1, limit = 10) {
+  //   return this.request(`/dynamic/t_progress_dapur?page=${page}&limit=${limit}`)
+  // }
+
+  async getProgressDapur(page = 1, limit = 10, id_dapur = null) {
+  let url = `/dynamic/t_progress_dapur?page=${page}&limit=${limit}`;
+  if (id_dapur) {
+    url += `&where=id_dapur=${id_dapur}`;
   }
+  console.log("API Request URL:", url); // debug
+  return this.request(url);
+}
 
   // You can add more API methods here as needed
   async getRegions(page = 1, limit = 20) {
     return this.request(`/dynamic/m_prov?page=${page}&limit=${limit}`)
   }
 
-  async getKitchens(region) {
-    // This would be another API endpoint for kitchens by region
-    // For now, return static data
-    return {
-      status: 'success',
-      data: ['Dapur Rungkut', 'Dapur Gubeng', 'Dapur Wonokromo']
-    }
+  async getCitys(page = 1, limit = 20) {
+    return this.request(`/dynamic/m_kota?page=${page}&limit=${limit}`)
+  }
+
+  async getKitchens(page = 1, limit = 20) {
+    return this.request(`/dynamic/m_dapur?page=${page}&limit=${limit}`)
   }
 }
 

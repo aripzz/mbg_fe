@@ -3,26 +3,38 @@
     <Header />
 
     <div class="">
-
       <div className="grid grid-cols-1 grid-rows-1 gap-4">
         <div>
-          <div class="flex items-center space-x-2 mb-4">
-            <select v-model="selectedRegion"
-              class="w-20 bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-blue-600">
+          <div class="flex items-center space-x-2 m-4">
+            <select
+              v-model="selectedRegion"
+              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-600"
+            >
+              <option disabled value="">Pilih Provinsi</option>
               <option v-for="region in regions" :key="region" :value="region">
                 {{ region }}
               </option>
             </select>
-            <select v-model="selectedKitchen"
-              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600">
-              <option v-for="kitchen in kitchens" :key="kitchen" :value="kitchen">
-                {{ kitchen }}
+            <select
+              v-model="selectedCity"
+              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600"
+            >
+              <option disabled value="">Pilih Kota</option>
+              <option v-for="city in citys" :key="city" :value="city">
+                {{ city }}
               </option>
             </select>
-            <select v-model="selectedKitchen"
-              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600">
-              <option v-for="kitchen in kitchens" :key="kitchen" :value="kitchen">
-                {{ kitchen }}
+            <select
+              v-model="selectedKitchenId"
+              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600"
+            >
+              <option disabled value="">Pilih Dapur</option>
+              <option
+                v-for="kitchen in kitchens"
+                :key="kitchen.id"
+                :value="kitchen.id"
+              >
+                {{ kitchen.nama }}
               </option>
             </select>
           </div>
@@ -34,10 +46,12 @@
           <div class="mb-6">
             <h3 class="text-sm font-medium text-gray-800 mb-4">Riwayat</h3>
 
-            <!-- Loading State for History -->
+            <!-- Loading State -->
             <div v-if="loading" class="space-y-3">
               <div v-for="n in 5" :key="n" class="animate-pulse">
-                <div class="flex items-center justify-between p-3 bg-gray-200 rounded-lg">
+                <div
+                  class="flex items-center justify-between p-3 bg-gray-200 rounded-lg"
+                >
                   <div class="flex items-center space-x-3">
                     <div class="w-8 h-8 bg-gray-300 rounded-lg"></div>
                     <div class="w-12 h-4 bg-gray-300 rounded"></div>
@@ -49,25 +63,37 @@
 
             <!-- History Data -->
             <div v-else class="space-y-3">
-              <div v-for="(history, index) in historyData" :key="history.day"
-                class="flex items-center justify-between p-3 rounded-lg" :class="index === 0
-                  ? 'bg-blue-50 border-l-4 border-blue-500'
-                  : 'bg-gray-50'
-                  ">
+              <div
+                v-for="(history, index) in sortedHistory"
+                :key="history.day + index"
+                class="flex items-center justify-between p-3 rounded-lg"
+                :class="
+                  index === 0
+                    ? 'bg-blue-50 border-l-4 border-blue-500'
+                    : 'bg-gray-50'
+                "
+              >
                 <div class="flex items-center space-x-3">
-                  <div class="w-8 h-8 rounded-lg flex items-center justify-center"
-                    :class="index === 0 ? 'bg-blue-500' : 'bg-gray-400'">
-                    <span class="text-white text-xs font-bold">{{
-                      history.day
-                    }}</span>
+                  <div
+                    class="w-8 h-8 rounded-lg flex items-center justify-center"
+                    :class="index === 0 ? 'bg-blue-500' : 'bg-gray-400'"
+                  >
+                    <span class="text-white text-xs font-bold">
+                      {{ history.day }}
+                    </span>
                   </div>
-                  <span class="text-sm font-medium">{{ history.percentage }}%</span>
+                  <span class="text-sm font-medium">
+                    {{ history.percentage }}%
+                  </span>
                 </div>
                 <i class="fas fa-arrow-up text-green-500 text-xs"></i>
               </div>
 
-              <!-- Empty state for history -->
-              <div v-if="historyData.length === 0" class="p-4 bg-gray-50 rounded-lg text-center">
+              <!-- Empty state -->
+              <div
+                v-if="historyData.length === 0"
+                class="p-4 bg-gray-50 rounded-lg text-center"
+              >
                 <i class="fas fa-history text-gray-400 text-2xl mb-2"></i>
                 <p class="text-sm text-gray-500">No history data available</p>
               </div>
@@ -80,7 +106,15 @@
               Akumulasi Progres
             </h3>
             <div class="flex items-center justify-center mb-4">
-              <CircleWilayah :value="progressPercentage" :difference="progressDifference" :lastUpdate="lastUpdated" />
+              <CircleWilayah
+                v-if="historyData.length"
+                :value="historyData[historyData.length - 1].percentage"
+                :difference="progressDifference"
+                :lastUpdate="lastUpdated"
+              />
+              <p v-if="lastUpdate" class="text-xs text-gray-500 mt-4">
+                Terakhir diupdate {{ lastUpdate }}
+              </p>
             </div>
             <p class="text-center text-sm text-gray-600">
               Tercapai akumulasi 1 Agustus - 31Agustus 2025
@@ -89,38 +123,82 @@
         </div>
         <div className="col-span-4 row-span-2 col-start-5">
           <!-- Perkembangan Pembangunan -->
-          <ProgressChart />
+          <ProgressChart
+            v-if="values.length && labels.length"
+            :labels="labels"
+            :values="values"
+            :last-updated="lastUpdated"
+          />
         </div>
-        <div className="col-span-6 col-start-3 row-start-3">
+        <div class="col-span-6 col-start-3 row-start-3">
           <!-- target -->
           <div class="rounded-lg p-6 mb-6">
             <div class="flex items-center justify-between mb-4">
               <div>
                 <span class="text-sm text-gray-500">Target</span>
-                <span class="ml-4 text-blue-600 font-medium">Minggu </span>
-                <span class="text-blue-600 font-bold">87.5 %</span>
+                <span class="m-4 text-blue-600 font-medium">
+                  Minggu {{ historyData.length }}
+                </span>
+                <span class="text-blue-600 font-bold">
+                  {{ historyData[historyData.length - 1]?.percentage || 0 }} %
+                </span>
               </div>
             </div>
 
             <!-- Timeline -->
-            <div class="flex items-center space-x-2 mb-4 w-full">
-              <div class="flex items-center flex-1 space-x-2">
-                <div v-for="n in 8" :key="n" class="flex items-center flex-1 space-x-2">
-                  <div
-                    class="h-8 w-8 bg-blue-500 flex items-center justify-center text-white text-sm font-bold rounded">
-                    {{ n }}
-                  </div>
-                  <div :class="n <= 7 ? 'h-1 bg-blue-500 flex-1' : 'h-1 bg-gray-200 flex-1'
-                    "></div>
+            <div class="flex items-center w-full relative">
+              <!-- Garis abu-abu background -->
+              <div
+                class="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 -translate-y-1/2"
+              ></div>
+
+              <!-- Garis progress -->
+              <div
+                class="absolute top-1/2 left-0 h-1 bg-blue-500 -translate-y-1/2 transition-all duration-700"
+                :style="{
+                  width:
+                    (historyData[historyData.length - 1]?.percentage || 0) +
+                    '%',
+                }"
+              ></div>
+
+              <!-- Titik berdasarkan historyData -->
+              <div
+                v-for="(item, i) in historyData"
+                :key="i"
+                class="relative flex flex-col items-center"
+                :style="{
+                  left: item.percentage + '%',
+                  position: 'absolute',
+                  transform: 'translateX(-50%)',
+                }"
+              >
+                <div
+                  class="h-8 w-8 flex items-center justify-center text-white text-xs font-bold rounded-full shadow-md"
+                  :class="
+                    item.percentage <=
+                    (historyData[historyData.length - 1]?.percentage || 0)
+                      ? 'bg-blue-500'
+                      : 'bg-gray-300'
+                  "
+                >
+                  {{ item.percentage }}%
                 </div>
+                <span class="text-xs text-gray-500 mt-2">{{ item.day }}</span>
               </div>
             </div>
           </div>
         </div>
+
         <div className="col-span-3 row-span-3 col-start-3 row-start-4">
           <!-- foto -->
-          <MediaGallery :show-counts="true" :photos-count="42" :videos-count="14" :documents-count="14"
-            :show-view-all="false" />
+          <MediaGallery
+            :show-counts="true"
+            :photos-count="42"
+            :videos-count="14"
+            :documents-count="14"
+            :show-view-all="false"
+          />
         </div>
         <div className="col-span-3 row-span-3 col-start-6 row-start-4">
           <!-- note -->
@@ -130,12 +208,18 @@
               <div class="flex justify-between items-center mb-6">
                 <h3 class="text-lg font-semibold text-gray-800">Catatan</h3>
                 <div class="flex items-center space-x-2">
-                  <button @click="prevPage" :disabled="currentPage === 1"
-                    class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200 disabled:opacity-50">
+                  <button
+                    @click="prevPage"
+                    :disabled="currentPage === 1"
+                    class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200 disabled:opacity-50"
+                  >
                     <i class="fas fa-chevron-left"></i>
                   </button>
-                  <button @click="nextPage" :disabled="currentPage === totalPages"
-                    class="w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50">
+                  <button
+                    @click="nextPage"
+                    :disabled="currentPage === totalPages"
+                    class="w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+                  >
                     <i class="fas fa-chevron-right"></i>
                   </button>
                 </div>
@@ -143,24 +227,36 @@
 
               <!-- Loading State -->
               <div v-if="loading" class="flex items-center justify-center py-8">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                <div
+                  class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"
+                ></div>
                 <span class="ml-2 text-sm text-gray-600">Loading...</span>
               </div>
 
               <!-- Error State -->
-              <div v-else-if="error" class="p-4 bg-red-50 rounded-lg border border-red-200">
+              <div
+                v-else-if="error"
+                class="p-4 bg-red-50 rounded-lg border border-red-200"
+              >
                 <div class="flex items-center">
                   <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
                   <span class="text-sm text-red-700">{{ error }}</span>
                 </div>
-                <button @click="refreshData" class="mt-2 text-sm text-red-600 hover:text-red-800 underline">
+                <button
+                  @click="refreshData"
+                  class="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+                >
                   Try Again
                 </button>
               </div>
 
               <!-- Notes -->
               <div v-else class="space-y-0">
-                <div v-for="note in notes" :key="note.id" class="pt-2 pb-2 border-t flex flex-col items-start">
+                <div
+                  v-for="note in notes"
+                  :key="note.id"
+                  class="pt-2 pb-2 border-t flex flex-col items-start"
+                >
                   <p class="text-sm text-[#333333] leading-relaxed">
                     {{ note.text }}
                   </p>
@@ -171,7 +267,10 @@
                   </div>
                 </div>
                 <!-- Empty state -->
-                <div v-if="notes.length === 0" class="p-4 bg-gray-50 rounded-lg text-center">
+                <div
+                  v-if="notes.length === 0"
+                  class="p-4 bg-gray-50 rounded-lg text-center"
+                >
                   <i class="fas fa-sticky-note text-gray-400 text-2xl mb-2"></i>
                   <p class="text-sm text-gray-500">No notes available</p>
                 </div>
@@ -180,8 +279,6 @@
           </div>
         </div>
       </div>
-
-
     </div>
 
     <Footer />
@@ -207,16 +304,25 @@ export default {
     MediaGallery,
     CircleWilayah,
   },
+  props: {
+    historyData: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     return {
-      selectedRegion: "Surabaya",
-      selectedKitchen: "Dapur Rungkut",
-      selectedKota: "Surabaya",
+      selectedRegion: "",
+      selectedKitchenId: "",
+      selectedCity: "",
       currentPage: 1,
       totalPages: 1,
-      regions: ["Surabaya", "Solo", "Magelang", "Kupang"],
-      kitchens: ["Dapur Rungkut", "Dapur Gubeng", "Dapur Wonokromo"],
+      citys: [],
+      regions: [],
+      kitchens: [],
       historyData: [],
+      labels: ["Data 1", "Data 2", "Data 3"],
+      values: [15, 6, 40],
       notes: [
         {
           id: 1,
@@ -322,20 +428,58 @@ export default {
       return { percentage: 0, day: null }; // fallback
     },
 
+    historyWithWeeks() {
+      return this.historyData.map((item, index) => ({
+        ...item,
+        weekLabel: `Minggu ${this.historyData.length - index}`,
+      }));
+    },
+
+    chartLabels() {
+      return this.historyData.map((h) => h.day);
+    },
+
+    chartValues() {
+      return this.historyData.map((h) => Number(h.percentage));
+    },
+
+    chartData() {
+      return {
+        labels: this.labels || [],
+        datasets: [
+          {
+            label: "Progress",
+            data: this.values || [],
+            backgroundColor: ["#3b82f6", "#f97316", "#ef4444"],
+          },
+        ],
+      };
+    },
+
+    sortedHistory() {
+      // copy array biar tidak mutasi asli, lalu reverse
+      return this.historyData.slice().reverse();
+    },
+
     progressPercentage() {
       return this.history?.percentage ?? 0;
     },
 
-    progressDifference() {
-      if (this.historyData.length >= 2) {
-        return this.historyData[0].percentage - this.historyData[1].percentage;
-      }
-      return 0;
+    historyAsc() {
+      return [...this.historyData].sort(
+        (a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0)
+      );
     },
+
+    // progressDifference() {
+    //   if (this.historyData.length >= 2) {
+    //     return this.historyData[0].percentage - this.historyData[1].percentage;
+    //   }
+    //   return 0;
+    // },
 
     lastUpdated() {
       if (this.apiData && this.apiData.length > 0) {
-        // jika API ada field createdAt / date
         const last = this.apiData[0].createdAt || this.apiData[0].date;
         if (last) {
           const d = new Date(last);
@@ -350,22 +494,30 @@ export default {
           );
         }
       }
-
-      // fallback manual
       return "05 Juli 2025 16:22:01";
     },
   },
   async mounted() {
     await this.fetchProgressData();
     await this.loadRegions();
+    await this.loadCity();
     await this.loadKitchens();
   },
   watch: {
     selectedRegion() {
+      this.loadCity();
       this.loadKitchens();
     },
     currentPage() {
       this.fetchProgressData();
+    },
+    selectedKitchenId(newVal) {
+      console.log("selectedKitchenId berubah:", newVal);
+      if (newVal) {
+        this.fetchProgressData();
+      } else {
+        this.notes = [];
+      }
     },
   },
   methods: {
@@ -374,57 +526,106 @@ export default {
       this.error = null;
 
       try {
+        // ambil data progress per dapur
         const response = await ApiService.getProgressDapur(
           this.currentPage,
-          10
+          10,
+          this.selectedKitchenId
         );
 
-        // Asumsi struktur response API:
-        // {
-        //   status: "success",
-        //   data: [
-        //     { id: 1, date: "2025-08-25", progress_percentage: 72 },
-        //     { id: 2, date: "2025-08-26", progress_percentage: 74 }
-        //   ],
-        //   pagination: { total: 50, page: 1, totalPages: 5 }
-        // }
+        let data = response.data || [];
 
-        if (response.status === "success" && Array.isArray(response.data)) {
-          this.apiData = response.data;
-          this.pagination = response.pagination || {};
-          this.totalPages = this.pagination.totalPages || 1;
-
-          // Transform API data ke historyData
-          this.historyData = response.data.map((item, index) => {
-            const day = item.createdAt
-              ? new Date(item.createdAt).getDate().toString().padStart(2, "0")
-              : String(index + 1).padStart(2, "0");
-
-            return {
-              id: item.id || index,
-              day,
-              percentage: item.progress ?? 0,
-            };
-          });
-        } else {
-          throw new Error("API response invalid atau kosong");
+        // kalau backend belum filter by id_dapur → filter manual
+        if (this.selectedKitchenId) {
+          data = data.filter(
+            (item) => item.id_dapur === this.selectedKitchenId
+          );
         }
+
+        this.apiData = data;
+        this.pagination = response.pagination || {};
+        this.totalPages = this.pagination.totalPages || 1;
+
+        // mapping ke historyData
+        this.historyData = data.map((item, index) => {
+          const day = item.createdAt
+            ? new Date(item.createdAt).getDate().toString().padStart(2, "0")
+            : String(index + 1).padStart(2, "0");
+
+          return {
+            id: item.id || index,
+            day,
+            percentage: Number(item.progress ?? 0), // number, bukan string
+            createdAt: item.createdAt || null,
+          };
+        });
+
+        // ambil data terbaru berdasarkan createdAt
+        if (this.historyData.length > 0) {
+          const sorted = [...this.historyData].sort(
+            (a, b) => new Date(a.createdAt) - new Date(b.createdAt) // urut ASC
+          );
+
+          const earliest = sorted[0]; // data paling awal
+          const latest = sorted[sorted.length - 1]; // data terbaru
+
+          // isi untuk CircleWilayah
+          this.progressPercentage = latest.percentage;
+          this.progressDifference = latest.percentage - earliest.percentage;
+
+          this.lastUpdated = latest.createdAt
+            ? new Date(latest.createdAt).toLocaleString("id-ID", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "-";
+        } else {
+          this.progressPercentage = 0;
+          this.progressDifference = 0;
+          this.lastUpdated = "-";
+        }
+
+        // mapping ke notes
+        this.notes = data.map((item, index) => {
+          const dateObj = item.createdAt ? new Date(item.createdAt) : null;
+
+          return {
+            id: item.id || index,
+            text: item.catatan || "-", // asumsi backend ada field catatan
+            date: dateObj
+              ? dateObj.toLocaleDateString("id-ID", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })
+              : "-",
+            time: dateObj
+              ? dateObj.toLocaleTimeString("id-ID", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : "-",
+          };
+        });
       } catch (error) {
         console.error("Error fetching progress data:", error);
         this.error = error.message;
-        this.loadFallbackData();
+        this.apiData = [];
+        this.historyData = [];
+        this.notes = [];
+        this.progressPercentage = 0;
+        this.progressDifference = 0;
+        this.lastUpdated = "-";
       } finally {
         this.loading = false;
       }
     },
 
     loadFallbackData() {
-      this.historyData = [
-        { id: 1, day: "04", percentage: 79 },
-        { id: 2, day: "03", percentage: 78 },
-        { id: 3, day: "02", percentage: 74 },
-        { id: 4, day: "01", percentage: 72 },
-      ];
+      this.historyData = [];
     },
 
     async loadRegions() {
@@ -443,16 +644,37 @@ export default {
       }
     },
 
-    async loadKitchens() {
+    async loadCity() {
       try {
-        const response = await ApiService.getKitchens(this.selectedRegion);
-        if (response.status === "success") {
-          this.kitchens = response.data;
-          this.selectedKitchen = this.kitchens[0] || "Dapur Rungkut";
+        const response = await ApiService.getCitys();
+
+        if (response.status === "success" && Array.isArray(response.data)) {
+          // hanya ambil field "nama"
+          this.citys = response.data.map((item) => item.nama);
+        } else {
+          throw new Error("Data city tidak valid");
         }
       } catch (error) {
-        console.error("Error loading kitchens:", error);
-        // Keep default kitchens if API fails
+        console.error("Error loading city:", error);
+        // keep default city kalau gagal
+      }
+    },
+
+    async loadKitchens() {
+      try {
+        const response = await ApiService.getKitchens();
+
+        if (response.status === "success" && Array.isArray(response.data)) {
+          // simpan objek { id, nama }
+          this.kitchens = response.data.map((item) => ({
+            id: item.id,
+            nama: item.nama,
+          }));
+        } else {
+          throw new Error("Data kitchen tidak valid");
+        }
+      } catch (error) {
+        console.error("Error loading kitchen:", error);
       }
     },
 
