@@ -96,10 +96,11 @@
               Akumulasi Progres
             </h3>
             <div class="flex items-center justify-center">
-              <CircleWilayah v-if="historyData.length" :value="historyData[historyData.length - 1].percentage"
-                :difference="progressDifference" :lastUpdate="lastUpdated" />
+              <CircleWilayah v-if="historyData.length"
+                :value="Number(historyData[historyData.length - 1].percentage).toFixed(0)"
+                :difference="Number(progressDifference).toFixed(0)" :lastUpdate="Number(lastUpdated).toFixed(0)" />
               <p v-if="lastUpdate" class="text-xs text-gray-500 mt-4">
-                Terakhir diupdate {{ lastUpdate }}
+                Terakhir diupdate {{ Number(lastUpdate).toFixed(0) }}
               </p>
             </div>
             <p class="text-center text-sm text-gray-600">
