@@ -18,7 +18,7 @@
                     <i class="fas fa-building text-white"></i>
                     <span class="font-medium">Semua Wilayah</span>
                   </div>
-                  <div class="flex justify-center">
+                  <div class="flex justify-center pt-4">
                     <ProgressCircle :percentage="75.5" updatedAt="05 Juli 2025" />
                   </div>
                 </div>
