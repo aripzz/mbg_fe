@@ -28,37 +28,52 @@
 </template>
 
 <script>
+import ApiService from "@/services/api.js";
+
 export default {
   name: 'MediaGallery',
   props: {
-    showCounts: {
-      type: Boolean,
-      default: false
+    kitchenId: {
+      type: [String, Number],
+      required: true
     },
-    photosCount: {
-      type: Number,
-      default: 0
-    },
-    videosCount: {
-      type: Number,
-      default: 0
-    },
-    documentsCount: {
-      type: Number,
-      default: 0
-    },
-    showViewAll: {
-      type: Boolean,
-      default: true
-    },
-    showViewAllRight: {
-      type: Boolean,
-      default: true
-    }
+    showCounts: { type: Boolean, default: false },
+    showViewAll: { type: Boolean, default: true },
+    showViewAllRight: { type: Boolean, default: true }
   },
   data() {
     return {
-      activeTab: 'foto'
+      activeTab: 'foto',
+      photos: [],
+      videos: [],
+      documents: []
+    }
+  },
+  computed: {
+    photosCount() { return this.photos.length },
+    videosCount() { return this.videos.length },
+    documentsCount() { return this.documents.length }
+  },
+  methods: {
+    async fetchMedia() {
+      try {
+        const res = await ApiService.getImageByDapurID(this.kitchenId, 1, 100);
+        const files = res.data || [];
+
+        this.photos = files.filter(f => f.mime?.includes("image"));
+        this.videos = files.filter(f => f.mime?.includes("video"));
+        this.documents = files.filter(f =>
+          f.mime?.includes("pdf") || f.mime?.includes("doc")
+        );
+      } catch (err) {
+        console.error("Gagal ambil media:", err);
+      }
+    }
+  },
+  watch: {
+    kitchenId: {
+      handler() { this.fetchMedia() },
+      immediate: true
     }
   }
 }

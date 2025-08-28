@@ -140,7 +140,7 @@ class ApiService {
     );
   }
 
-  async getImageByDapurID(id_dapur = "", page = 1, limit = 20) {
+  async getImageByDapurID(id_dapur = null, page = 1, limit = 20) {
     return this.request(
       `/dynamic/t_progress_image?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}&page=${page}&limit=${limit}`
     );
