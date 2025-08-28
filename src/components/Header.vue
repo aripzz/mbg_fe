@@ -1,4 +1,7 @@
 <template>
+  <AddKitchenModal :is-open="isModalOpen" @close="closeModal" @save="handleSave" />
+  <AddUserModal :is-open="isModalOpenUser" @close="closeModalUser" @save="handleSaveUser" />
+
   <header class="bg-white shadow-sm border-b">
     <div class="flex items-center justify-between px-6 py-4">
       <div class="flex items-center space-x-2">
@@ -44,18 +47,15 @@
                 <div class="font-medium text-gray-900">{{ userInfo.username || 'Admin' }}</div>
                 <div class="text-sm text-gray-500 mt-1">{{ userInfo.email || 'admin@dapurmbg.com' }}</div>
               </div>
-              <router-link to="/tambah-dapur"
-                class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
-                role="menuitem">
-                <i class="fas fa-plus-circle mr-2 text-gray-400"></i>
-                Tambah Dapur
-              </router-link>
-              <router-link to="/tambah-user"
-                class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
-                role="menuitem">
+              <button @click="isModalOpen = true"
+                class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                <i class="fas fa-plus-circle mr-2 text-gray-400"></i> Tambah Dapur
+              </button>
+              <button @click="isModalOpenUser = true"
+                class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors">
                 <i class="fas fa-user-plus mr-2 text-gray-400"></i>
                 Tambah User
-              </router-link>
+              </button>
               <router-link to="/pengaturan"
                 class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
                 role="menuitem">
@@ -78,14 +78,22 @@
 </template>
 
 <script>
+import AddKitchenModal from './AddKitchenModal.vue';
+import AddUserModal from './AddUserModal.vue';
 import ApiService from '@/services/api.js'
 
 export default {
   name: 'Header',
+  components: {
+    AddKitchenModal,
+    AddUserModal
+  },
   data() {
     return {
       showUserMenu: false,
-      userInfo: {}
+      userInfo: {},
+      isModalOpen: false,
+      isModalOpenUser: false,
     }
   },
   computed: {
@@ -133,11 +141,29 @@ export default {
         this.$router.push('/login')
       }
     },
-
     handleClickOutside(event) {
       if (!this.$el.contains(event.target)) {
         this.showUserMenu = false
       }
+    },
+    closeModal() {
+      this.isModalOpen = false
+    },
+    closeModalUser() {
+      this.isModalOpenUser = false
+    },
+    handleSaveUser(userData) {
+      console.log('Data user yang disimpan:', userData);
+      this.closeModalUser()
+    },
+    handleSave(kitchenData) {
+      console.log('Data dapur yang disimpan:', kitchenData);
+      // Di sini Anda bisa memanggil API untuk menyimpan data ke database
+      // Misalnya:
+      // saveKitchenToApi(kitchenData).then(() => { ... });
+
+      // Close modal after saving
+      this.closeModal()
     }
   }
 }
