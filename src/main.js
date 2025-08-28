@@ -102,7 +102,8 @@ const app = createApp(App);
 app.use(router);
 app.use(VueGoogleMaps, {
   load: {
-    key: "AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg",
+    // key: "AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg",
+    key: "AIzaSyDpGqjV40bMx7L8dVnypclnHpPxBaQUK3o",
   },
 });
 app.mount("#app");
