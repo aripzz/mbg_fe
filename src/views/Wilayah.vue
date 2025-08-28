@@ -1,13 +1,21 @@
+<style>
+select:focus {
+  outline: none;
+  border-color: transparent;
+  /* Atau warna lain jika Anda ingin tetap ada border */
+  box-shadow: none;
+  /* Menghilangkan shadow yang mungkin muncul */
+}
+</style>
 <template>
   <div>
     <Header />
-
     <div class="">
       <div className="grid grid-cols-1 grid-rows-1 gap-4">
         <div>
           <div class="flex items-center space-x-2 m-4">
             <select v-model="selectedRegion"
-              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-600"
+              class="bg-[#F1F4FB] text-[#2F61D4] border-none rounded-lg px-3 py-2 text-sm font-bold "
               :disabled="loadingRegions">
               <option disabled value="">{{ loadingRegions ? 'Loading...' : 'Pilih Provinsi' }}</option>
               <option v-for="region in regions" :key="region.id" :value="region.id">
@@ -15,14 +23,14 @@
               </option>
             </select>
             <select v-model="selectedCity"
-              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600">
+              class="bg-[#F1F4FB] border-none rounded-lg px-3 py-2 text-sm font-bold text-[#2F61D4]">
               <option disabled value="">Pilih Kota</option>
               <option v-for="city in citys" :key="city" :value="city">
                 {{ city.m_area.nama }}
               </option>
             </select>
             <select v-model="selectedKitchenId"
-              class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-600">
+              class="bg-[#F1F4FB] border-none rounded-lg px-3 py-2 text-sm text-[#2F61D4] font-bold">
               <option disabled value="">Pilih Dapur</option>
               <option v-for="kitchen in kitchens" :key="kitchen.id" :value="kitchen.id">
                 {{ kitchen.nama }}
@@ -353,7 +361,6 @@ export default {
     },
 
     sortedHistory() {
-      // copy array biar tidak mutasi asli, lalu reverse
       return this.historyData.slice();
     },
 
@@ -395,7 +402,6 @@ export default {
   },
   async mounted() {
     await this.loadRegions();
-    // await this.loadCity();
   },
   watch: {
     selectedRegion() {

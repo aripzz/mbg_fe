@@ -56,6 +56,11 @@ export default {
   mounted() {
     this.initChart();
   },
+  beforeDestroy() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+  },
   methods: {
     initChart() {
       const ctx = this.$refs.chartCanvas.getContext("2d");
@@ -102,9 +107,15 @@ export default {
     },
     updateChart() {
       if (this.chart) {
-        this.chart.data.labels = this.labels;
-        this.chart.data.datasets[0].data = this.values;
-        this.chart.update();
+        // Check if the data structure has changed significantly
+        const labelsChanged = JSON.stringify(this.chart.data.labels) !== JSON.stringify(this.labels);
+        const valuesChanged = JSON.stringify(this.chart.data.datasets[0].data) !== JSON.stringify(this.values);
+
+        if (labelsChanged || valuesChanged) {
+          // Destroy and recreate the chart for significant data changes
+          this.chart.destroy();
+          this.initChart();
+        }
       }
     }
   }
