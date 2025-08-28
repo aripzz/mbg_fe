@@ -119,7 +119,6 @@ export default {
   },
   methods: {
     getFileUrl(filePath) {
-      console.log(filePath)
       // Assuming the API base URL, adjust as needed
       const baseUrl = 'https://server.qqltech.com:7113/'; // Replace with your actual API base URL
       return `${baseUrl}${filePath}`;

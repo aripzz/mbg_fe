@@ -108,8 +108,9 @@
               Akumulasi Progres
             </h3>
             <div class="flex items-center justify-center">
-              <CircleWilayah v-if="historyData.length" :value="Number(historyData[0].percentage).toFixed(0)"
-                :difference="Number(progressDifference).toFixed(0)" :lastUpdate="lastUpdated" />
+              <CircleWilayah :value="historyData.length ? Number(historyData[0].percentage || 0).toFixed(0) : '0'"
+                :difference="historyData.length ? Number(progressDifference || 0).toFixed(0) : '0'"
+                :lastUpdate="historyData.length ? lastUpdated : 'No data available'" />
               <p v-if="lastUpdate" class="text-xs text-gray-500 mt-4">
                 Terakhir diupdate {{ lastUpdate }}
               </p>
@@ -121,8 +122,21 @@
         </div>
         <div className="col-span-4 row-span-2 col-start-5">
           <!-- Perkembangan Pembangunan -->
-          <ProgressChart v-if="chartValues.length && chartLabels.length" :labels="chartLabels" :values="chartValues"
-            :last-updated="lastUpdated" />
+          <div class="bg-white rounded-lg p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold text-gray-800">Perkembangan Pembangunan</h3>
+            </div>
+            <div v-if="chartValues.length && chartLabels.length" class="h-48">
+              <ProgressChart :labels="chartLabels" :values="chartValues" :last-updated="lastUpdated" />
+            </div>
+            <div v-else class="h-48 flex items-center justify-center bg-gray-50 rounded-lg">
+              <div class="text-center">
+                <i class="fas fa-chart-line text-gray-400 text-3xl mb-2"></i>
+                <p class="text-gray-500 text-sm">Data grafik tidak tersedia</p>
+                <p class="text-gray-400 text-xs">Pilih dapur untuk melihat perkembangan</p>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="col-span-6 col-start-3 row-start-3">
           <!-- target -->
@@ -131,12 +145,12 @@
               <div>
                 <span class="text-sm text-gray-500">Target</span>
                 <span class="m-4 text-blue-600 font-medium">
-                  Minggu {{ historyData.length }}
+                  Minggu {{ historyData.length || 1 }}
                 </span>
                 <span class="text-blue-600 font-bold">
                   {{
                     Number(
-                      historyData[historyData.length - 1]?.percentage
+                      historyData[historyData.length - 1]?.percentage || 0
                     ).toFixed(0) || 0
                   }}
                   %
@@ -146,7 +160,7 @@
 
             <!-- Timeline -->
             <div class="pr-4">
-              <Timeline :totalSteps="historyData.length" :currentStep="historyData.length - 1"
+              <Timeline :totalSteps="historyData.length || 8" :currentStep="historyData.length - 1 || 0"
                 :percent="historyData[historyData.length - 1]?.percentage || 0" />
             </div>
           </div>
@@ -166,11 +180,11 @@
               <div class="flex justify-between items-center mb-6">
                 <h3 class="text-lg font-semibold text-gray-800">Catatan</h3>
                 <div class="flex items-center space-x-2">
-                  <button @click="prevPage" :disabled="currentPage === 1"
+                  <button @click="prevPage" :disabled="currentPageNote === 1"
                     class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200 disabled:opacity-50">
                     <i class="fas fa-chevron-left"></i>
                   </button>
-                  <button @click="nextPage" :disabled="currentPage === totalPages"
+                  <button @click="nextPage" :disabled="currentPageNote === totalPagesNote"
                     class="w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50">
                     <i class="fas fa-chevron-right"></i>
                   </button>
@@ -381,7 +395,7 @@ export default {
   },
   async mounted() {
     await this.loadRegions();
-    await this.loadCity();
+    // await this.loadCity();
   },
   watch: {
     selectedRegion() {
@@ -399,11 +413,8 @@ export default {
     },
     selectedKitchenId(newVal) {
       console.log("selectedKitchenId berubah:", newVal);
-      if (newVal) {
-        this.fetchProgressData();
-      } else {
-        this.notes = [];
-      }
+      this.fetchProgressData();
+      this.loading = false;
     },
   },
   methods: {
@@ -430,6 +441,8 @@ export default {
           4,
           this.selectedKitchenId
         );
+        this.totalPagesNote = response.pagination.totalPages;
+        this.processNotesData(response.data);
         return response;
       } catch (error) {
         console.error("Error fetching progress notes:", error);
@@ -586,16 +599,15 @@ export default {
         // Fetch all data concurrently for better performance
         const [
           progressResponse,
-          notesResponse,
-          // imagesResponse,
-          // documentsResponse,
-          // videosResponse
+          imagesResponse,
+          documentsResponse,
+          videosResponse
         ] = await Promise.all([
           this.fetchProgressDapur(),
           this.fetchProgressNotes(),
-          // this.fetchMediaImages(),
-          // this.fetchMediaDocuments(),
-          // this.fetchMediaVideos()
+          this.fetchMediaImages(),
+          this.fetchMediaDocuments(),
+          this.fetchMediaVideos()
         ]);
 
         // Set pagination info from progress response
@@ -604,7 +616,6 @@ export default {
 
         // Process all the fetched data
         this.processProgressData(progressResponse.data);
-        this.processNotesData(notesResponse.data);
         this.processMediaData(
           imagesResponse.data,
           documentsResponse.data,
@@ -682,7 +693,11 @@ export default {
 
     async loadKitchens(cityId = null) {
       try {
-        const response = await ApiService.getKitchens(cityId.id);
+        let filterID = null;
+        if (cityId != null) {
+          filterID = cityId.id;
+        }
+        const response = await ApiService.getKitchens(filterID);
 
         if (response.status === "success" && Array.isArray(response.data)) {
           this.kitchens = response.data;
@@ -704,6 +719,7 @@ export default {
     async nextPage() {
       if (this.currentPageNote < this.totalPagesNote) {
         this.currentPageNote++;
+        console.log(this.currentPageNote);
         await this.fetchProgressNotes();
       }
     },

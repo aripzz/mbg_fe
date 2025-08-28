@@ -1,13 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg p-6 shadow-sm">
-    <div class="flex items-center justify-between mb-4">
-      <h3 class="text-lg font-semibold text-gray-800">Perkembangan Pembangunan</h3>
-      <slot name="select"></slot>
-    </div>
-    <div class="h-48">
-      <canvas ref="chartCanvas" class="w-full h-full"></canvas>
-    </div>
-  </div>
+  <canvas ref="chartCanvas" class="w-full h-full"></canvas>
 </template>
 
 <script>

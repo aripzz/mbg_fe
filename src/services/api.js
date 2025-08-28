@@ -153,15 +153,19 @@ class ApiService {
   }
 
   async getCities(regionId = null, page = 1, limit = 20) {
-    let url = `/dynamic/m_kota?page=${page}&limit=${limit}`;
+    let url = `/dynamic/m_wilayah?include=m_area,m_kota&page=${page}&limit=${limit}`;
     if (regionId) {
-      url += `&where=id_prov=${regionId}`;
+      url += `&where=m_wilayah.id_prov=${regionId}`;
     }
     return this.request(url);
   }
 
-  async getKitchens(page = 1, limit = 20) {
-    return this.request(`/dynamic/m_dapur?page=${page}&limit=${limit}`);
+  async getKitchens(cityId = null, page = 1, limit = 20) {
+    let url = `/dynamic/m_dapur?page=${page}&limit=${limit}`;
+    if (cityId) {
+      url += `&where=id_wilayah=${cityId}`;
+    }
+    return this.request(url);
   }
 }
 
