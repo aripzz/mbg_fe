@@ -13,7 +13,7 @@
       <span class="text-[18px] font-medium">{{ region.kota }}</span>
     </div>
     <div class="text-[34px] font-bold text-gray-800 text-right">{{ region.rata_rata_progress }}%</div>
-    <div class="text-[11px] font-bold text-[#92A1AD] text-right">Diupdate 05 Juli 2025</div>
+    <div class="text-[11px] font-bold text-[#92A1AD] text-right">{{region.created_at}}</div>
     <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
       <div :class="progressColor" class="h-2 rounded-full" :style="{ width: region.rata_rata_progress + '%' }"></div>
     </div>
@@ -70,6 +70,25 @@ export default {
     }
   },
   methods: {
+    formatDateTime(value) {
+    if (!value) return "-";
+
+    const dateObj = new Date(value);
+    if (isNaN(dateObj)) return "-";
+
+    const date = dateObj.toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+
+    const time = dateObj.toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    return `${date} ${time}`;
+  },
     // Fungsi sederhana untuk menghasilkan hash dari sebuah string
     // Ini membantu memastikan warna yang sama untuk kota yang sama setiap kali di-render
     getStringHash(str) {
