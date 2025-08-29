@@ -266,7 +266,7 @@ select:focus {
               <div>
                 <span class="text-sm text-gray-500">Target</span>
                 <span class="m-4 text-blue-600 font-medium">
-                  Minggu {{ historyData.length || 1 }}
+                  Minggu {{ Number(historyData[historyData.length - 1]?.percentage/ 12.5).toFixed(0) }}
                 </span>
                 <span class="text-blue-600 font-bold">
                   {{
@@ -281,7 +281,7 @@ select:focus {
 
             <!-- Timeline -->
             <div class="pr-4">
-              <Timeline :totalSteps="historyData.length || 8" :currentStep="historyData.length - 1 || 0"
+              <Timeline :totalSteps="8" :currentStep="Number(historyData[historyData.length - 1]?.percentage/ 12.5).toFixed(0)"
                 :percent="historyData[historyData.length - 1]?.percentage || 0" />
             </div>
           </div>
@@ -494,11 +494,6 @@ export default {
       return this.history?.percentage ?? 0;
     },
 
-    historyAsc() {
-      return [...this.historyData].sort(
-        (a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0)
-      );
-    },
 
     progressDifference() {
       if (this.historyData.length >= 2) {
@@ -683,12 +678,6 @@ export default {
     // Process progress data and map to historyData
     processProgressData(data) {
       let filteredData = data || [];
-
-      if (this.selectedKitchenId) {
-        filteredData = filteredData.filter(
-          (item) => item.id_dapur === this.selectedKitchenId
-        );
-      }
 
       this.apiData = filteredData;
 

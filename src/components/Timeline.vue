@@ -35,7 +35,7 @@ export default {
         },
         currentStep: {
             type: Number,
-            default: 7
+            default: 1
         },
         percent: {
             type: Number,

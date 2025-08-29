@@ -250,6 +250,7 @@ import ActivityItem from "@/components/ActivityItem.vue";
 import MediaGallery from "@/components/MediaGallery.vue";
 import Timeline from "@/components/Timeline.vue";
 import ApiService from "@/services/api.js";
+import { ref } from 'vue';
 export default {
   name: "Dashboard",
   components: {
@@ -411,6 +412,7 @@ export default {
 });
 
         this.averageProgressData = dataAvg.slice(0, 4);
+        console.log(this.averageProgressData);
         this.noteData = dataNote.map(note => ({
           ...note,
           iconColor: this.getConsistentColor(note.nama_dapur)
@@ -456,10 +458,11 @@ export default {
         } else {
           this.lastUpdated = "-";
         }
-        let currentTime = new Date();
-        const hour = currentTime.value.getHours();
-        // Jam 8 pagi (8) sampai jam 5 sore (17)
-        this.isBusinessHours = hour >= 8 && hour < 17;
+      const currentTime = ref(new Date());
+
+      // Hitung status jam kerja
+      const hour = currentTime.value.getHours();
+      this.isBusinessHours = hour >= 8 && hour < 17;
 
       } catch (error) {
         console.error("Gagal mengambil data progress:", error);

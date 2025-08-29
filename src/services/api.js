@@ -112,7 +112,7 @@ class ApiService {
   }
 
   async getProgressDapur(page = 1, limit = 8, id_dapur = null) {
-    let url = `/dynamic/t_progress_dapur?page=${page}&paginate=${limit}`;
+    let url = `/dynamic/t_progress_dapur?page=${page}&paginate=${limit}&order_by_raw=createdAt%20desc`;
     if (id_dapur) {
       url += `&where=id_dapur=${id_dapur}`;
     }
