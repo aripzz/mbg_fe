@@ -4,29 +4,50 @@
       <div class="flex space-x-6">
         <button
           @click="activeTab = 'foto'"
-          :class="activeTab === 'foto' ? 'text-blue-600 font-medium border-b-2 border-blue-600' : 'text-gray-500'"
+          :class="
+            activeTab === 'foto'
+              ? 'text-blue-600 font-medium border-b-2 border-blue-600'
+              : 'text-gray-500'
+          "
         >
           Foto{{ showCounts ? ` (${photosCount})` : "" }}
         </button>
         <button
           @click="activeTab = 'video'"
-          :class="activeTab === 'video' ? 'text-blue-600 font-medium border-b-2 border-blue-600' : 'text-gray-500'"
+          :class="
+            activeTab === 'video'
+              ? 'text-blue-600 font-medium border-b-2 border-blue-600'
+              : 'text-gray-500'
+          "
         >
           Video{{ showCounts ? ` (${videosCount})` : "" }}
         </button>
         <button
           @click="activeTab = 'dokumen'"
-          :class="activeTab === 'dokumen' ? 'text-blue-600 font-medium border-b-2 border-blue-600' : 'text-gray-500'"
+          :class="
+            activeTab === 'dokumen'
+              ? 'text-blue-600 font-medium border-b-2 border-blue-600'
+              : 'text-gray-500'
+          "
         >
           Dokumen{{ showCounts ? ` (${documentsCount})` : "" }}
         </button>
       </div>
-      <span v-if="showViewAllRight" class="text-sm text-gray-500">Lihat Semua</span>
+      <span
+        v-if="showViewAllRight"
+        @click="openAllMediaModal"
+        class="text-sm text-gray-500 cursor-pointer hover:text-blue-600"
+      >
+        Lihat Semua
+      </span>
     </div>
 
     <!-- FOTO -->
     <div v-if="activeTab === 'foto'" class="grid grid-cols-4 gap-4">
-      <div v-if="photos.length === 0" class="col-span-4 text-center py-8 text-gray-500">
+      <div
+        v-if="photos.length === 0"
+        class="col-span-4 text-center py-8 text-gray-500"
+      >
         <i class="fas fa-image text-2xl mb-2"></i>
         <p>No photos available</p>
       </div>
@@ -47,7 +68,10 @@
 
     <!-- VIDEO -->
     <div v-if="activeTab === 'video'" class="grid grid-cols-4 gap-4">
-      <div v-if="videos.length === 0" class="col-span-4 text-center py-8 text-gray-500">
+      <div
+        v-if="videos.length === 0"
+        class="col-span-4 text-center py-8 text-gray-500"
+      >
         <i class="fas fa-video text-2xl mb-2"></i>
         <p>No videos available</p>
       </div>
@@ -72,7 +96,10 @@
 
     <!-- DOKUMEN -->
     <div v-if="activeTab === 'dokumen'" class="grid grid-cols-4 gap-4">
-      <div v-if="documents.length === 0" class="col-span-4 text-center py-8 text-gray-500">
+      <div
+        v-if="documents.length === 0"
+        class="col-span-4 text-center py-8 text-gray-500"
+      >
         <i class="fas fa-file text-2xl mb-2"></i>
         <p>No documents available</p>
       </div>
@@ -96,7 +123,10 @@
     </div>
 
     <!-- LIGHTBOX MODAL -->
-    <div v-if="lightbox.isOpen" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+    <div
+      v-if="lightbox.isOpen"
+      class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[100]"
+    >
       <div class="relative">
         <button
           @click="closeLightbox"
@@ -110,10 +140,50 @@
         />
       </div>
     </div>
+
+    <!-- LIHAT SEMUA MODAL -->
+    <div
+      v-if="allMediaModal"
+      class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[50]"
+    >
+      <div
+        class="bg-white rounded-lg shadow-lg w-[90%] max-w-5xl max-h-[90vh] overflow-y-auto p-6 relative"
+      >
+        <button
+          @click="allMediaModal = false"
+          class="absolute top-2 right-2 text-gray-600 hover:text-black text-3xl font-bold"
+        >
+          ×
+        </button>
+        <h2 class="text-lg font-semibold mb-4">Semua Foto</h2>
+        <div class="grid grid-cols-3 md:grid-cols-4 gap-4">
+          <div
+            v-for="item in allMedia"
+            :key="item.id"
+            class="border rounded-lg p-2 flex flex-col items-center text-center"
+          >
+            <img
+              v-if="item.image"
+              :src="getFileUrl(item.image)"
+              class="w-full h-32 object-cover rounded mb-2"
+              @click="openLightbox(getFileUrl(item.image))"
+            />
+            <i v-else class="fas fa-file text-gray-400 text-3xl mb-2"></i>
+            <p class="text-sm font-medium">
+              {{ item?.t_progress_dapur?.m_dapur?.nama || "-" }}
+            </p>
+            <p class="text-xs text-gray-500">
+              {{ formatDate(item.createdAt) }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import ApiService from "@/services/api.js";
 export default {
   name: "MediaGallery",
   props: {
@@ -134,12 +204,38 @@ export default {
         isOpen: false,
         currentImage: null,
       },
+      allMediaModal: false,
+      allMediaData: [],
     };
   },
+  computed: {
+    allMedia() {
+      return this.allMediaData;
+    },
+  },
   methods: {
+    async request(url, options) {
+    return ApiService.request(url, options);
+  },
+    async fetchAllMedia() {
+      try {
+        const res = await this.request(
+          "/dynamic/t_progress_image?include=t_progress_dapur>m_dapur",
+          { method: "GET" }
+        );
+
+        if (res && Array.isArray(res.data)) {
+          this.allMediaData = res.data;
+        } else if (Array.isArray(res)) {
+          this.allMediaData = res;
+        }
+      } catch (err) {
+        console.error("Gagal ambil media:", err);
+      }
+    },
     getFileUrl(filePath) {
       if (!filePath) return "";
-      const baseUrl = "https://server.qqltech.com:7113/"; // sesuaikan
+      const baseUrl = "https://server.qqltech.com:7113/";
       return `${baseUrl}${filePath}`;
     },
     getFileName(filePath) {
@@ -162,7 +258,6 @@ export default {
       link.click();
       document.body.removeChild(link);
     },
-    // LIGHTBOX
     openLightbox(image) {
       this.lightbox.currentImage = image;
       this.lightbox.isOpen = true;
@@ -170,6 +265,18 @@ export default {
     closeLightbox() {
       this.lightbox.isOpen = false;
       this.lightbox.currentImage = null;
+    },
+    openAllMediaModal() {
+      this.fetchAllMedia();
+      this.allMediaModal = true;
+    },
+    formatDate(date) {
+      if (!date) return "-";
+      return new Date(date).toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
     },
   },
 };
