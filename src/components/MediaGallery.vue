@@ -53,7 +53,7 @@
         <p>No photos available</p>
       </div>
       <div
-        v-for="photo in photos"
+        v-for="photo in photos.slice(0, 12)"
         :key="photo.id"
         class="bg-gray-200 rounded-lg h-24 flex items-center justify-center overflow-hidden"
       >
