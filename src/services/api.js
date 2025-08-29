@@ -151,6 +151,12 @@ class ApiService {
     );
   }
 
+  async getDapur(page = 1, limit = 20) {
+    return this.request(
+      `/dynamic/m_dapur?page=${page}&paginate=${limit}`
+    );
+  }
+
   async getVideoByDapurID(id_dapur = null, page = 1, limit = 20) {
     return this.request(
       `/dynamic/t_progress_video?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}&page=${page}&paginate=${limit}`

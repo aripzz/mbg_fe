@@ -248,27 +248,6 @@ import ActivityItem from "@/components/ActivityItem.vue";
 import MediaGallery from "@/components/MediaGallery.vue";
 import Timeline from "@/components/Timeline.vue";
 import ApiService from "@/services/api.js";
-
-const formatDate = (dateString) => {
-  // Parsing string dengan format "DD-MM-YYYY HH:mm"
-  const [datePart, timePart] = dateString.split(' ');
-  const [day, month, year] = datePart.split('-');
-
-  // Membuat objek Date dengan format yang benar (YYYY-MM-DD)
-  const dateObject = new Date(`${year}-${month}-${day}T${timePart}:00`);
-
-  // Menggunakan Intl.DateTimeFormat untuk format lokal
-  const options = {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  };
-
-  // Mengembalikan string yang sudah diformat ke bahasa Indonesia
-  return new Intl.DateTimeFormat('id-ID', options).format(dateObject);
-};
-// import axios from "axios";
-
 export default {
   name: "Dashboard",
   components: {
@@ -309,22 +288,7 @@ export default {
         totalPages: 0,
         limit: 10,
       },
-      markers: [
-        {
-          id: "dfsldjl3r",
-          position: {
-            lat: -7.2462496,
-            lng: 112.6177856,
-          },
-        },
-        {
-          id: "dfsldjl3r",
-          position: {
-            lat: -7.4462496,
-            lng: 112.7177856,
-          },
-        },
-      ],
+      markers: [],
       regions: [
         { name: "Solo", percentage: 73 },
         { name: "Surabaya", percentage: 79 },
@@ -420,12 +384,26 @@ export default {
         const responseVideo = await ApiService.getVideoDashboard();  
         const responseAvg = await ApiService.getAverageProgressArea();
         const responseNote = await ApiService.getNotedPerKota();
+        const responseDapur = await ApiService.getDapur();
 
         const dataImage = responseImage.data || [];
         const dataDoc = responseDoc.data || [];
         const dataVideo = responseVideo.data || [];
         const dataAvg = responseAvg || [];
         const dataNote = responseNote || [];
+        const dataDapur = responseDapur.data || [];
+
+        this.dapurData = dataDapur;
+
+        this.markers = dataDapur.map((item) => {
+  return {
+    id: "dfsldjl3r",
+    position: {
+      lat: Number(item.lat),
+      lng: Number(item.long),
+    },
+  };
+});
 
         this.averageProgressData = dataAvg.slice(0, 4);
         this.noteData = dataNote.map(note => ({
