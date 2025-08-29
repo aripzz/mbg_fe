@@ -225,7 +225,9 @@
               :videos-count="mediaCounts.videos"
               :documents-count="mediaCounts.documents"
               :show-view-all="false"
+              :show-dapur-name="false"
               @photo-click="openLightbox"
+              @video-click="openVideoLightbox"
             />
           </div>
         </div>
@@ -272,6 +274,10 @@ export default {
         isOpen: false,
         currentImage: null,
       },
+      videoLightbox: {
+        isOpen: false,
+        currentVideos: [],
+      },
       mediaCounts: {
         photos: 0,
         videos: 0,
@@ -286,7 +292,6 @@ export default {
       pagination: {
         page: 1,
         totalPages: 0,
-        limit: 10,
       },
       markers: [],
       regions: [
@@ -473,6 +478,16 @@ export default {
     closeLightbox() {
       this.lightbox.isOpen = false;
       this.lightbox.currentImage = null;
+    },
+    openVideoLightbox(videos) {
+      this.videoLightbox.currentVideos = Array.isArray(videos)
+        ? videos
+        : [videos];
+      this.videoLightbox.isOpen = true;
+    },
+    closeVideoLightbox() {
+      this.videoLightbox.isOpen = false;
+      this.videoLightbox.currentVideos = [];
     },
   },
 };

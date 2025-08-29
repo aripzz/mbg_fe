@@ -1,5 +1,6 @@
 <template>
   <div class="bg-white rounded-lg p-4 w-[100%] shadow-sm">
+    <!-- TAB HEADER -->
     <div class="flex items-center justify-between mb-4">
       <div class="flex space-x-6">
         <button
@@ -42,7 +43,7 @@
       </span>
     </div>
 
-    <!-- FOTO -->
+    <!-- ================= FOTO ================= -->
     <div v-if="activeTab === 'foto'" class="grid grid-cols-4 gap-4">
       <div
         v-if="photos.length === 0"
@@ -66,7 +67,7 @@
       </div>
     </div>
 
-    <!-- VIDEO -->
+    <!-- ================= VIDEO ================= -->
     <div v-if="activeTab === 'video'" class="grid grid-cols-4 gap-4">
       <div
         v-if="videos.length === 0"
@@ -75,26 +76,37 @@
         <i class="fas fa-video text-2xl mb-2"></i>
         <p>No videos available</p>
       </div>
+
       <div
-        v-for="video in videos"
-        :key="video.id"
-        class="bg-gray-200 rounded-lg h-24 flex items-center justify-center group relative"
+        v-for="(vid, idx) in videos"
+        :key="vid.id || idx"
+        class="bg-gray-200 rounded-lg h-32 flex items-center justify-center group relative cursor-pointer overflow-hidden"
+        @click="openVideoLightbox(vid)"
       >
-        <div class="text-center">
-          <i class="fas fa-play-circle text-2xl text-gray-600 mb-1"></i>
-        </div>
-        <button
-          v-if="video.video"
-          @click="downloadDocument(video.video)"
-          class="absolute top-1 right-1 bg-blue-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-          title="Download Video"
+        <video
+          v-if="vid.video"
+          :src="getFileUrl(vid.video)"
+          class="w-full h-full object-cover rounded"
+          muted
+          preload="metadata"
+        ></video>
+
+        <div
+          class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition"
         >
-          <i class="fas fa-download text-xs"></i>
-        </button>
+          <i class="fas fa-play-circle text-4xl text-white"></i>
+        </div>
+
+        <div
+          v-if="showDapurName"
+          class="absolute bottom-1 left-1 bg-black bg-opacity-60 text-white text-xs px-2 py-0.5 rounded"
+        >
+          {{ vid.t_progress_dapur?.m_dapur?.nama || "Tanpa Dapur" }}
+        </div>
       </div>
     </div>
 
-    <!-- DOKUMEN -->
+    <!-- ================= DOKUMEN ================= -->
     <div v-if="activeTab === 'dokumen'" class="grid grid-cols-4 gap-4">
       <div
         v-if="documents.length === 0"
@@ -109,7 +121,7 @@
         class="bg-gray-200 rounded-lg h-24 flex items-center justify-center group relative"
       >
         <div class="text-center p-2">
-          <i class="fas fa-file-alt text-2xl text-gray-600 mb-1"></i>
+          <i :class="getDocumentIcon(document.file)" class="text-3xl"></i>
         </div>
         <button
           v-if="document.file"
@@ -122,7 +134,7 @@
       </div>
     </div>
 
-    <!-- LIGHTBOX MODAL -->
+    <!-- ================= LIGHTBOX FOTO ================= -->
     <div
       v-if="lightbox.isOpen"
       class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[100]"
@@ -141,7 +153,30 @@
       </div>
     </div>
 
-    <!-- LIHAT SEMUA MODAL -->
+    <!-- ================= LIGHTBOX VIDEO ================= -->
+    <div
+      v-if="videoLightbox.isOpen"
+      class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[100]"
+    >
+      <div class="relative w-full max-w-4xl px-4">
+        <button
+          @click="closeVideoLightbox"
+          class="absolute top-4 right-4 text-white text-3xl font-bold z-[210]"
+        >
+          ×
+        </button>
+        <video
+          ref="activeVideo"
+          v-if="videoLightbox.currentVideo"
+          :src="getFileUrl(videoLightbox.currentVideo.video)"
+          controls
+          autoplay
+          class="w-full h-[700px] rounded-lg shadow-lg"
+        ></video>
+      </div>
+    </div>
+
+    <!-- ================= MODAL LIHAT SEMUA ================= -->
     <div
       v-if="allMediaModal"
       class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[50]"
@@ -155,20 +190,68 @@
         >
           ×
         </button>
-        <h2 class="text-lg font-semibold mb-4">Semua Foto</h2>
+        <h2 class="text-lg font-semibold mb-4">
+          Semua
+          {{ allMediaType.charAt(0).toUpperCase() + allMediaType.slice(1) }}
+        </h2>
         <div class="grid grid-cols-3 md:grid-cols-4 gap-4">
           <div
             v-for="item in allMedia"
             :key="item.id"
-            class="border rounded-lg p-2 flex flex-col items-center text-center"
+            class="border rounded-lg p-2 flex flex-col items-center text-center relative group"
           >
+            <!-- FOTO -->
             <img
-              v-if="item.image"
+              v-if="allMediaType === 'foto' && item.image"
               :src="getFileUrl(item.image)"
-              class="w-full h-32 object-cover rounded mb-2"
+              class="w-full h-32 object-cover rounded mb-2 cursor-pointer"
               @click="openLightbox(getFileUrl(item.image))"
             />
+
+            <!-- VIDEO -->
+            <div
+              v-else-if="allMediaType === 'video' && item.video"
+              class="w-full h-32 bg-gray-200 flex items-center justify-center rounded mb-2 relative overflow-hidden cursor-pointer"
+              @click="openVideoLightbox(item)"
+            >
+              <video
+                :src="getFileUrl(item.video)"
+                class="w-full h-full object-cover rounded"
+                muted
+                preload="metadata"
+              ></video>
+              <div
+                class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition"
+              >
+                <i class="fas fa-play-circle text-4xl text-white"></i>
+              </div>
+              <button
+                @click.stop="downloadDocument(item.video)"
+                class="absolute top-1 right-1 bg-blue-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                title="Download Video"
+              >
+                <i class="fas fa-download text-xs"></i>
+              </button>
+            </div>
+
+            <!-- DOKUMEN -->
+            <div
+              v-else-if="allMediaType === 'dokumen' && item.file"
+              class="w-full h-32 bg-gray-200 flex items-center justify-center rounded mb-2 relative"
+            >
+              <i :class="getDocumentIcon(item.file)" class="text-3xl"></i>
+              <button
+                @click="downloadDocument(item.file)"
+                class="absolute top-1 right-1 bg-blue-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                title="Download Document"
+              >
+                <i class="fas fa-download text-xs"></i>
+              </button>
+            </div>
+
+            <!-- fallback -->
             <i v-else class="fas fa-file text-gray-400 text-3xl mb-2"></i>
+
             <p class="text-sm font-medium">
               {{ item?.t_progress_dapur?.m_dapur?.nama || "-" }}
             </p>
@@ -196,56 +279,90 @@ export default {
     photosCount: { type: Number, default: 0 },
     videosCount: { type: Number, default: 0 },
     documentsCount: { type: Number, default: 0 },
+    showDapurName: { type: Boolean, default: true },
   },
   data() {
     return {
       activeTab: "foto",
-      lightbox: {
-        isOpen: false,
-        currentImage: null,
-      },
+      lightbox: { isOpen: false, currentImage: null },
+      videoLightbox: { isOpen: false, currentVideo: null },
       allMediaModal: false,
       allMediaData: [],
+      allMediaType: "foto",
     };
   },
   computed: {
     allMedia() {
+      if (!Array.isArray(this.allMediaData)) return [];
+      if (this.allMediaType === "foto")
+        return this.allMediaData.filter((i) => i.image);
+      if (this.allMediaType === "video")
+        return this.allMediaData.filter((i) => i.video);
+      if (this.allMediaType === "dokumen")
+        return this.allMediaData.filter((i) => i.file);
       return this.allMediaData;
     },
   },
   methods: {
     async request(url, options) {
-    return ApiService.request(url, options);
-  },
+      return ApiService.request(url, options);
+    },
     async fetchAllMedia() {
       try {
-        const res = await this.request(
-          "/dynamic/t_progress_image?include=t_progress_dapur>m_dapur",
-          { method: "GET" }
-        );
-
-        if (res && Array.isArray(res.data)) {
-          this.allMediaData = res.data;
-        } else if (Array.isArray(res)) {
-          this.allMediaData = res;
+        let url = "";
+        if (this.allMediaType === "foto") {
+          url = "/dynamic/t_progress_image?include=t_progress_dapur>m_dapur";
+        } else if (this.allMediaType === "video") {
+          url =
+            "/dynamic/t_progress_video?paginate=100&include=t_progress_dapur>m_dapur";
+        } else if (this.allMediaType === "dokumen") {
+          url =
+            "/dynamic/t_progress_doc?paginate=100&include=t_progress_dapur>m_dapur";
         }
+        const res = await this.request(url, { method: "GET" });
+        this.allMediaData = Array.isArray(res?.data)
+          ? res.data
+          : Array.isArray(res)
+          ? res
+          : [];
       } catch (err) {
         console.error("Gagal ambil media:", err);
       }
     },
+    getDocumentIcon(filePath) {
+      if (!filePath) {
+        return "fas fa-file-alt"; // Ikon default
+      }
+      const ext = filePath.split(".").pop().toLowerCase();
+      const icons = {
+        pdf: "fas fa-file-pdf text-red-600",
+        doc: "fas fa-file-word text-blue-600",
+        docx: "fas fa-file-word text-blue-600",
+        xls: "fas fa-file-excel text-green-600",
+        xlsx: "fas fa-file-excel text-green-600",
+        ppt: "fas fa-file-powerpoint text-orange-600",
+        pptx: "fas fa-file-powerpoint text-orange-600",
+        zip: "fas fa-file-archive text-yellow-600",
+        rar: "fas fa-file-archive text-yellow-600",
+        jpg: "fas fa-file-image text-purple-600",
+        jpeg: "fas fa-file-image text-purple-600",
+        png: "fas fa-file-image text-purple-600",
+        txt: "fas fa-file-alt text-gray-600",
+        csv: "fas fa-file-csv text-teal-600",
+      };
+      return icons[ext] || "fas fa-file-alt"; // Kembalikan ikon yang sesuai atau ikon default
+    },
     getFileUrl(filePath) {
       if (!filePath) return "";
-      const baseUrl = "https://server.qqltech.com:7113/";
-      return `${baseUrl}${filePath}`;
+      return `https://server.qqltech.com:7113/${filePath}`;
     },
     getFileName(filePath) {
-      if (!filePath) return "";
-      return filePath.split("/").pop() || filePath;
+      return filePath ? filePath.split("/").pop() || filePath : "";
     },
     handleImageError(event) {
       event.target.style.display = "none";
-      const parent = event.target.parentElement;
-      parent.innerHTML = '<i class="fas fa-image text-gray-400 text-2xl"></i>';
+      event.target.parentElement.innerHTML =
+        '<i class="fas fa-image text-gray-400 text-2xl"></i>';
     },
     downloadDocument(filePath) {
       if (!filePath) return;
@@ -259,14 +376,26 @@ export default {
       document.body.removeChild(link);
     },
     openLightbox(image) {
-      this.lightbox.currentImage = image;
-      this.lightbox.isOpen = true;
+      this.lightbox = { isOpen: true, currentImage: image };
     },
     closeLightbox() {
-      this.lightbox.isOpen = false;
-      this.lightbox.currentImage = null;
+      this.lightbox = { isOpen: false, currentImage: null };
+    },
+    openVideoLightbox(video) {
+      this.videoLightbox.currentVideo = video;
+      this.videoLightbox.isOpen = true;
+    },
+    closeVideoLightbox() {
+      const videoEl = this.$refs.activeVideo;
+      if (videoEl) {
+        videoEl.pause();
+        videoEl.currentTime = 0;
+      }
+      this.videoLightbox.isOpen = false;
+      this.videoLightbox.currentVideo = null;
     },
     openAllMediaModal() {
+      this.allMediaType = this.activeTab;
       this.fetchAllMedia();
       this.allMediaModal = true;
     },
