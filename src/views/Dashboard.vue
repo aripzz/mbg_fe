@@ -420,7 +420,6 @@ export default {
 });
 
         this.averageProgressData = dataAvg.slice(0, 4);
-        console.log(this.averageProgressData);
         this.noteData = dataNote.map(note => ({
           ...note,
           iconColor: this.getConsistentColor(note.nama_dapur)

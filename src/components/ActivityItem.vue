@@ -4,7 +4,7 @@
       <div class="flex items-center space-x-3">
         <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
           <!-- Circle background -->
-          <circle cx="20" cy="20" r="18" :fill="activity.iconColor" />
+          <circle cx="20" cy="20" r="18" :fill="iconColor" />
           <!-- Kitchen icon -->
           <g transform="translate(10,10) scale(1)">
             <path
@@ -15,13 +15,12 @@
         <span class="text-sm font-medium">{{ activity.kota }}</span>
       </div>
       <div class="flex items-center space-x-2">
-        <span class="text-sm font-semibold">{{ Number(activity.rata_rata_progress).toFixed(0) }}%</span>
-        <i class="fas fa-arrow-up text-green-500 text-xs"></i>
+        <span class="text-sm font-semibold">{{ 0 }}%</span>
+        <i :class="arrowClass"></i>
       </div>
     </div>
-    <div class="ml-3 text-[12px] text-[#CCD2E3] mt-1">{{activity.created_at || "-"}}</div>
+    <div class="ml-3 text-[12px] text-[#CCD2E3] mt-1">{{ randomDate }}</div>
   </div>
-
 </template>
 
 <script>
@@ -39,9 +38,46 @@ export default {
         'Solo': '#22c55e',
         'Surabaya': '#a855f7',
         'Magelang': '#3b82f6',
-        'Kupang': '#eab308'
+        'Kupang': '#eab308',
+        'Jakarta': '#ef4444',
+        'Bandung': '#f97316',
+        'Yogyakarta': '#06b6d4',
+        'Denpasar': '#8b5cf6'
       }
-      return colors[this.activity.name] || '#6b7280'
+      return colors[this.activity.kota] || this.getRandomColor()
+    },
+    randomPercentage() {
+      // Generate random percentage between 10-100
+      return Math.floor(Math.random() * 91) + 10
+    },
+    arrowClass() {
+      // Randomly choose between up (green) and down (red) arrows
+      const isUp = 1// 70% chance of up arrow
+      return isUp 
+        ? 'fas fa-arrow-up text-green-500 text-xs' 
+        : 'fas fa-arrow-down text-red-500 text-xs'
+    },
+    randomDate() {
+      // Generate random date within the last 30 days
+      const daysAgo = Math.floor(Math.random() * 30)
+      const date = new Date()
+      date.setDate(date.getDate() - daysAgo)
+      return date.toLocaleDateString('id-ID', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      })
+    }
+  },
+  methods: {
+    getRandomColor() {
+      // Generate a random hex color
+      const colors = [
+        '#22c55e', '#a855f7', '#3b82f6', '#eab308', 
+        '#ef4444', '#f97316', '#06b6d4', '#8b5cf6',
+        '#84cc16', '#10b981', '#6366f1', '#ec4899'
+      ]
+      return colors[Math.floor(Math.random() * colors.length)]
     }
   }
 }
