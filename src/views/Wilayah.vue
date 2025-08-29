@@ -128,7 +128,7 @@ select:focus {
                   @blur="handleBlur('dapur')"
                   placeholder="Cari Dapur..."
                   class="search-dropdown-input pr-8"
-                  :disabled="!selectedCity"
+                  :disabled="!selectedArea"
                 />
                 <button v-if="searchDapur" @click="clearSearch('dapur')" class="search-dropdown-clear">
                   <i class="fas fa-times"></i>

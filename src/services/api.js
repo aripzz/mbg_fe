@@ -176,7 +176,7 @@ class ApiService {
     return this.request(`/dynamic/m_prov?page=${page}&paginate=${limit}`);
   }
 
-  async getAreas(regionId = null, page = 1, limit = 20) {
+  async getAreas(regionId = null, page = 1, limit = 100) {
     let url = `/dynamic/m_wilayah?include=m_area,m_kota&page=${page}&paginate=${limit}`;
     if (regionId) {
       url += `&where=id_prov=${regionId}`;
@@ -184,7 +184,7 @@ class ApiService {
     return this.request(url);
   }
 
-  async getKitchens(cityId = null, page = 1, limit = 20) {
+  async getKitchens(cityId = null, page = 1, limit = 100) {
     let url = `/dynamic/m_dapur?page=${page}&paginate=${limit}`;
     if (cityId) {
       url += `&where=id_wilayah=${cityId}`;
@@ -192,7 +192,7 @@ class ApiService {
     return this.request(url);
   }
 
-  async getCities(provinceId = null, page = 1, limit = 20) {
+  async getCities(provinceId = null, page = 1, limit = 50) {
     let url = `/dynamic/m_kota?page=${page}&paginate=${limit}`;
     if (provinceId) {
       url += `&where=id_prov=${provinceId}`;
