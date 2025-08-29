@@ -4,8 +4,8 @@ select:focus {
   border-color: transparent;
   /* Atau warna lain jika Anda ingin tetap ada border */
   box-shadow: none;
-  /* Menghilangkan shadow yang mungkin muncul */
-}
+}  /* Menghilangkan shadow yang mungkin muncul */
+
 </style>
 <template>
   <div>
@@ -14,28 +14,141 @@ select:focus {
       <div className="grid grid-cols-1 grid-rows-1 gap-4">
         <div>
           <div class="flex items-center space-x-2 m-4">
-            <select v-model="selectedRegion"
-              class="bg-[#F1F4FB] text-[#2F61D4] border-none rounded-lg px-3 py-2 text-sm font-bold "
-              :disabled="loadingRegions">
-              <option disabled value="">{{ loadingRegions ? 'Loading...' : 'Pilih Provinsi' }}</option>
-              <option v-for="region in regions" :key="region.id" :value="region.id">
-                {{ region.nama }}
-              </option>
-            </select>
-            <select v-model="selectedCity"
-              class="bg-[#F1F4FB] border-none rounded-lg px-3 py-2 text-sm font-bold text-[#2F61D4]">
-              <option disabled value="">Pilih Kota</option>
-              <option v-for="city in citys" :key="city" :value="city">
-                {{ city.m_area.nama }}
-              </option>
-            </select>
-            <select v-model="selectedKitchenId"
-              class="bg-[#F1F4FB] border-none rounded-lg px-3 py-2 text-sm text-[#2F61D4] font-bold">
-              <option disabled value="">Pilih Dapur</option>
-              <option v-for="kitchen in kitchens" :key="kitchen.id" :value="kitchen.id">
-                {{ kitchen.nama }}
-              </option>
-            </select>
+            <!-- Provinsi Search Dropdown -->
+            <div class="search-dropdown">
+              <div class="relative">
+                <input
+                  v-model="searchProvinsi"
+                  @focus="showProvinsiDropdown = true"
+                  @blur="handleBlur('provinsi')"
+                  placeholder="Cari Provinsi..."
+                  class="search-dropdown-input pr-8"
+                  :disabled="loadingRegions"
+                />
+                <button v-if="searchProvinsi" @click="clearSearch('provinsi')" class="search-dropdown-clear">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div v-if="showProvinsiDropdown" class="search-dropdown-list">
+                <div v-if="loadingRegions" class="search-dropdown-loading">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  <span>Loading...</span>
+                </div>
+                <div v-else-if="filteredRegions.length === 0" class="search-dropdown-empty">
+                  {{ searchProvinsi ? 'Tidak ditemukan' : 'Tidak ada data' }}
+                </div>
+                <div
+                  v-else
+                  v-for="region in filteredRegions"
+                  :key="region.id"
+                  @mousedown="selectRegion(region)"
+                  :class="['search-dropdown-item', { selected: selectedRegion?.id === region.id }]"
+                >
+                  {{ region.nama }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Kota Search Dropdown -->
+            <div class="search-dropdown">
+              <div class="relative">
+                <input
+                  v-model="searchKota"
+                  @focus="showKotaDropdown = true"
+                  @blur="handleBlur('kota')"
+                  placeholder="Cari Kota..."
+                  class="search-dropdown-input pr-8"
+                  :disabled="!selectedRegion || loadingCities"
+                />
+                <button v-if="searchKota" @click="clearSearch('kota')" class="search-dropdown-clear">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div v-if="showKotaDropdown" class="search-dropdown-list">
+                <div v-if="loadingCities" class="search-dropdown-loading">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  <span>Loading...</span>
+                </div>
+                <div v-else-if="filteredCitys.length === 0" class="search-dropdown-empty">
+                  {{ searchKota ? 'Tidak ditemukan' : selectedRegion ? 'Pilih provinsi terlebih dahulu' : 'Tidak ada data' }}
+                </div>
+                <div
+                  v-else
+                  v-for="city in filteredCitys"
+                  :key="city.id"
+                  @mousedown="selectCity(city)"
+                  :class="['search-dropdown-item', { selected: selectedCity?.id === city.id }]"
+                >
+                  {{ city.m_kotum?.nama || city.nama }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Area Search Dropdown -->
+            <div class="search-dropdown">
+              <div class="relative">
+                <input
+                  v-model="searchArea"
+                  @focus="showAreaDropdown = true"
+                  @blur="handleBlur('area')"
+                  placeholder="Cari Area..."
+                  class="search-dropdown-input pr-8"
+                  :disabled="!selectedCity || loadingAreas"
+                />
+                <button v-if="searchArea" @click="clearSearch('area')" class="search-dropdown-clear">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div v-if="showAreaDropdown" class="search-dropdown-list">
+                <div v-if="loadingAreas" class="search-dropdown-loading">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  <span>Loading...</span>
+                </div>
+                <div v-else-if="filteredAreas.length === 0" class="search-dropdown-empty">
+                  {{ searchArea ? 'Tidak ditemukan' : selectedCity ? 'Tidak ada area' : 'Pilih kota terlebih dahulu' }}
+                </div>
+                <div
+                  v-else
+                  v-for="area in filteredAreas"
+                  :key="area.id"
+                  @mousedown="selectArea(area)"
+                  :class="['search-dropdown-item', { selected: selectedArea?.id === area.id }]"
+                >
+                  {{ area.nama }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Dapur Search Dropdown -->
+            <div class="search-dropdown">
+              <div class="relative">
+                <input
+                  v-model="searchDapur"
+                  @focus="showDapurDropdown = true"
+                  @blur="handleBlur('dapur')"
+                  placeholder="Cari Dapur..."
+                  class="search-dropdown-input pr-8"
+                  :disabled="!selectedCity"
+                />
+                <button v-if="searchDapur" @click="clearSearch('dapur')" class="search-dropdown-clear">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div v-if="showDapurDropdown" class="search-dropdown-list">
+                <div v-if="filteredKitchens.length === 0" class="search-dropdown-empty">
+                  {{ searchDapur ? 'Tidak ditemukan' : selectedArea ? 'Tidak ada dapur' : 'Pilih area terlebih dahulu' }}
+                </div>
+                <div
+                  v-else
+                  v-for="kitchen in filteredKitchens"
+                  :key="kitchen.id"
+                  @mousedown="selectKitchen(kitchen)"
+                  :class="['search-dropdown-item', { selected: selectedKitchenId === kitchen.id }]"
+                >
+                  {{ kitchen.nama }}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -273,19 +386,23 @@ export default {
   },
   data() {
     return {
-      selectedRegion: "",
+      selectedRegion: null,
       selectedKitchenId: "",
-      selectedCity: "",
+      selectedCity: null,
+      selectedArea: null,
       currentPage: 1,
       totalPages: 1,
       currentPageNote: 1,
       totalPagesNote: 1,
       citys: [],
+      areas: [],
       regions: [],
       loadingRegions: false,
       regionsError: null,
       loadingCities: false,
       citiesError: null,
+      loadingAreas: false,
+      areasError: null,
       kitchens: [],
       historyData: [],
       labels: ["Data 1", "Data 2", "Data 3"],
@@ -314,6 +431,15 @@ export default {
         next_page: null,
         prev_page: null,
       },
+      // Search dropdown states
+      searchProvinsi: "",
+      searchKota: "",
+      searchArea: "",
+      searchDapur: "",
+      showProvinsiDropdown: false,
+      showKotaDropdown: false,
+      showAreaDropdown: false,
+      showDapurDropdown: false,
     };
   },
   computed: {
@@ -399,6 +525,52 @@ export default {
       }
       return "05 Juli 2025 16:22:01";
     },
+
+    // Filtered regions based on search
+    filteredRegions() {
+      if (!this.searchProvinsi) {
+        return this.regions;
+      }
+      const searchTerm = this.searchProvinsi.toLowerCase();
+      return this.regions.filter(region => 
+        region.nama && region.nama.toLowerCase().includes(searchTerm)
+      );
+    },
+
+    // Filtered cities based on search
+    filteredCitys() {
+      if (!this.searchKota) {
+        return this.citys;
+      }
+      const searchTerm = this.searchKota.toLowerCase();
+      return this.citys.filter(city => 
+        (city.m_area?.nama || city.nama) && 
+        (city.m_area?.nama.toLowerCase().includes(searchTerm) || 
+         city.nama.toLowerCase().includes(searchTerm))
+      );
+    },
+
+    // Filtered kitchens based on search
+    filteredKitchens() {
+      if (!this.searchDapur) {
+        return this.kitchens;
+      }
+      const searchTerm = this.searchDapur.toLowerCase();
+      return this.kitchens.filter(kitchen => 
+        kitchen.nama && kitchen.nama.toLowerCase().includes(searchTerm)
+      );
+    },
+
+    // Filtered areas based on search
+    filteredAreas() {
+      if (!this.searchArea) {
+        return this.areas;
+      }
+      const searchTerm = this.searchArea.toLowerCase();
+      return this.areas.filter(area => 
+        area.nama && area.nama.toLowerCase().includes(searchTerm)
+      );
+    },
   },
   async mounted() {
     await this.loadRegions();
@@ -406,13 +578,20 @@ export default {
   watch: {
     selectedRegion() {
       this.selectedCity = "";
+      this.selectedArea = null;
       this.selectedKitchenId = "";
       this.loadCity();
       this.loadKitchens();
     },
     selectedCity(newCity) {
+      this.selectedArea = null;
       this.selectedKitchenId = "";
-      this.loadKitchens(newCity ? newCity.id : null);
+      this.loadAreas(newCity);
+      this.loadKitchens();
+    },
+    selectedArea(newArea) {
+      this.selectedKitchenId = "";
+      this.loadKitchens(newArea);
     },
     currentPage() {
       this.fetchProgressData();
@@ -636,7 +815,6 @@ export default {
       }
     },
 
-    // Legacy method for backward compatibility - now calls fetchAllData
     async fetchProgressData() {
       await this.fetchAllData();
     },
@@ -651,10 +829,9 @@ export default {
 
       try {
         const response = await ApiService.getRegions();
-        console.log("Regions API response:", response); // Debug log
+        console.log("Regions API response:", response); 
 
         if (response.status === "success" && Array.isArray(response.data)) {
-          // Store the full region objects instead of just the names
           this.regions = response.data;
         } else {
           throw new Error("Data regions tidak valid");
@@ -662,7 +839,7 @@ export default {
       } catch (error) {
         console.error("Error loading regions:", error);
         this.regionsError = error.message;
-        this.regions = []; // Clear regions on error
+        this.regions = []; 
       } finally {
         this.loadingRegions = false;
       }
@@ -671,8 +848,8 @@ export default {
     async loadCity() {
       if (!this.selectedRegion) {
         this.citys = [];
-        this.selectedCity = ""; // Reset selected city
-        this.loadKitchens(); // Load all kitchens when no region selected
+        this.selectedCity = ""; 
+        this.loadKitchens(); 
         return;
       }
 
@@ -681,7 +858,7 @@ export default {
 
       try {
         const response = await ApiService.getCities(this.selectedRegion.id);
-        console.log("Cities API response:", response); // Debug log
+        console.log("Cities API response:", response); 
 
         if (response.status === "success" && Array.isArray(response.data)) {
           this.citys = response.data;
@@ -691,17 +868,60 @@ export default {
       } catch (error) {
         console.error("Error loading cities:", error);
         this.citiesError = error.message;
-        this.citys = []; // Clear cities on error
+        this.citys = []; 
       } finally {
         this.loadingCities = false;
       }
     },
 
-    async loadKitchens(cityId = null) {
+    async loadAreas(cityId = null) {
+      if (!cityId) {
+        this.areas = [];
+        this.selectedArea = null;
+        this.loadKitchens(); 
+        return;
+      }
+
+      this.loadingAreas = true;
+      this.areasError = null;
+
+      try {
+        const response = await ApiService.getAreas(cityId.id_prov || cityId.id);
+        console.log("Areas API response:", response); 
+
+        if (response.status === "success" && Array.isArray(response.data)) {
+          const areaSet = new Set();
+          const uniqueAreas = [];
+          
+          response.data.forEach(item => {
+            const areaName = item.m_area?.nama || item.nama;
+            if (areaName && !areaSet.has(areaName)) {
+              areaSet.add(areaName);
+              uniqueAreas.push({
+                id: item.id,
+                nama: areaName
+              });
+            }
+          });
+
+          this.areas = uniqueAreas;
+        } else {
+          throw new Error("Data areas tidak valid");
+        }
+      } catch (error) {
+        console.error("Error loading areas:", error);
+        this.areasError = error.message;
+        this.areas = []; // Clear areas on error
+      } finally {
+        this.loadingAreas = false;
+      }
+    },
+
+    async loadKitchens(areaId = null) {
       try {
         let filterID = null;
-        if (cityId != null) {
-          filterID = cityId.id;
+        if (areaId != null) {
+          filterID = areaId.id;
         }
         const response = await ApiService.getKitchens(filterID);
 
@@ -732,6 +952,72 @@ export default {
 
     async refreshData() {
       await this.fetchProgressData();
+    },
+
+    selectRegion(region) {
+      this.selectedRegion = region;
+      this.searchProvinsi = region.nama;
+      this.showProvinsiDropdown = false;
+    },
+
+    selectCity(city) {
+      this.selectedCity = city;
+      this.searchKota = city.m_kotum?.nama || city.nama;
+      this.showKotaDropdown = false;
+    },
+
+    selectKitchen(kitchen) {
+      this.selectedKitchenId = kitchen.id;
+      this.searchDapur = kitchen.nama;
+      this.showDapurDropdown = false;
+      this.fetchProgressData();
+    },
+
+    selectArea(area) {
+      this.selectedArea = area;
+      this.searchArea = area.nama;
+      this.showAreaDropdown = false;
+    },
+
+    clearSearch(type) {
+      if (type === 'provinsi') {
+        this.searchProvinsi = '';
+        this.selectedRegion = null;
+        this.selectedCity = null;
+        this.selectedArea = null;
+        this.selectedKitchenId = '';
+        this.showProvinsiDropdown = true;
+      } else if (type === 'kota') {
+        this.searchKota = '';
+        this.selectedCity = null;
+        this.selectedArea = null;
+        this.selectedKitchenId = '';
+        this.showKotaDropdown = true;
+      } else if (type === 'area') {
+        this.searchArea = '';
+        this.selectedArea = null;
+        this.selectedKitchenId = '';
+        this.showAreaDropdown = true;
+      } else if (type === 'dapur') {
+        this.searchDapur = '';
+        this.selectedKitchenId = '';
+        this.showDapurDropdown = true;
+      }
+    },
+
+    handleBlur(type) {
+      // Use setTimeout to allow click events to be processed before hiding dropdown
+      setTimeout(() => {
+        if (type === 'provinsi') {
+          this.showProvinsiDropdown = false;
+        } else if (type === 'kota') {
+          this.showKotaDropdown = false;
+        } else if (type === 'area') {
+          this.showAreaDropdown = false;
+        } else if (type === 'dapur') {
+          this.showDapurDropdown = false;
+        }
+      }, 200);
     },
   },
 };

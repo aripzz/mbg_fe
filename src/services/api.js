@@ -125,45 +125,53 @@ class ApiService {
     if (id_dapur) {
       url += `&where=id_dapur=${id_dapur}`;
     }
-    console.log("API Request URL:", url); // debug
+    console.log("API Request URL:", url); 
     return this.request(url);
   }
 
   async getDocByDapurID(id_dapur = null, page = 1, limit = 20) {
     return this.request(
-      `/dynamic/t_progress_doc?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}&page=${page}&limit=${limit}`
+      `/dynamic/t_progress_doc?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}&page=${page}&paginate=${limit}`
     );
   }
 
   async getImageByDapurID(id_dapur = null, page = 1, limit = 20) {
     return this.request(
-      `/dynamic/t_progress_image?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}&page=${page}&limit=${limit}`
+      `/dynamic/t_progress_image?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}&page=${page}&paginate=${limit}`
     );
   }
 
   async getVideoByDapurID(id_dapur = null, page = 1, limit = 20) {
     return this.request(
-      `/dynamic/t_progress_video?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}&page=${page}&limit=${limit}`
+      `/dynamic/t_progress_video?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}&page=${page}&paginate=${limit}`
     );
   }
 
   // You can add more API methods here as needed
-  async getRegions(page = 1, limit = 20) {
-    return this.request(`/dynamic/m_prov?page=${page}&limit=${limit}`);
+  async getRegions(page = 1, limit = 38) {
+    return this.request(`/dynamic/m_prov?page=${page}&paginate=${limit}`);
   }
 
-  async getCities(regionId = null, page = 1, limit = 20) {
-    let url = `/dynamic/m_wilayah?include=m_area,m_kota&page=${page}&limit=${limit}`;
+  async getAreas(regionId = null, page = 1, limit = 20) {
+    let url = `/dynamic/m_wilayah?include=m_area,m_kota&page=${page}&paginate=${limit}`;
     if (regionId) {
-      url += `&where=m_wilayah.id_prov=${regionId}`;
+      url += `&where=id_prov=${regionId}`;
     }
     return this.request(url);
   }
 
   async getKitchens(cityId = null, page = 1, limit = 20) {
-    let url = `/dynamic/m_dapur?page=${page}&limit=${limit}`;
+    let url = `/dynamic/m_dapur?page=${page}&paginate=${limit}`;
     if (cityId) {
       url += `&where=id_wilayah=${cityId}`;
+    }
+    return this.request(url);
+  }
+
+  async getCities(provinceId = null, page = 1, limit = 20) {
+    let url = `/dynamic/m_kota?page=${page}&paginate=${limit}`;
+    if (provinceId) {
+      url += `&where=id_prov=${provinceId}`;
     }
     return this.request(url);
   }
