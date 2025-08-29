@@ -125,7 +125,7 @@ class ApiService {
     if (id_dapur) {
       url += `&where=id_dapur=${id_dapur}`;
     }
-    console.log("API Request URL:", url); 
+    console.log("API Request URL:", url);
     return this.request(url);
   }
 
@@ -136,9 +136,7 @@ class ApiService {
   }
 
   async getDocDashboard(page = 1, limit = 8) {
-    return this.request(
-      `/dynamic/t_progress_doc?page=${page}&limit=${limit}`
-    );
+    return this.request(`/dynamic/t_progress_doc?page=${page}&limit=${limit}`);
   }
 
   async getImageByDapurID(id_dapur = null, page = 1, limit = 20) {
@@ -147,7 +145,7 @@ class ApiService {
     );
   }
 
-  async getImageDashboard(page = 1, limit =8) {
+  async getImageDashboard(page = 1, limit = 8) {
     return this.request(
       `/dynamic/t_progress_image?page=${page}&limit=${limit}`
     );
@@ -159,18 +157,30 @@ class ApiService {
     );
   }
 
-  async getVideoDashboard(page = 1, limit =8) {
+  async getVideoDashboard(page = 1, limit = 8) {
+    return this.request(
+      `/dynamic/t_progress_video?page=${page}&limit=${limit}`
+    );
+  }
+
+  async getVideoDashboard(page = 1, limit = 8) {
     return this.request(
       `/dynamic/t_progress_video?page=${page}&limit=${limit}`
     );
   }
 
   async getAverageProgress() {
-    return this.request(
-      `/fn/m_dapur/getAverageProgress`
-    );
+    return this.request(`/fn/m_dapur/getAverageProgress`);
   }
-  
+
+  async getAverageProgressArea() {
+    return this.request(`/fn/m_dapur/getAverageProgressPerKota`);
+  }
+
+  async getNotedPerKota(){
+    return this.request(`/fn/m_kota/getDapurWithCatatan`)
+  }
+
   // You can add more API methods here as needed
   async getRegions(page = 1, limit = 38) {
     return this.request(`/dynamic/m_prov?page=${page}&paginate=${limit}`);

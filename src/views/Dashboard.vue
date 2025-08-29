@@ -56,8 +56,8 @@
             </div>
             <div class="grid grid-cols-2 gap-4 w-full h-full">
               <RegionCard
-                v-for="region in regions"
-                :key="region.name"
+                v-for="region in averageProgressData"
+                :key="region.kota"
                 :region="region"
               />
             </div>
@@ -112,8 +112,8 @@
               <div class="flex items-center justify-between mb-4">
                 <div>
                   <span class="text-sm text-gray-500">Target</span>
-                  <span class="m-4 text-blue-600 font-medium">Minggu 7</span>
-                  <span class="text-blue-600 font-bold">87.6 %</span>
+                  <span class="m-4 text-blue-600 font-medium">Minggu {{ Number(progress/ 12.5).toFixed(0) }}</span>
+                  <span class="text-blue-600 font-bold">{{ progress }} %</span>
                 </div>
                 <div class="flex items-center space-x-2">
                   <button
@@ -126,7 +126,7 @@
                 </div>
               </div>
               <!-- Timeline -->
-              <Timeline :totalSteps="8" :currentStep="7" :percent="80" />
+              <Timeline :totalSteps="8" :currentStep="Number(progress/ 12.5).toFixed(0)" :percent=" progress " />
             </div>
           </div>
           <div className="col-span-3 row-span-3 col-start-10">
@@ -140,7 +140,7 @@
 
                 <!-- Regional Information Cards -->
                 <div class="space-y-4">
-                  <div v-for="note in notes" :key="note.region">
+                  <div v-for="note in noteData" :key="note.nama_dapur">
                     <div class="flex items-center space-x-2 mb-2">
                       <svg
                         width="40"
@@ -159,13 +159,12 @@
                           />
                         </g>
                       </svg>
-
-                      <span class="font-medium">{{ note.region }}</span>
+                      <span class="font-medium">{{ note.kota }} - {{ note.nama_dapur }}</span>
                     </div>
-                    <p class="text-sm text-gray-600">{{ note.description }}</p>
+                    <p class="text-sm text-gray-600">{{ note.catatan_terakhir || "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." }}</p>
                     <div class="flex items-start justify-start">
                       <div class="text-xs text-[#CCD2E3]">
-                        {{ note.date }} {{ note.time }}
+                        {{ note.updated_at }}
                       </div>
                     </div>
                   </div>
@@ -181,8 +180,8 @@
               </div>
               <div class="space-y-3">
                 <ActivityItem
-                  v-for="activity in activities"
-                  :key="activity.name"
+                  v-for="activity in averageProgressData"
+                  :key="activity.kota"
                   :activity="activity"
                 />
               </div>
@@ -221,6 +220,25 @@ import ActivityItem from "@/components/ActivityItem.vue";
 import MediaGallery from "@/components/MediaGallery.vue";
 import Timeline from "@/components/Timeline.vue";
 import ApiService from "@/services/api.js";
+
+const formatDate = (dateString) => {
+  // Parsing string dengan format "DD-MM-YYYY HH:mm"
+  const [datePart, timePart] = dateString.split(' ');
+  const [day, month, year] = datePart.split('-');
+
+  // Membuat objek Date dengan format yang benar (YYYY-MM-DD)
+  const dateObject = new Date(`${year}-${month}-${day}T${timePart}:00`);
+
+  // Menggunakan Intl.DateTimeFormat untuk format lokal
+  const options = {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  };
+
+  // Mengembalikan string yang sudah diformat ke bahasa Indonesia
+  return new Intl.DateTimeFormat('id-ID', options).format(dateObject);
+};
 // import axios from "axios";
 
 export default {
@@ -289,6 +307,8 @@ export default {
         { name: "Surabaya", percentage: 79 },
         { name: "Magelang", percentage: 79 },
       ],
+      averageProgressData: [],
+      noteData: [],
       notes: [
         {
           region: "Surabaya",
@@ -329,6 +349,9 @@ export default {
       ],
     };
   },
+  // async mounted() {
+    
+  // },
   async created() {
     await this.fetchProgress();
   },
@@ -336,18 +359,50 @@ export default {
     return this.request(`/dynamic/t_progress_doc?page=${page}&limit=${limit}`);
   },
   methods: {
+      getConsistentColor(key) {
+    const colors = [
+      '#22c55e', // Hijau
+      '#a855f7', // Ungu
+      '#3b82f6', // Biru
+      '#eab308', // Kuning
+      '#ef4444', // Merah
+      '#f97316', // Oranye
+      '#10b981', // Hijau toska
+      '#6366f1', // Indigo
+    ];
+
+    // Fungsi sederhana untuk menghasilkan nilai numerik dari sebuah string
+    let hash = 0;
+    for (let i = 0; i < key.length; i++) {
+      hash = ((hash << 5) - hash) + key.charCodeAt(i);
+      hash |= 0; // Mengubahnya menjadi 32-bit integer
+    }
+
+    // Menggunakan hash untuk memilih warna secara konsisten
+    const index = Math.abs(hash) % colors.length;
+    return colors[index];
+  },
     async fetchProgress() {
       try {
         const response = await ApiService.getAverageProgress();
-        console.log("API response:", response);
 
         const responseImage = await ApiService.getImageDashboard();
         const responseDoc = await ApiService.getDocDashboard();
-        const responseVideo = await ApiService.getVideoDashboard();
+        const responseVideo = await ApiService.getVideoDashboard();  
+        const responseAvg = await ApiService.getAverageProgressArea();
+        const responseNote = await ApiService.getNotedPerKota();
 
         const dataImage = responseImage.data || [];
         const dataDoc = responseDoc.data || [];
         const dataVideo = responseVideo.data || [];
+        const dataAvg = responseAvg || [];
+        const dataNote = responseNote || [];
+
+        this.averageProgressData = dataAvg.slice(0, 4);
+        this.noteData = dataNote.map(note => ({
+          ...note,
+          iconColor: this.getConsistentColor(note.nama_dapur)
+        }));
 
         this.mediaCounts = {
           photos: dataImage.length,

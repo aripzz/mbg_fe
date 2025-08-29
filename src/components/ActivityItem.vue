@@ -12,14 +12,14 @@
               fill="white" />
           </g>
         </svg>
-        <span class="text-sm font-medium">{{ activity.name }}</span>
+        <span class="text-sm font-medium">{{ activity.kota }}</span>
       </div>
       <div class="flex items-center space-x-2">
-        <span class="text-sm font-semibold">{{ activity.percentage }}%</span>
+        <span class="text-sm font-semibold">{{ Number(activity.rata_rata_progress).toFixed(0) }}%</span>
         <i class="fas fa-arrow-up text-green-500 text-xs"></i>
       </div>
     </div>
-    <div class="ml-3 text-[12px] text-[#CCD2E3] mt-1">05 Juli 2025 16:20:21</div>
+    <div class="ml-3 text-[12px] text-[#CCD2E3] mt-1">{{activity.created_at || "05 Juli 2025 16:20:21"}}</div>
   </div>
 
 </template>
