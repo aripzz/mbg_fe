@@ -382,14 +382,14 @@ select:focus {
                   Minggu
                   {{
                     Number(
-                      historyData[historyData.length - 1]?.percentage / 12.5
+                      historyData[0]?.percentage / 12.5
                     ).toFixed(0)
                   }}
                 </span>
                 <span class="text-blue-600 font-bold">
                   {{
                     Number(
-                      historyData[historyData.length - 1]?.percentage || 0
+                      historyData[0]?.percentage || 0
                     ).toFixed(0) || 0
                   }}
                   %
@@ -403,10 +403,10 @@ select:focus {
                 :totalSteps="8"
                 :currentStep="
                   Number(
-                    historyData[historyData.length - 1]?.percentage / 12.5
+                    historyData[0]?.percentage / 12.5
                   ).toFixed(0)
                 "
-                :percent="historyData[historyData.length - 1]?.percentage || 0"
+                :percent="historyData[0]?.percentage || 0"
               />
             </div>
           </div>
@@ -809,7 +809,7 @@ export default {
         const response = await ApiService.getImageByDapurID(
           this.selectedKitchenId,
           this.currentPage,
-          4
+          100
         );
         return response;
       } catch (error) {
@@ -824,7 +824,7 @@ export default {
         const response = await ApiService.getDocByDapurID(
           this.selectedKitchenId,
           this.currentPage,
-          4
+          100
         );
         return response;
       } catch (error) {
@@ -839,7 +839,7 @@ export default {
         const response = await ApiService.getVideoByDapurID(
           this.selectedKitchenId,
           this.currentPage,
-          4
+          100
         );
         return response;
       } catch (error) {
