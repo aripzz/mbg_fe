@@ -175,7 +175,7 @@
               <div class="p-4 bg-white shadow-sm rounded-lg">
                 <div class="flex items-center justify-between mb-6">
                   <span class="text-sm text-gray-500">Catatan</span>
-                  <span class="text-sm text-gray-500">Lihat Semua</span>
+                  <!-- <span class="text-sm text-gray-500">Lihat Semua</span> -->
                 </div>
 
                 <!-- Regional Information Cards -->
@@ -218,7 +218,7 @@
             <div class="bg-white rounded-lg p-8 shadow-sm">
               <div class="flex justify-between items-center mb-4">
                 <h3 class="font-medium text-gray-800">Aktivitas</h3>
-                <span class="text-sm text-gray-500">Lihat Semua</span>
+                <!-- <span class="text-sm text-gray-500">Lihat Semua</span> -->
               </div>
               <div class="space-y-3">
                 <ActivityItem
