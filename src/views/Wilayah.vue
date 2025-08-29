@@ -809,7 +809,7 @@ export default {
         const response = await ApiService.getImageByDapurID(
           this.selectedKitchenId,
           this.currentPage,
-          4
+          100
         );
         return response;
       } catch (error) {
@@ -824,7 +824,7 @@ export default {
         const response = await ApiService.getDocByDapurID(
           this.selectedKitchenId,
           this.currentPage,
-          4
+          100
         );
         return response;
       } catch (error) {
@@ -839,7 +839,7 @@ export default {
         const response = await ApiService.getVideoByDapurID(
           this.selectedKitchenId,
           this.currentPage,
-          4
+          100
         );
         return response;
       } catch (error) {
