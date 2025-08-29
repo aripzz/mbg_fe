@@ -52,7 +52,8 @@
           <!-- Region Cards (col-5) -->
           <div class="col-span-5 flex flex-col">
             <div class="flex justify-end mb-4">
-              <a href="#" class="text-sm text-gray-500">Lihat Semua</a>
+              <a href="#" class="text-sm text-gray-500 mt-7"></a>
+              <!-- Lihat Semua -->
             </div>
             <div class="grid grid-cols-2 gap-4 w-full h-full">
               <RegionCard
@@ -86,25 +87,52 @@
             <div class="space-y-4 mb-6">
               <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-600 font-bold">Status</span>
-                <span
-                  class="text-sm text-red-600 bg-red-100 p-2 rounded-lg font-bold"
-                  >Closed</span
-                >
+                <span v-if="isBusinessHours" class="text-sm bg-green-500 text-white p-2 rounded-lg font-bold">
+                Open
+                </span>
+                <span v-else class="text-sm text-red-600 bg-red-100 p-2 rounded-lg font-bold">
+                Closed
+                </span>
               </div>
-              <div class="grid grid-cols-2 gap-4">
-                <div class="bg-gray-100 rounded-lg p-4 text-center">
-                  <i
-                    class="fas fa-calendar-check text-gray-400 text-2xl mb-2"
-                  ></i>
-                  <div class="text-sm text-gray-600">Open</div>
-                </div>
-                <div class="bg-red-500 rounded-lg p-4 text-center text-white">
-                  <i
-                    class="fas fa-exclamation-triangle text-white text-2xl mb-2"
-                  ></i>
-                  <div class="text-sm">Closed</div>
-                </div>
-              </div>
+            <div class="grid grid-cols-2 gap-4">
+    <div
+      :class="{
+        'bg-gray-100 text-gray-600': !isBusinessHours,
+        'bg-green-500 text-white': isBusinessHours,
+      }"
+      class="rounded-lg p-4 text-center transition-colors duration-300"
+    >
+      <i
+        :class="{
+          'fa-calendar-check': isBusinessHours,
+          'fa-clock': !isBusinessHours,
+          'text-white': isBusinessHours,
+          'text-gray-400': !isBusinessHours,
+        }"
+        class="fas text-2xl mb-2"
+      ></i>
+      <div class="text-sm">Open</div>
+    </div>
+
+    <div
+      :class="{
+        'bg-gray-100 text-gray-600': isBusinessHours,
+        'bg-red-500 text-white': !isBusinessHours,
+      }"
+      class="rounded-lg p-4 text-center transition-colors duration-300"
+    >
+      <i
+        :class="{
+          'fa-exclamation-triangle': !isBusinessHours,
+          'fa-calendar-times': isBusinessHours,
+          'text-white': !isBusinessHours,
+          'text-gray-400': isBusinessHours,
+        }"
+        class="fas text-2xl mb-2"
+      ></i>
+      <div class="text-sm">Closed</div>
+    </div>
+  </div>
             </div>
           </div>
           <div className="col-span-7 col-start-3">
@@ -256,6 +284,7 @@ export default {
   data() {
     return {
       isModalOpen: false,
+      isBusinessHours: true,
       progress: 0,
       lastUpdated: "",
       center: { lat: -7.4462496, lng: 112.7177856 },
@@ -444,6 +473,11 @@ export default {
         } else {
           this.lastUpdated = "-";
         }
+        let currentTime = new Date();
+        const hour = currentTime.value.getHours();
+        // Jam 8 pagi (8) sampai jam 5 sore (17)
+        this.isBusinessHours = hour >= 8 && hour < 17;
+
       } catch (error) {
         console.error("Gagal mengambil data progress:", error);
       }
