@@ -189,7 +189,7 @@
                       </svg>
                       <span class="font-medium">{{ note.kota }} - {{ note.nama_dapur }}</span>
                     </div>
-                    <p class="text-sm text-gray-600">{{ note.catatan_terakhir || "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." }}</p>
+                    <p class="text-sm text-gray-600">{{ note.catatan_terakhir || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut." }}</p>
                     <div class="flex items-start justify-start">
                       <div class="text-xs text-[#CCD2E3]">
                         {{ note.updated_at }}
@@ -358,6 +358,14 @@ export default {
     return this.request(`/dynamic/t_progress_doc?page=${page}&limit=${limit}`);
   },
   methods: {
+
+     truncateText(text) {
+      const maxLength = 81;
+      if (text.length > maxLength) {
+        return text.substring(0, maxLength) + '...';
+      }
+      return text;
+    },
       getConsistentColor(key) {
     const colors = [
       '#22c55e', // Hijau

@@ -333,7 +333,7 @@ select:focus {
               <div v-else class="space-y-0">
                 <div v-for="note in notes" :key="note.id" class="pt-2 pb-2 border-t flex flex-col items-start">
                   <p class="text-sm text-[#333333] leading-relaxed">
-                    {{ note.text }}
+                    {{ truncateText(note.text) }}
                   </p>
                   <div class="flex items-center justify-center">
                     <div class="text-xs text-[#CCD2E3]">
@@ -366,7 +366,7 @@ import ProgressChart from "@/components/ProgressChart.vue";
 import MediaGallery from "@/components/MediaGallery.vue";
 import Timeline from "@/components/Timeline.vue";
 import ApiService from "@/services/api.js";
-
+import { ref } from 'vue';
 export default {
   name: "Wilayah",
   components: {
@@ -598,6 +598,14 @@ export default {
     },
   },
   methods: {
+
+      truncateText(text) {
+      const maxLength = 81;
+      if (text.length > maxLength) {
+        return text.substring(0, maxLength) + '...';
+      }
+      return text;
+    },
     // Fetch progress data per dapur
     async fetchProgressDapur() {
       try {
