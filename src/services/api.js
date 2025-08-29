@@ -135,9 +135,21 @@ class ApiService {
     );
   }
 
+  async getDocDashboard(page = 1, limit = 8) {
+    return this.request(
+      `/dynamic/t_progress_doc?page=${page}&limit=${limit}`
+    );
+  }
+
   async getImageByDapurID(id_dapur = null, page = 1, limit = 20) {
     return this.request(
       `/dynamic/t_progress_image?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}&page=${page}&paginate=${limit}`
+    );
+  }
+
+  async getImageDashboard(page = 1, limit =8) {
+    return this.request(
+      `/dynamic/t_progress_image?page=${page}&limit=${limit}`
     );
   }
 
@@ -147,6 +159,18 @@ class ApiService {
     );
   }
 
+  async getVideoDashboard(page = 1, limit =8) {
+    return this.request(
+      `/dynamic/t_progress_video?page=${page}&limit=${limit}`
+    );
+  }
+
+  async getAverageProgress() {
+    return this.request(
+      `/fn/m_dapur/getAverageProgress`
+    );
+  }
+  
   // You can add more API methods here as needed
   async getRegions(page = 1, limit = 38) {
     return this.request(`/dynamic/m_prov?page=${page}&paginate=${limit}`);

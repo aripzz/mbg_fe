@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@fawmi/vue-google-maps": "^0.9.79",
+    "axios": "^1.11.0",
     "chart.js": "^4.4.0",
     "pinia": "^3.0.3",
     "vue": "^3.4.0",
