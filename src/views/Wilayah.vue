@@ -4,8 +4,7 @@ select:focus {
   border-color: transparent;
   /* Atau warna lain jika Anda ingin tetap ada border */
   box-shadow: none;
-}  /* Menghilangkan shadow yang mungkin muncul */
-
+} /* Menghilangkan shadow yang mungkin muncul */
 </style>
 <template>
   <div>
@@ -25,7 +24,11 @@ select:focus {
                   class="search-dropdown-input pr-8"
                   :disabled="loadingRegions"
                 />
-                <button v-if="searchProvinsi" @click="clearSearch('provinsi')" class="search-dropdown-clear">
+                <button
+                  v-if="searchProvinsi"
+                  @click="clearSearch('provinsi')"
+                  class="search-dropdown-clear"
+                >
                   <i class="fas fa-times"></i>
                 </button>
               </div>
@@ -34,15 +37,21 @@ select:focus {
                   <i class="fas fa-spinner fa-spin"></i>
                   <span>Loading...</span>
                 </div>
-                <div v-else-if="filteredRegions.length === 0" class="search-dropdown-empty">
-                  {{ searchProvinsi ? 'Tidak ditemukan' : 'Tidak ada data' }}
+                <div
+                  v-else-if="filteredRegions.length === 0"
+                  class="search-dropdown-empty"
+                >
+                  {{ searchProvinsi ? "Tidak ditemukan" : "Tidak ada data" }}
                 </div>
                 <div
                   v-else
                   v-for="region in filteredRegions"
                   :key="region.id"
                   @mousedown="selectRegion(region)"
-                  :class="['search-dropdown-item', { selected: selectedRegion?.id === region.id }]"
+                  :class="[
+                    'search-dropdown-item',
+                    { selected: selectedRegion?.id === region.id },
+                  ]"
                 >
                   {{ region.nama }}
                 </div>
@@ -60,7 +69,11 @@ select:focus {
                   class="search-dropdown-input pr-8"
                   :disabled="!selectedRegion || loadingCities"
                 />
-                <button v-if="searchKota" @click="clearSearch('kota')" class="search-dropdown-clear">
+                <button
+                  v-if="searchKota"
+                  @click="clearSearch('kota')"
+                  class="search-dropdown-clear"
+                >
                   <i class="fas fa-times"></i>
                 </button>
               </div>
@@ -69,15 +82,27 @@ select:focus {
                   <i class="fas fa-spinner fa-spin"></i>
                   <span>Loading...</span>
                 </div>
-                <div v-else-if="filteredCitys.length === 0" class="search-dropdown-empty">
-                  {{ searchKota ? 'Tidak ditemukan' : selectedRegion ? 'Pilih provinsi terlebih dahulu' : 'Tidak ada data' }}
+                <div
+                  v-else-if="filteredCitys.length === 0"
+                  class="search-dropdown-empty"
+                >
+                  {{
+                    searchKota
+                      ? "Tidak ditemukan"
+                      : selectedRegion
+                      ? "Pilih provinsi terlebih dahulu"
+                      : "Tidak ada data"
+                  }}
                 </div>
                 <div
                   v-else
                   v-for="city in filteredCitys"
                   :key="city.id"
                   @mousedown="selectCity(city)"
-                  :class="['search-dropdown-item', { selected: selectedCity?.id === city.id }]"
+                  :class="[
+                    'search-dropdown-item',
+                    { selected: selectedCity?.id === city.id },
+                  ]"
                 >
                   {{ city.m_kotum?.nama || city.nama }}
                 </div>
@@ -95,7 +120,11 @@ select:focus {
                   class="search-dropdown-input pr-8"
                   :disabled="!selectedCity || loadingAreas"
                 />
-                <button v-if="searchArea" @click="clearSearch('area')" class="search-dropdown-clear">
+                <button
+                  v-if="searchArea"
+                  @click="clearSearch('area')"
+                  class="search-dropdown-clear"
+                >
                   <i class="fas fa-times"></i>
                 </button>
               </div>
@@ -104,15 +133,27 @@ select:focus {
                   <i class="fas fa-spinner fa-spin"></i>
                   <span>Loading...</span>
                 </div>
-                <div v-else-if="filteredAreas.length === 0" class="search-dropdown-empty">
-                  {{ searchArea ? 'Tidak ditemukan' : selectedCity ? 'Tidak ada area' : 'Pilih kota terlebih dahulu' }}
+                <div
+                  v-else-if="filteredAreas.length === 0"
+                  class="search-dropdown-empty"
+                >
+                  {{
+                    searchArea
+                      ? "Tidak ditemukan"
+                      : selectedCity
+                      ? "Tidak ada area"
+                      : "Pilih kota terlebih dahulu"
+                  }}
                 </div>
                 <div
                   v-else
                   v-for="area in filteredAreas"
                   :key="area.id"
                   @mousedown="selectArea(area)"
-                  :class="['search-dropdown-item', { selected: selectedArea?.id === area.id }]"
+                  :class="[
+                    'search-dropdown-item',
+                    { selected: selectedArea?.id === area.id },
+                  ]"
                 >
                   {{ area.nama }}
                 </div>
@@ -130,20 +171,36 @@ select:focus {
                   class="search-dropdown-input pr-8"
                   :disabled="!selectedArea"
                 />
-                <button v-if="searchDapur" @click="clearSearch('dapur')" class="search-dropdown-clear">
+                <button
+                  v-if="searchDapur"
+                  @click="clearSearch('dapur')"
+                  class="search-dropdown-clear"
+                >
                   <i class="fas fa-times"></i>
                 </button>
               </div>
               <div v-if="showDapurDropdown" class="search-dropdown-list">
-                <div v-if="filteredKitchens.length === 0" class="search-dropdown-empty">
-                  {{ searchDapur ? 'Tidak ditemukan' : selectedArea ? 'Tidak ada dapur' : 'Pilih area terlebih dahulu' }}
+                <div
+                  v-if="filteredKitchens.length === 0"
+                  class="search-dropdown-empty"
+                >
+                  {{
+                    searchDapur
+                      ? "Tidak ditemukan"
+                      : selectedArea
+                      ? "Tidak ada dapur"
+                      : "Pilih area terlebih dahulu"
+                  }}
                 </div>
                 <div
                   v-else
                   v-for="kitchen in filteredKitchens"
                   :key="kitchen.id"
                   @mousedown="selectKitchen(kitchen)"
-                  :class="['search-dropdown-item', { selected: selectedKitchenId === kitchen.id }]"
+                  :class="[
+                    'search-dropdown-item',
+                    { selected: selectedKitchenId === kitchen.id },
+                  ]"
                 >
                   {{ kitchen.nama }}
                 </div>
@@ -154,14 +211,18 @@ select:focus {
       </div>
 
       <div className="grid grid-cols-8 grid-rows-6 gap-4">
-        <div className="col-span-2 row-span-6 bg-white p-6 h-[85%] rounded-lg shadow-sm">
+        <div
+          className="col-span-2 row-span-6 bg-white p-6 h-[85%] rounded-lg shadow-sm"
+        >
           <div class="mb-6">
             <h3 class="text-sm font-medium text-gray-800 mb-4">Riwayat</h3>
 
             <!-- Loading State -->
             <div v-if="loading" class="space-y-3">
               <div v-for="n in 5" :key="n" class="animate-pulse">
-                <div class="flex items-center justify-between p-3 bg-gray-200 rounded-lg">
+                <div
+                  class="flex items-center justify-between p-3 bg-gray-200 rounded-lg"
+                >
                   <div class="flex items-center space-x-3">
                     <div class="w-8 h-8 bg-gray-300 rounded-lg"></div>
                     <div class="w-12 h-4 bg-gray-300 rounded"></div>
@@ -173,16 +234,27 @@ select:focus {
 
             <!-- History Data -->
             <div v-else class="space-y-3">
-              <div v-for="(history, index) in sortedHistory" :key="history.day + index"
-                class="flex items-center justify-between p-2 bg-white rounded-xl shadow-md space-x-4">
+              <div
+                v-for="(history, index) in sortedHistory"
+                :key="history.day + index"
+                class="flex items-center justify-between p-2 bg-white rounded-xl shadow-md space-x-4"
+              >
                 <div
-                  class="flex-shrink-0 flex flex-col items-center justify-center w-14 h-14 bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
-                  <span class="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
-                    {{ history.createdAt
-                      ? new Date(history.createdAt).toLocaleDateString("id-ID", {
-                        month: "short",
-                      })
-                      : `Hari ${history.id}` }}
+                  class="flex-shrink-0 flex flex-col items-center justify-center w-14 h-14 bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-gray-700 dark:border-gray-600"
+                >
+                  <span
+                    class="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400"
+                  >
+                    {{
+                      history.createdAt
+                        ? new Date(history.createdAt).toLocaleDateString(
+                            "id-ID",
+                            {
+                              month: "short",
+                            }
+                          )
+                        : `Hari ${history.id}`
+                    }}
                   </span>
                   <span class="text-xl font-bold text-gray-900 dark:text-white">
                     {{ history.day }}
@@ -195,28 +267,46 @@ select:focus {
                   </p>
                 </div>
 
-                <div class="flex-shrink-0 flex items-center px-3 py-1 bg-[#00B1320D] w-[50px] rounded-md">
+                <div
+                  class="flex-shrink-0 flex items-center px-3 py-1 bg-[#00B1320D] w-[50px] rounded-md"
+                >
                   <img src="/asset/up.png" />
-                  <span class="text-sm font-semibold text-green-600 dark:text-green-300">
+                  <span
+                    class="text-sm font-semibold text-green-600 dark:text-green-300"
+                  >
                     +{{
                       sortedHistory[index + 1]?.percentage !== undefined
                         ? (
-                          history.percentage -
-                          sortedHistory[index + 1].percentage
-                        ).toFixed(0)
+                            history.percentage -
+                            sortedHistory[index + 1].percentage
+                          ).toFixed(0)
                         : 0
                     }}
                   </span>
                 </div>
                 <button
-                  class="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 focus:outline-none dark:text-gray-500 dark:hover:text-gray-300">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  class="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 focus:outline-none dark:text-gray-500 dark:hover:text-gray-300"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 5l7 7-7 7"
+                    ></path>
                   </svg>
                 </button>
               </div>
-              <div v-if="historyData.length === 0" class="p-4 bg-gray-50 rounded-lg text-center">
+              <div
+                v-if="historyData.length === 0"
+                class="p-4 bg-gray-50 rounded-lg text-center"
+              >
                 <i class="fas fa-history text-gray-400 text-2xl mb-2"></i>
                 <p class="text-sm text-gray-500">No history data available</p>
               </div>
@@ -229,9 +319,21 @@ select:focus {
               Akumulasi Progres
             </h3>
             <div class="flex items-center justify-center">
-              <CircleWilayah :value="historyData.length ? Number(historyData[0].percentage || 0).toFixed(0) : '0'"
-                :difference="historyData.length ? Number(progressDifference || 0).toFixed(0) : '0'"
-                :lastUpdate="historyData.length ? lastUpdated : 'No data available'" />
+              <CircleWilayah
+                :value="
+                  historyData.length
+                    ? Number(historyData[0].percentage || 0).toFixed(0)
+                    : '0'
+                "
+                :difference="
+                  historyData.length
+                    ? Number(progressDifference || 0).toFixed(0)
+                    : '0'
+                "
+                :lastUpdate="
+                  historyData.length ? lastUpdated : 'No data available'
+                "
+              />
               <p v-if="lastUpdate" class="text-xs text-gray-500 mt-4">
                 Terakhir diupdate {{ lastUpdate }}
               </p>
@@ -245,16 +347,27 @@ select:focus {
           <!-- Perkembangan Pembangunan -->
           <div class="bg-white rounded-lg p-6 shadow-sm">
             <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-semibold text-gray-800">Perkembangan Pembangunan</h3>
+              <h3 class="text-lg font-semibold text-gray-800">
+                Perkembangan Pembangunan
+              </h3>
             </div>
             <div v-if="chartValues.length && chartLabels.length" class="h-48">
-              <ProgressChart :labels="chartLabels" :values="chartValues" :last-updated="lastUpdated" />
+              <ProgressChart
+                :labels="chartLabels"
+                :values="chartValues"
+                :last-updated="lastUpdated"
+              />
             </div>
-            <div v-else class="h-48 flex items-center justify-center bg-gray-50 rounded-lg">
+            <div
+              v-else
+              class="h-48 flex items-center justify-center bg-gray-50 rounded-lg"
+            >
               <div class="text-center">
                 <i class="fas fa-chart-line text-gray-400 text-3xl mb-2"></i>
                 <p class="text-gray-500 text-sm">Data grafik tidak tersedia</p>
-                <p class="text-gray-400 text-xs">Pilih dapur untuk melihat perkembangan</p>
+                <p class="text-gray-400 text-xs">
+                  Pilih dapur untuk melihat perkembangan
+                </p>
               </div>
             </div>
           </div>
@@ -266,7 +379,12 @@ select:focus {
               <div>
                 <span class="text-sm text-gray-500">Target</span>
                 <span class="m-4 text-blue-600 font-medium">
-                  Minggu {{ Number(historyData[historyData.length - 1]?.percentage/ 12.5).toFixed(0) }}
+                  Minggu
+                  {{
+                    Number(
+                      historyData[historyData.length - 1]?.percentage / 12.5
+                    ).toFixed(0)
+                  }}
                 </span>
                 <span class="text-blue-600 font-bold">
                   {{
@@ -281,17 +399,34 @@ select:focus {
 
             <!-- Timeline -->
             <div class="pr-4">
-              <Timeline :totalSteps="8" :currentStep="Number(historyData[historyData.length - 1]?.percentage/ 12.5).toFixed(0)"
-                :percent="historyData[historyData.length - 1]?.percentage || 0" />
+              <Timeline
+                :totalSteps="8"
+                :currentStep="
+                  Number(
+                    historyData[historyData.length - 1]?.percentage / 12.5
+                  ).toFixed(0)
+                "
+                :percent="historyData[historyData.length - 1]?.percentage || 0"
+              />
             </div>
           </div>
         </div>
 
         <div className="col-span-3 row-span-3 col-start-3 row-start-4">
           <!-- foto -->
-          <MediaGallery :show-counts="true" :photos="mediaData.photos" :videos="mediaData.videos"
-            :documents="mediaData.documents" :photos-count="mediaCounts.photos" :videos-count="mediaCounts.videos"
-            :documents-count="mediaCounts.documents" :show-view-all="false" />
+          <MediaGallery
+            :show-counts="true"
+            :photos="mediaData.photos"
+            :videos="mediaData.videos"
+            :documents="mediaData.documents"
+            :photos-count="mediaCounts.photos"
+            :videos-count="mediaCounts.videos"
+            :documents-count="mediaCounts.documents"
+            :show-view-all="false"
+            :show-dapur-name="false"
+            @photo-click="openLightbox"
+            @video-click="openVideoLightbox"
+          />
         </div>
         <div className="col-span-3 row-span-3 col-start-6 row-start-4">
           <!-- note -->
@@ -301,12 +436,18 @@ select:focus {
               <div class="flex justify-between items-center mb-6">
                 <h3 class="text-lg font-semibold text-gray-800">Catatan</h3>
                 <div class="flex items-center space-x-2">
-                  <button @click="prevPage" :disabled="currentPageNote === 1"
-                    class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200 disabled:opacity-50">
+                  <button
+                    @click="prevPage"
+                    :disabled="currentPageNote === 1"
+                    class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200 disabled:opacity-50"
+                  >
                     <i class="fas fa-chevron-left"></i>
                   </button>
-                  <button @click="nextPage" :disabled="currentPageNote === totalPagesNote"
-                    class="w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50">
+                  <button
+                    @click="nextPage"
+                    :disabled="currentPageNote === totalPagesNote"
+                    class="w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+                  >
                     <i class="fas fa-chevron-right"></i>
                   </button>
                 </div>
@@ -314,24 +455,36 @@ select:focus {
 
               <!-- Loading State -->
               <div v-if="loading" class="flex items-center justify-center py-8">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                <div
+                  class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"
+                ></div>
                 <span class="ml-2 text-sm text-gray-600">Loading...</span>
               </div>
 
               <!-- Error State -->
-              <div v-else-if="error" class="p-4 bg-red-50 rounded-lg border border-red-200">
+              <div
+                v-else-if="error"
+                class="p-4 bg-red-50 rounded-lg border border-red-200"
+              >
                 <div class="flex items-center">
                   <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
                   <span class="text-sm text-red-700">{{ error }}</span>
                 </div>
-                <button @click="refreshData" class="mt-2 text-sm text-red-600 hover:text-red-800 underline">
+                <button
+                  @click="refreshData"
+                  class="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+                >
                   Try Again
                 </button>
               </div>
 
               <!-- Notes -->
               <div v-else class="space-y-0">
-                <div v-for="note in notes" :key="note.id" class="pt-2 pb-2 border-t flex flex-col items-start">
+                <div
+                  v-for="note in notes"
+                  :key="note.id"
+                  class="pt-2 pb-2 border-t flex flex-col items-start"
+                >
                   <p class="text-sm text-[#333333] leading-relaxed">
                     {{ truncateText(note.text) }}
                   </p>
@@ -342,7 +495,10 @@ select:focus {
                   </div>
                 </div>
                 <!-- Empty state -->
-                <div v-if="notes.length === 0" class="p-4 bg-gray-50 rounded-lg text-center">
+                <div
+                  v-if="notes.length === 0"
+                  class="p-4 bg-gray-50 rounded-lg text-center"
+                >
                   <i class="fas fa-sticky-note text-gray-400 text-2xl mb-2"></i>
                   <p class="text-sm text-gray-500">No notes available</p>
                 </div>
@@ -408,6 +564,14 @@ export default {
       labels: ["Data 1", "Data 2", "Data 3"],
       values: [15, 6, 40],
       notes: [],
+      lightbox: {
+        isOpen: false,
+        currentImage: null,
+      },
+      videoLightbox: {
+        isOpen: false,
+        currentVideos: [],
+      },
       loading: false,
       error: null,
       apiData: null,
@@ -426,7 +590,6 @@ export default {
         total: 0,
         page: 1,
         totalPages: 0,
-        limit: 10,
         currentRowsCount: 0,
         next_page: null,
         prev_page: null,
@@ -462,9 +625,9 @@ export default {
       return this.historyData.map((item) =>
         item.createdAt
           ? new Date(item.createdAt).toLocaleDateString("id-ID", {
-            day: "2-digit",
-            month: "short",
-          })
+              day: "2-digit",
+              month: "short",
+            })
           : `Hari ${item.id}`
       );
     },
@@ -493,7 +656,6 @@ export default {
     progressPercentage() {
       return this.history?.percentage ?? 0;
     },
-
 
     progressDifference() {
       if (this.historyData.length >= 2) {
@@ -527,8 +689,9 @@ export default {
         return this.regions;
       }
       const searchTerm = this.searchProvinsi.toLowerCase();
-      return this.regions.filter(region => 
-        region.nama && region.nama.toLowerCase().includes(searchTerm)
+      return this.regions.filter(
+        (region) =>
+          region.nama && region.nama.toLowerCase().includes(searchTerm)
       );
     },
 
@@ -538,10 +701,11 @@ export default {
         return this.citys;
       }
       const searchTerm = this.searchKota.toLowerCase();
-      return this.citys.filter(city => 
-        (city.m_area?.nama || city.nama) && 
-        (city.m_area?.nama.toLowerCase().includes(searchTerm) || 
-         city.nama.toLowerCase().includes(searchTerm))
+      return this.citys.filter(
+        (city) =>
+          (city.m_area?.nama || city.nama) &&
+          (city.m_area?.nama.toLowerCase().includes(searchTerm) ||
+            city.nama.toLowerCase().includes(searchTerm))
       );
     },
 
@@ -551,8 +715,9 @@ export default {
         return this.kitchens;
       }
       const searchTerm = this.searchDapur.toLowerCase();
-      return this.kitchens.filter(kitchen => 
-        kitchen.nama && kitchen.nama.toLowerCase().includes(searchTerm)
+      return this.kitchens.filter(
+        (kitchen) =>
+          kitchen.nama && kitchen.nama.toLowerCase().includes(searchTerm)
       );
     },
 
@@ -562,8 +727,8 @@ export default {
         return this.areas;
       }
       const searchTerm = this.searchArea.toLowerCase();
-      return this.areas.filter(area => 
-        area.nama && area.nama.toLowerCase().includes(searchTerm)
+      return this.areas.filter(
+        (area) => area.nama && area.nama.toLowerCase().includes(searchTerm)
       );
     },
   },
@@ -644,7 +809,7 @@ export default {
         const response = await ApiService.getImageByDapurID(
           this.selectedKitchenId,
           this.currentPage,
-          4,
+          4
         );
         return response;
       } catch (error) {
@@ -659,7 +824,7 @@ export default {
         const response = await ApiService.getDocByDapurID(
           this.selectedKitchenId,
           this.currentPage,
-          4,
+          4
         );
         return response;
       } catch (error) {
@@ -674,7 +839,7 @@ export default {
         const response = await ApiService.getVideoByDapurID(
           this.selectedKitchenId,
           this.currentPage,
-          4,
+          4
         );
         return response;
       } catch (error) {
@@ -716,16 +881,16 @@ export default {
           text: item.catatan || "-", // asumsi backend ada field catatan
           date: dateObj
             ? dateObj.toLocaleDateString("id-ID", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-            })
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })
             : "-",
           time: dateObj
             ? dateObj.toLocaleTimeString("id-ID", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
+                hour: "2-digit",
+                minute: "2-digit",
+              })
             : "-",
         };
       });
@@ -778,31 +943,41 @@ export default {
       this.error = null;
 
       try {
-        // Fetch all data concurrently for better performance
+        // Ambil semua data paralel
         const [
           progressResponse,
+          notesResponse,
           imagesResponse,
           documentsResponse,
-          videosResponse
+          videosResponse,
         ] = await Promise.all([
           this.fetchProgressDapur(),
           this.fetchProgressNotes(),
           this.fetchMediaImages(),
           this.fetchMediaDocuments(),
-          this.fetchMediaVideos()
+          this.fetchMediaVideos(),
         ]);
 
-        // Set pagination info from progress response
+        // Set pagination info
         this.pagination = progressResponse.pagination || {};
         this.totalPages = this.pagination.totalPages || 1;
 
-        // Process all the fetched data
+        // Isi progress & notes
         this.processProgressData(progressResponse.data);
-        this.processMediaData(
-          imagesResponse.data,
-          documentsResponse.data,
-          videosResponse.data
-        );
+        this.processNotesData(notesResponse.data);
+
+        // Isi mediaData & mediaCounts → persis dengan dashboard.vue
+        this.mediaCounts = {
+          photos: (imagesResponse?.data || []).length,
+          videos: (videosResponse?.data || []).length,
+          documents: (documentsResponse?.data || []).length,
+        };
+
+        this.mediaData = {
+          photos: imagesResponse?.data || [],
+          videos: videosResponse?.data || [],
+          documents: documentsResponse?.data || [],
+        };
       } catch (error) {
         console.error("Error fetching all data:", error);
         this.error = error.message;
@@ -826,7 +1001,7 @@ export default {
 
       try {
         const response = await ApiService.getRegions();
-        console.log("Regions API response:", response); 
+        console.log("Regions API response:", response);
 
         if (response.status === "success" && Array.isArray(response.data)) {
           this.regions = response.data;
@@ -836,7 +1011,7 @@ export default {
       } catch (error) {
         console.error("Error loading regions:", error);
         this.regionsError = error.message;
-        this.regions = []; 
+        this.regions = [];
       } finally {
         this.loadingRegions = false;
       }
@@ -845,8 +1020,8 @@ export default {
     async loadCity() {
       if (!this.selectedRegion) {
         this.citys = [];
-        this.selectedCity = ""; 
-        this.loadKitchens(); 
+        this.selectedCity = "";
+        this.loadKitchens();
         return;
       }
 
@@ -855,7 +1030,7 @@ export default {
 
       try {
         const response = await ApiService.getCities(this.selectedRegion.id);
-        console.log("Cities API response:", response); 
+        console.log("Cities API response:", response);
 
         if (response.status === "success" && Array.isArray(response.data)) {
           this.citys = response.data;
@@ -865,7 +1040,7 @@ export default {
       } catch (error) {
         console.error("Error loading cities:", error);
         this.citiesError = error.message;
-        this.citys = []; 
+        this.citys = [];
       } finally {
         this.loadingCities = false;
       }
@@ -875,7 +1050,7 @@ export default {
       if (!cityId) {
         this.areas = [];
         this.selectedArea = null;
-        this.loadKitchens(); 
+        this.loadKitchens();
         return;
       }
 
@@ -884,19 +1059,19 @@ export default {
 
       try {
         const response = await ApiService.getAreas(cityId.id_prov || cityId.id);
-        console.log("Areas API response:", response); 
+        console.log("Areas API response:", response);
 
         if (response.status === "success" && Array.isArray(response.data)) {
           const areaSet = new Set();
           const uniqueAreas = [];
-          
-          response.data.forEach(item => {
+
+          response.data.forEach((item) => {
             const areaName = item.m_area?.nama || item.nama;
             if (areaName && !areaSet.has(areaName)) {
               areaSet.add(areaName);
               uniqueAreas.push({
                 id: item.id,
-                nama: areaName
+                nama: areaName,
               });
             }
           });
@@ -951,6 +1126,25 @@ export default {
       await this.fetchProgressData();
     },
 
+    openLightbox(image) {
+      this.lightbox.currentImage = image;
+      this.lightbox.isOpen = true;
+    },
+    closeLightbox() {
+      this.lightbox.isOpen = false;
+      this.lightbox.currentImage = null;
+    },
+    openVideoLightbox(videos) {
+      this.videoLightbox.currentVideos = Array.isArray(videos)
+        ? videos
+        : [videos];
+      this.videoLightbox.isOpen = true;
+    },
+    closeVideoLightbox() {
+      this.videoLightbox.isOpen = false;
+      this.videoLightbox.currentVideos = [];
+    },
+
     selectRegion(region) {
       this.selectedRegion = region;
       this.searchProvinsi = region.nama;
@@ -977,27 +1171,27 @@ export default {
     },
 
     clearSearch(type) {
-      if (type === 'provinsi') {
-        this.searchProvinsi = '';
+      if (type === "provinsi") {
+        this.searchProvinsi = "";
         this.selectedRegion = null;
         this.selectedCity = null;
         this.selectedArea = null;
-        this.selectedKitchenId = '';
+        this.selectedKitchenId = "";
         this.showProvinsiDropdown = true;
-      } else if (type === 'kota') {
-        this.searchKota = '';
+      } else if (type === "kota") {
+        this.searchKota = "";
         this.selectedCity = null;
         this.selectedArea = null;
-        this.selectedKitchenId = '';
+        this.selectedKitchenId = "";
         this.showKotaDropdown = true;
-      } else if (type === 'area') {
-        this.searchArea = '';
+      } else if (type === "area") {
+        this.searchArea = "";
         this.selectedArea = null;
-        this.selectedKitchenId = '';
+        this.selectedKitchenId = "";
         this.showAreaDropdown = true;
-      } else if (type === 'dapur') {
-        this.searchDapur = '';
-        this.selectedKitchenId = '';
+      } else if (type === "dapur") {
+        this.searchDapur = "";
+        this.selectedKitchenId = "";
         this.showDapurDropdown = true;
       }
     },
@@ -1005,13 +1199,13 @@ export default {
     handleBlur(type) {
       // Use setTimeout to allow click events to be processed before hiding dropdown
       setTimeout(() => {
-        if (type === 'provinsi') {
+        if (type === "provinsi") {
           this.showProvinsiDropdown = false;
-        } else if (type === 'kota') {
+        } else if (type === "kota") {
           this.showKotaDropdown = false;
-        } else if (type === 'area') {
+        } else if (type === "area") {
           this.showAreaDropdown = false;
-        } else if (type === 'dapur') {
+        } else if (type === "dapur") {
           this.showDapurDropdown = false;
         }
       }, 200);

@@ -87,52 +87,58 @@
             <div class="space-y-4 mb-6">
               <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-600 font-bold">Status</span>
-                <span v-if="isBusinessHours" class="text-sm bg-green-500 text-white p-2 rounded-lg font-bold">
-                Open
+                <span
+                  v-if="isBusinessHours"
+                  class="text-sm bg-green-500 text-white p-2 rounded-lg font-bold"
+                >
+                  Open
                 </span>
-                <span v-else class="text-sm text-red-600 bg-red-100 p-2 rounded-lg font-bold">
-                Closed
+                <span
+                  v-else
+                  class="text-sm text-red-600 bg-red-100 p-2 rounded-lg font-bold"
+                >
+                  Closed
                 </span>
               </div>
-            <div class="grid grid-cols-2 gap-4">
-    <div
-      :class="{
-        'bg-gray-100 text-gray-600': !isBusinessHours,
-        'bg-green-500 text-white': isBusinessHours,
-      }"
-      class="rounded-lg p-4 text-center transition-colors duration-300"
-    >
-      <i
-        :class="{
-          'fa-calendar-check': isBusinessHours,
-          'fa-clock': !isBusinessHours,
-          'text-white': isBusinessHours,
-          'text-gray-400': !isBusinessHours,
-        }"
-        class="fas text-2xl mb-2"
-      ></i>
-      <div class="text-sm">Open</div>
-    </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div
+                  :class="{
+                    'bg-gray-100 text-gray-600': !isBusinessHours,
+                    'bg-green-500 text-white': isBusinessHours,
+                  }"
+                  class="rounded-lg p-4 text-center transition-colors duration-300"
+                >
+                  <i
+                    :class="{
+                      'fa-calendar-check': isBusinessHours,
+                      'fa-clock': !isBusinessHours,
+                      'text-white': isBusinessHours,
+                      'text-gray-400': !isBusinessHours,
+                    }"
+                    class="fas text-2xl mb-2"
+                  ></i>
+                  <div class="text-sm">Open</div>
+                </div>
 
-    <div
-      :class="{
-        'bg-gray-100 text-gray-600': isBusinessHours,
-        'bg-red-500 text-white': !isBusinessHours,
-      }"
-      class="rounded-lg p-4 text-center transition-colors duration-300"
-    >
-      <i
-        :class="{
-          'fa-exclamation-triangle': !isBusinessHours,
-          'fa-calendar-times': isBusinessHours,
-          'text-white': !isBusinessHours,
-          'text-gray-400': isBusinessHours,
-        }"
-        class="fas text-2xl mb-2"
-      ></i>
-      <div class="text-sm">Closed</div>
-    </div>
-  </div>
+                <div
+                  :class="{
+                    'bg-gray-100 text-gray-600': isBusinessHours,
+                    'bg-red-500 text-white': !isBusinessHours,
+                  }"
+                  class="rounded-lg p-4 text-center transition-colors duration-300"
+                >
+                  <i
+                    :class="{
+                      'fa-exclamation-triangle': !isBusinessHours,
+                      'fa-calendar-times': isBusinessHours,
+                      'text-white': !isBusinessHours,
+                      'text-gray-400': isBusinessHours,
+                    }"
+                    class="fas text-2xl mb-2"
+                  ></i>
+                  <div class="text-sm">Closed</div>
+                </div>
+              </div>
             </div>
           </div>
           <div className="col-span-7 col-start-3">
@@ -140,7 +146,9 @@
               <div class="flex items-center justify-between mb-4">
                 <div>
                   <span class="text-sm text-gray-500">Target</span>
-                  <span class="m-4 text-blue-600 font-medium">Minggu {{ Number(progress/ 12.5).toFixed(0) }}</span>
+                  <span class="m-4 text-blue-600 font-medium"
+                    >Minggu {{ Number(progress / 12.5).toFixed(0) }}</span
+                  >
                   <span class="text-blue-600 font-bold">{{ progress }} %</span>
                 </div>
                 <div class="flex items-center space-x-2">
@@ -154,7 +162,11 @@
                 </div>
               </div>
               <!-- Timeline -->
-              <Timeline :totalSteps="8" :currentStep="Number(progress/ 12.5).toFixed(0)" :percent=" progress " />
+              <Timeline
+                :totalSteps="8"
+                :currentStep="Number(progress / 12.5).toFixed(0)"
+                :percent="progress"
+              />
             </div>
           </div>
           <div className="col-span-3 row-span-3 col-start-10">
@@ -187,7 +199,9 @@
                           />
                         </g>
                       </svg>
-                      <span class="font-medium">{{ note.kota }} - {{ note.nama_dapur }}</span>
+                      <span class="font-medium"
+                        >{{ note.kota }} - {{ note.nama_dapur }}</span
+                      >
                     </div>
                     <p class="text-sm text-gray-600">{{ note.catatan_terakhir || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut." }}</p>
                     <div class="flex items-start justify-start">
@@ -250,7 +264,7 @@ import ActivityItem from "@/components/ActivityItem.vue";
 import MediaGallery from "@/components/MediaGallery.vue";
 import Timeline from "@/components/Timeline.vue";
 import ApiService from "@/services/api.js";
-import { ref } from 'vue';
+import { ref } from "vue";
 export default {
   name: "Dashboard",
   components: {
@@ -349,7 +363,7 @@ export default {
     };
   },
   // async mounted() {
-    
+
   // },
   async created() {
     await this.fetchProgress();
@@ -378,24 +392,24 @@ export default {
       '#6366f1', // Indigo
     ];
 
-    // Fungsi sederhana untuk menghasilkan nilai numerik dari sebuah string
-    let hash = 0;
-    for (let i = 0; i < key.length; i++) {
-      hash = ((hash << 5) - hash) + key.charCodeAt(i);
-      hash |= 0; // Mengubahnya menjadi 32-bit integer
-    }
+      // Fungsi sederhana untuk menghasilkan nilai numerik dari sebuah string
+      let hash = 0;
+      for (let i = 0; i < key.length; i++) {
+        hash = (hash << 5) - hash + key.charCodeAt(i);
+        hash |= 0; // Mengubahnya menjadi 32-bit integer
+      }
 
-    // Menggunakan hash untuk memilih warna secara konsisten
-    const index = Math.abs(hash) % colors.length;
-    return colors[index];
-  },
+      // Menggunakan hash untuk memilih warna secara konsisten
+      const index = Math.abs(hash) % colors.length;
+      return colors[index];
+    },
     async fetchProgress() {
       try {
         const response = await ApiService.getAverageProgress();
 
         const responseImage = await ApiService.getImageDashboard();
         const responseDoc = await ApiService.getDocDashboard();
-        const responseVideo = await ApiService.getVideoDashboard();  
+        const responseVideo = await ApiService.getVideoDashboard();
         const responseAvg = await ApiService.getAverageProgressArea();
         const responseNote = await ApiService.getNotedPerKota();
         const responseDapur = await ApiService.getDapur();
@@ -410,19 +424,19 @@ export default {
         this.dapurData = dataDapur;
 
         this.markers = dataDapur.map((item) => {
-  return {
-    id: "dfsldjl3r",
-    position: {
-      lat: Number(item.lat),
-      lng: Number(item.long),
-    },
-  };
-});
+          return {
+            id: "dfsldjl3r",
+            position: {
+              lat: Number(item.lat),
+              lng: Number(item.long),
+            },
+          };
+        });
 
         this.averageProgressData = dataAvg.slice(0, 4);
         this.noteData = dataNote.map(note => ({
           ...note,
-          iconColor: this.getConsistentColor(note.nama_dapur)
+          iconColor: this.getConsistentColor(note.nama_dapur),
         }));
 
         this.mediaCounts = {
@@ -465,12 +479,11 @@ export default {
         } else {
           this.lastUpdated = "-";
         }
-      const currentTime = ref(new Date());
+        const currentTime = ref(new Date());
 
-      // Hitung status jam kerja
-      const hour = currentTime.value.getHours();
-      this.isBusinessHours = hour >= 8 && hour < 17;
-
+        // Hitung status jam kerja
+        const hour = currentTime.value.getHours();
+        this.isBusinessHours = hour >= 8 && hour < 17;
       } catch (error) {
         console.error("Gagal mengambil data progress:", error);
       }
