@@ -11,10 +11,10 @@
 
     <!-- Percentage & Label -->
     <div class="absolute bg-white mt-8 mr-8 ml-8 mb-9 rounded-full inset-0 flex flex-col items-center justify-center">
-      <p class="text-[32px] font-bold text-[#307FF5]">
+      <p class="text-[32px] text-center font-bold text-[#307FF5]">
         {{ percentage }}%
       </p>
-      <span class="text-[10px] leading-tight text-[#7D95C9]">
+      <span class="text-[10px] text-center leading-tight text-[#7D95C9]">
         Diupdate <br /> {{ updatedAt }}
       </span>
     </div>
