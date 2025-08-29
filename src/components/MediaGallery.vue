@@ -307,19 +307,36 @@ export default {
     async request(url, options) {
       return ApiService.request(url, options);
     },
-    async fetchAllMedia() {
-      try {
-        let url = "";
-        if (this.allMediaType === "foto") {
-          url = "/dynamic/t_progress_image?include=t_progress_dapur>m_dapur";
-        } else if (this.allMediaType === "video") {
-          url =
-            "/dynamic/t_progress_video?paginate=100&include=t_progress_dapur>m_dapur";
-        } else if (this.allMediaType === "dokumen") {
-          url =
-            "/dynamic/t_progress_doc?paginate=100&include=t_progress_dapur>m_dapur";
+    getMediaUrl(type, id_dapur = null) {
+      if (id_dapur) {
+        // untuk wilayah.vue
+        switch (type) {
+          case "foto":
+            return `/dynamic/t_progress_image?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}`;
+          case "video":
+            return `/dynamic/t_progress_video?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}`;
+          case "dokumen":
+            return `/dynamic/t_progress_doc?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}`;
         }
+      } else {
+        // untuk dashboard.vue
+        switch (type) {
+          case "foto":
+            return `/dynamic/t_progress_image?include=t_progress_dapur>m_dapur`;
+          case "video":
+            return `/dynamic/t_progress_video?paginate=100&include=t_progress_dapur>m_dapur`;
+          case "dokumen":
+            return `/dynamic/t_progress_doc?paginate=100&include=t_progress_dapur>m_dapur`;
+        }
+      }
+      return "";
+    },
+
+    async fetchAllMedia(id_dapur = null) {
+      try {
+        const url = this.getMediaUrl(this.allMediaType, id_dapur);
         const res = await this.request(url, { method: "GET" });
+
         this.allMediaData = Array.isArray(res?.data)
           ? res.data
           : Array.isArray(res)
