@@ -145,9 +145,9 @@ class ApiService {
     );
   }
 
-  async getImageDashboard(page = 1, limit = 8) {
+  async getImageDashboard(page = 1, paginate =100) {
     return this.request(
-      `/dynamic/t_progress_image?page=${page}&limit=${limit}`
+      `/dynamic/t_progress_image?page=${page}&paginate=${paginate}`
     );
   }
 
@@ -157,15 +157,9 @@ class ApiService {
     );
   }
 
-  async getVideoDashboard(page = 1, limit = 8) {
+  async getVideoDashboard(page = 1, paginate = 100) {
     return this.request(
-      `/dynamic/t_progress_video?page=${page}&limit=${limit}`
-    );
-  }
-
-  async getVideoDashboard(page = 1, limit = 8) {
-    return this.request(
-      `/dynamic/t_progress_video?page=${page}&limit=${limit}`
+      `/dynamic/t_progress_video?page=${page}&paginate=${paginate}`
     );
   }
 
