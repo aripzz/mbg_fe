@@ -15,10 +15,10 @@
           :class="{ 'text-[#022A44] font-bold border-b-2 border-[#022A44] pb-1': $route.name === 'Dashboard' }">
           Dashboard
         </router-link>
-        <router-link to="/wilayah" class="text-gray-500 hover:text-gray-700"
+        <a href="#" class="text-gray-500 hover:text-gray-700"
           :class="{ 'text-[#022A44] font-bold border-b-2 border-[#022A44] pb-1': $route.name === 'Wilayah' }">
           Wilayah
-        </router-link>
+      </a>
       </nav>
 
       <div class="flex items-center space-x-4">

@@ -70,7 +70,7 @@
                     <div>
                         <label for="mapSearch" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cari
                             Lokasi Maps<span class="text-red-700"></span></label>
-                        <div class="relative">
+                        <!-- <div class="relative">
                             <input type="text" id="mapSearch" v-model="formData.locationSearch"
                                 @focus="showMapSuggestion = true" @blur="hideMapSuggestion"
                                 class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -81,7 +81,10 @@
                                     Aplikasi Demo Belum Integrasi peta akan menampilkan saran lokasi di sini.
                                 </p>
                             </div>
-                        </div>
+                        </div> -->
+                    </div>
+                    <div>
+                         <MapView @locationSelected="updateLocation" />
                     </div>
 
                     <div>
@@ -114,6 +117,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import apiService from '../services/api.js';
+import MapView from './Map.vue'
 
 const props = defineProps({
     isOpen: {
@@ -127,9 +131,14 @@ const emit = defineEmits(['close', 'save']);
 const formData = ref({
     name: '',
     locationSearch: '',
-    latitude: null,
-    longitude: null
+    lat: null,
+    long: null
 });
+
+const updateLocation = (location) => {
+  formData.value.lat = parseFloat(location.lat.toFixed(6))
+  formData.value.long = parseFloat(location.lng.toFixed(6))
+}
 
 const wilayahs = ref([]);
 const isLoading = ref(false);
@@ -170,6 +179,8 @@ const fetchWilayah = async () => {
         isLoading.value = false;
     }
 };
+
+
 
 const submitForm = async () => {
 
