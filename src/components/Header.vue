@@ -1,71 +1,125 @@
 <template>
-  <AddKitchenModal :is-open="isModalOpen" @close="closeModal" @save="handleSave" />
-  <AddUserModal :is-open="isModalOpenUser" @close="closeModalUser" @save="handleSaveUser" />
+  <AddKitchenModal
+    :is-open="isModalOpen"
+    @close="closeModal"
+    @save="handleSave"
+  />
+  <AddUserModal
+    :is-open="isModalOpenUser"
+    @close="closeModalUser"
+    @save="handleSaveUser"
+  />
 
   <header class="bg-white shadow-sm border-b">
     <div class="flex items-center justify-between px-6 py-4">
       <div class="flex items-center space-x-2">
         <!-- logo -->
-        <img src="/asset/logo_bgn.png" alt="logo" class="w-7 h-7" srcset="">
+        <img src="/asset/logo_bgn.png" alt="logo" class="w-7 h-7" srcset="" />
         <h1 class="text-xl font-semibold text-gray-800">DapurMBG</h1>
       </div>
 
       <nav class="flex space-x-6">
-        <router-link to="/dashboard" class="text-gray-500 hover:text-gray-700"
-          :class="{ 'text-[#022A44] font-bold border-b-2 border-[#022A44] pb-1': $route.name === 'Dashboard' }">
+        <router-link
+          to="/dashboard"
+          class="text-gray-500 hover:text-gray-700"
+          :class="{
+            'text-[#022A44] font-bold border-b-2 border-[#022A44] pb-1':
+              $route.name === 'Dashboard',
+          }"
+        >
           Dashboard
         </router-link>
-        <a href="#" class="text-gray-500 hover:text-gray-700"
-          :class="{ 'text-[#022A44] font-bold border-b-2 border-[#022A44] pb-1': $route.name === 'Wilayah' }">
+
+        <router-link
+          to="/wilayah"
+          class="text-gray-500 hover:text-gray-700"
+          :class="{
+            'text-[#022A44] font-bold border-b-2 border-[#022A44] pb-1':
+              $route.name === 'Wilayah',
+          }"
+        >
           Wilayah
-      </a>
+        </router-link>
       </nav>
 
       <div class="flex items-center space-x-4">
-        <i class="fas fa-bell text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"></i>
+        <i
+          class="fas fa-bell text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+        ></i>
         <div class="relative">
-          <button @click.stop="toggleUserMenu"
+          <button
+            @click.stop="toggleUserMenu"
             class="flex items-center focus:outline-none hover:opacity-80 transition-opacity"
-            :aria-expanded="showUserMenu" aria-haspopup="true">
-            <span class="text-sm mr-[10px] text-gray-600">{{ userInfo.username || 'Admin' }}</span>
+            :aria-expanded="showUserMenu"
+            aria-haspopup="true"
+          >
+            <span class="text-sm mr-[10px] text-gray-600">{{
+              userInfo.username || "Admin"
+            }}</span>
             <div
-              class="w-6 h-6 bg-red-500 mr-[10px] rounded-full flex items-center justify-center ring-2 ring-offset-2 ring-red-500 ring-offset-white">
-              <span class="text-white text-sm font-medium">{{ userInitial }}</span>
+              class="w-6 h-6 bg-red-500 mr-[10px] rounded-full flex items-center justify-center ring-2 ring-offset-2 ring-red-500 ring-offset-white"
+            >
+              <span class="text-white text-sm font-medium">{{
+                userInitial
+              }}</span>
             </div>
-            <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform duration-200"
-              :class="{ 'rotate-180': showUserMenu }"></i>
+            <i
+              class="fas fa-chevron-down text-gray-400 text-xs transition-transform duration-200"
+              :class="{ 'rotate-180': showUserMenu }"
+            ></i>
           </button>
 
-          <transition enter-active-class="transition ease-out duration-100"
-            enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100"
-            leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100"
-            leave-to-class="transform opacity-0 scale-95">
-            <div v-if="showUserMenu"
+          <transition
+            enter-active-class="transition ease-out duration-100"
+            enter-from-class="transform opacity-0 scale-95"
+            enter-to-class="transform opacity-100 scale-100"
+            leave-active-class="transition ease-in duration-75"
+            leave-from-class="transform opacity-100 scale-100"
+            leave-to-class="transform opacity-0 scale-95"
+          >
+            <div
+              v-if="showUserMenu"
               class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-1 z-50 border border-gray-200"
-              role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button">
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="user-menu-button"
+            >
               <div class="px-4 py-3 border-b border-gray-100">
-                <div class="font-medium text-gray-900">{{ userInfo.username || 'Admin' }}</div>
-                <div class="text-sm text-gray-500 mt-1">{{ userInfo.email || 'admin@dapurmbg.com' }}</div>
+                <div class="font-medium text-gray-900">
+                  {{ userInfo.username || "Admin" }}
+                </div>
+                <div class="text-sm text-gray-500 mt-1">
+                  {{ userInfo.email || "admin@dapurmbg.com" }}
+                </div>
               </div>
-              <button @click="isModalOpen = true"
-                class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors">
-                <i class="fas fa-plus-circle mr-2 text-gray-400"></i> Tambah Dapur
+              <button
+                @click="isModalOpen = true"
+                class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+              >
+                <i class="fas fa-plus-circle mr-2 text-gray-400"></i> Tambah
+                Dapur
               </button>
-              <button @click="isModalOpenUser = true"
-                class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+              <button
+                @click="isModalOpenUser = true"
+                class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+              >
                 <i class="fas fa-user-plus mr-2 text-gray-400"></i>
                 Tambah User
               </button>
-              <router-link to="/pengaturan"
+              <router-link
+                to="/pengaturan"
                 class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
-                role="menuitem">
+                role="menuitem"
+              >
                 <i class="fas fa-cog mr-2 text-gray-400"></i>
                 Pengaturan
               </router-link>
               <div class="border-t border-gray-100 my-1"></div>
-              <button @click="handleLogout"
+              <button
+                @click="handleLogout"
                 class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
-                role="menuitem">
+                role="menuitem"
+              >
                 <i class="fas fa-sign-out-alt mr-2 text-gray-400"></i>
                 Logout
               </button>
@@ -78,15 +132,15 @@
 </template>
 
 <script>
-import AddKitchenModal from './AddKitchenModal.vue';
-import AddUserModal from './AddUserModal.vue';
-import ApiService from '@/services/api.js'
+import AddKitchenModal from "./AddKitchenModal.vue";
+import AddUserModal from "./AddUserModal.vue";
+import ApiService from "@/services/api.js";
 
 export default {
-  name: 'Header',
+  name: "Header",
   components: {
     AddKitchenModal,
-    AddUserModal
+    AddUserModal,
   },
   data() {
     return {
@@ -94,77 +148,77 @@ export default {
       userInfo: {},
       isModalOpen: false,
       isModalOpenUser: false,
-    }
+    };
   },
   computed: {
     userInitial() {
-      const username = this.userInfo.username || 'Admin'
-      return username.charAt(0).toUpperCase()
-    }
+      const username = this.userInfo.username || "Admin";
+      return username.charAt(0).toUpperCase();
+    },
   },
   mounted() {
-    this.loadUserInfo()
+    this.loadUserInfo();
     // Close dropdown when clicking outside
-    document.addEventListener('click', this.handleClickOutside)
+    document.addEventListener("click", this.handleClickOutside);
   },
   beforeUnmount() {
-    document.removeEventListener('click', this.handleClickOutside)
+    document.removeEventListener("click", this.handleClickOutside);
   },
   methods: {
     loadUserInfo() {
-      const storedUserInfo = localStorage.getItem('user_info')
+      const storedUserInfo = localStorage.getItem("user_info");
       if (storedUserInfo) {
         try {
-          this.userInfo = JSON.parse(storedUserInfo)
+          this.userInfo = JSON.parse(storedUserInfo);
         } catch (error) {
-          console.error('Error parsing user info:', error)
-          this.userInfo = { username: 'Admin' }
+          console.error("Error parsing user info:", error);
+          this.userInfo = { username: "Admin" };
         }
       } else {
-        this.userInfo = { username: 'Admin' }
+        this.userInfo = { username: "Admin" };
       }
     },
 
     toggleUserMenu() {
-      this.showUserMenu = !this.showUserMenu
+      this.showUserMenu = !this.showUserMenu;
     },
 
     async handleLogout() {
       try {
-        this.showUserMenu = false
-        await ApiService.logout()
-        this.$router.push('/login')
+        this.showUserMenu = false;
+        await ApiService.logout();
+        this.$router.push("/login");
       } catch (error) {
-        console.error('Logout error:', error)
+        console.error("Logout error:", error);
         // Force logout even if API call fails
-        ApiService.clearAuth()
-        this.$router.push('/login')
+        ApiService.clearAuth();
+        this.$router.push("/login");
       }
     },
     handleClickOutside(event) {
       if (!this.$el.contains(event.target)) {
-        this.showUserMenu = false
+        this.showUserMenu = false;
       }
     },
     closeModal() {
-      this.isModalOpen = false
+      this.isModalOpen = false;
     },
     closeModalUser() {
-      this.isModalOpenUser = false
+      this.isModalOpenUser = false;
     },
     handleSaveUser(userData) {
-      console.log('Data user yang disimpan:', userData);
-      this.closeModalUser()
+      console.log("Data user yang disimpan:", userData);
+      this.closeModalUser();
     },
     handleSave(kitchenData) {
-      console.log('Data dapur yang disimpan:', kitchenData);
+      console.log("Data dapur yang disimpan:", kitchenData);
       // Di sini Anda bisa memanggil API untuk menyimpan data ke database
       // Misalnya:
       // saveKitchenToApi(kitchenData).then(() => { ... });
 
       // Close modal after saving
-      this.closeModal()
-    }
-  }
-}
+      this.closeModal();
+    },
+  },
+};
 </script>
