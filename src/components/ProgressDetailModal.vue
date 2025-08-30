@@ -34,54 +34,38 @@
           <p v-else class="text-gray-400">-</p>
         </div>
 
-        <!-- FOTO -->
-        <div>
-          <h3 class="text-lg font-semibold text-gray-700 mb-2">Foto</h3>
-          <div v-if="photos.length" class="grid grid-cols-3 gap-3">
-            <img
-              v-for="(photo, index) in photos"
-              :key="index"
-              :src="getFileUrl(photo.image)"
-              class="w-full h-32 object-cover rounded-lg shadow cursor-pointer hover:opacity-90"
-              @click="openLightbox('image', index)"
-            />
+         <div v-if="documents.length">
+          <p class="section-title">Dokumen</p>
+          <div class="attachment-item document-item" v-for="(doc, index) in documents" :key="index">
+            <span class="file-icon">&#128441;</span>
+            <div class="file-info">
+              <span class="file-name">File Laporan {{ index+1 }}</span>
+              <span class="file-size">Size XXX</span>
+            </div>
+            <a :href="'https://server.qqltech.com:7113/' + doc.file" target="_blank" class="download-button" download>
+              <span class="download-icon">&#10515;</span>
+            </a>
           </div>
-          <p v-else class="text-gray-400">Tidak ada foto</p>
         </div>
 
-        <!-- VIDEO -->
-        <div>
-          <h3 class="text-lg font-semibold text-gray-700 mb-2">Video</h3>
-          <div v-if="videos.length" class="space-y-3">
-            <video
-              v-for="(video, index) in videos"
-              :key="index"
-              controls
-              class="w-full rounded-lg shadow cursor-pointer"
-              @click.prevent="openLightbox('video', index)"
-            >
-              <source :src="getFileUrl(video.video)" type="video/mp4" />
-              Browser kamu tidak mendukung video.
-            </video>
+        <div v-if="photos.length">
+          <p class="section-title">Foto</p>
+          <div class="photos-grid">
+            <div class="photo-item" v-for="(photo, index) in photos" :key="index">
+              <img :src="'https://server.qqltech.com:7113/' + photo.image" @click="openLightbox('image', index)">
+            </div>
           </div>
-          <p v-else class="text-gray-400">Tidak ada video</p>
         </div>
 
-        <!-- DOKUMEN -->
-        <div>
-          <h3 class="text-lg font-semibold text-gray-700 mb-2">Dokumen</h3>
-          <ul v-if="documents.length" class="list-disc list-inside space-y-2">
-            <li v-for="(doc, index) in documents" :key="index">
-              <a
-                :href="getFileUrl(doc.file)"
-                target="_blank"
-                class="text-blue-600 hover:underline"
-              >
-                {{ getFileName(doc.file) }}
-              </a>
-            </li>
-          </ul>
-          <p v-else class="text-gray-400">Tidak ada dokumen</p>
+        <div v-if="videos.length">
+          <p class="section-title">Video</p>
+          <div class="video-item" v-for="(video, index) in videos" :key="index">
+            <div class="video-thumbnail" @click="openLightbox('video', index)">
+              <video :src="'https://server.qqltech.com:7113/' + video.video" preload="metadata"></video>
+              <!-- <div class="play-icon">&#9654;</div> -->
+               <img class="play-icon" src="/asset/Video_fill.png"></img>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -182,7 +166,7 @@ export default {
       });
     },
     getFileUrl(path) {
-      return path ? `/${path}` : "";
+      return path ? `https://server.qqltech.com:7113/${path}` : "";
     },
     getFileName(path) {
       return path ? path.split("/").pop() : "dokumen";
@@ -221,3 +205,183 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+/* Modal Backdrop */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal Container */
+.modal-container {
+  background-color: white;
+  padding: 24px;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Modal Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}
+
+.modal-header h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.close-button {
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+}
+
+.close-button:hover {
+  color: #333;
+}
+
+/* Content Sections */
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #555;
+  margin: 0 0 16px 0;
+}
+
+/* Document Section */
+.attachment-item.document-item {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  gap: 16px;
+}
+
+.file-icon {
+  font-size: 2rem;
+}
+
+.file-info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.file-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.file-size {
+  color: #777;
+  font-size: 0.9rem;
+}
+
+.download-button {
+  font-size: 1.5rem;
+  color: #007bff;
+}
+
+/* Photo Section */
+.photos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.photo-item {
+  position: relative;
+  width: 100%;
+  padding-top: 100%; /* Ratio 1:1 */
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.photo-item img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Video Section */
+.video-item {
+  margin-bottom: 24px;
+   display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.video-thumbnail {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* Ratio 16:9 */
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.video-thumbnail video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 3rem;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Created Info */
+.created-by,
+.created-at {
+  font-size: 0.9rem;
+  color: #777;
+  margin-top: 8px;
+  text-align: right;
+}
+</style>
