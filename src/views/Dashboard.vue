@@ -164,7 +164,7 @@
                   <span class="m-4 text-blue-600 font-medium"
                     >Minggu {{ Number(progress / 12.5).toFixed(0) }}</span
                   >
-                  <span class="text-blue-600 font-bold">{{ progress }} %</span>
+                  <span class="text-blue-600 font-bold">{{ Number(progress).toFixed(0) }} %</span>
                 </div>
                 <div class="flex items-center space-x-2">
                   <button

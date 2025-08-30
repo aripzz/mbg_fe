@@ -12,7 +12,7 @@
       </svg>
       <span class="text-[18px] font-medium">{{ region.kota }}</span>
     </div>
-    <div class="text-[34px] font-bold text-gray-800 text-right">{{ region.rata_rata_progress }}%</div>
+    <div class="text-[34px] font-bold text-gray-800 text-right">{{ Number(region.rata_rata_progress).toFixed(0) }}%</div>
     <div class="text-[11px] font-bold text-[#92A1AD] text-right">{{region.created_at}}</div>
     <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
       <div :class="progressColor" class="h-2 rounded-full" :style="{ width: region.rata_rata_progress + '%' }"></div>

@@ -15,7 +15,7 @@
 
       <div class="absolute inset-0 flex flex-col items-center justify-center">
         <p class="text-[32px] text-center font-bold text-[#307FF5]">
-          {{ percentage }}%
+          {{ Number(percentage).toFixed(0) }}%
         </p>
         <span class="text-[10px] text-center leading-tight text-[#7D95C9]">
           Diupdate <br /> {{ updatedAt }}
