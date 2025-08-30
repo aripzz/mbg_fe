@@ -15,8 +15,13 @@
         <span class="text-sm font-medium">{{ activity.kota }}</span>
       </div>
       <div class="flex items-center space-x-2">
-        <span class="text-sm font-semibold">{{ 0 }}%</span>
-        <i :class="arrowClass"></i>
+        <span class="text-sm font-semibold">{{ Number(activity.rata_rata_progress).toFixed(0) }}%</span>
+           <img src="/asset/up.png" />
+                  <span
+                    class="text-sm font-semibold text-green-600 dark:text-green-300"
+                  >
+                    +0
+                  </span>
       </div>
     </div>
     <div class="ml-3 text-[12px] text-[#CCD2E3] mt-1">{{ randomDate }}</div>
