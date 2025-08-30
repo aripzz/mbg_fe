@@ -1,14 +1,9 @@
 <template>
-  <div
-    v-if="isOpen"
-    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-  >
+  <div v-if="isOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-lg w-[800px] max-h-[90vh] overflow-y-auto relative">
       <!-- CLOSE BUTTON -->
-      <button
-        @click="$emit('close')"
-        class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-2xl font-bold"
-      >
+      <button @click="$emit('close')"
+        class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-2xl font-bold">
         ×
       </button>
 
@@ -18,20 +13,29 @@
       </div>
 
       <div class="p-4 bg-white rounded-xl flex items-center gap-4">
-    <div class="w-16 h-16 bg-blue-900 rounded-xl flex flex-col items-center justify-center text-white font-bold">
-      <span class="text-xs -mb-1">Ags</span>
-      <span class="text-2xl">01</span>
-    </div>
+        <div class="w-16 h-16 bg-blue-900 rounded-xl flex flex-col items-center justify-center text-white font-bold">
+          <span class="text-xs -mb-1">{{
+            progress.createdAt
+              ? new Date(progress.createdAt).toLocaleDateString(
+                "id-ID",
+                {
+                  month: "short",
+                }
+              )
+              : `Hari ${progress.id}`
+          }}</span>
+          <span class="text-2xl">{{ progress.day }}</span>
+        </div>
 
-    <div class="flex-grow">
-      <span class="text-gray-600 font-semibold text-2xl">Progres</span>
-      <span class="text-2xl font-bold ml-4">{{ progress?.progress || 0 }}%</span>
-    </div>
+        <div class="flex-grow">
+          <span class="text-gray-600 font-semibold text-2xl">Progres</span>
+          <span class="text-2xl font-bold ml-4">{{ progress?.progress || 0 }}%</span>
+        </div>
 
-    <div class="py-1 px-3 bg-green-100 rounded-full text-green-600 font-bold text-sm">
-      +{{ 0 }}
-    </div>
-  </div>
+        <div class="py-1 px-3 bg-green-100 rounded-full text-green-600 font-bold text-sm">
+          +{{ 0 }}
+        </div>
+      </div>
 
       <!-- BODY -->
       <div class="p-5 space-y-6">
@@ -44,16 +48,17 @@
           <p v-else class="text-gray-400">-</p>
         </div>
 
-         <div v-if="documents.length">
+        <div v-if="documents.length">
           <p class="section-title">Dokumen</p>
           <div class="attachment-item document-item" v-for="(doc, index) in documents" :key="index">
-            <img class="file-icon" src="/asset/file.png" />
+            <img class="file-icon" src="/asset/file.png">
             <div class="file-info">
-              <span class="file-name">File Laporan {{ index+1 }}</span>
-              <span class="file-size">Size XXX</span>
+              <span class="file-name">File Laporan {{ index + 1 }}</span>
+
+              <!-- <span>Size: {{ documentSizes[index] || 'Loading...' }}</span> -->
             </div>
-            <a :href="'https://server.qqltech.com:7113/' + doc.file" target="_blank" class="download-button" download>
-              <img class="download-icon" src="/asset/download.png" />
+            <a :href="getFileUrl(doc.file)" target="_blank" class="download-button" download>
+              <img class="download-icon" src="/asset/download.png">
             </a>
           </div>
         </div>
@@ -62,7 +67,7 @@
           <p class="section-title">Foto</p>
           <div class="photos-grid">
             <div class="photo-item" v-for="(photo, index) in photos" :key="index">
-              <img :src="'https://server.qqltech.com:7113/' + photo.image" @click="openLightbox('image', index)">
+              <img :src="getFileUrl(photo.image)" @click="openLightbox('image', index)">
             </div>
           </div>
         </div>
@@ -72,60 +77,46 @@
           <div class="video-item" v-for="(video, index) in videos" :key="index">
             <div class="video-thumbnail" @click="openLightbox('video', index)">
               <video :src="'https://server.qqltech.com:7113/' + video.video" preload="metadata"></video>
-              <!-- <div class="play-icon">&#9654;</div> -->
-               <img class="play-icon" src="/asset/Video_fill.png"></img>
+              <img class="play-icon" src="/asset/Video_fill.png">
             </div>
           </div>
         </div>
+        <!-- <div class="">
+          <p class="float-left">Dibuat oleh {{ progress.createdBy || '-' }}</p>
+        </div> -->
+        <div class="">
+          <p class="createdby">Dibuat pada {{ formatDate(progress.createdAt) }}</p>
+        </div>
 
-        <p class="created-by float-left">Dibuat oleh Admin</p>
-        <p class="created-at">Dibuat pada Admin</p>
       </div>
     </div>
 
     <!-- LIGHTBOX -->
-    <div
-      v-if="lightbox.isOpen"
-      class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[100]"
-    >
+    <div v-if="lightbox.isOpen" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[100]">
       <!-- CLOSE -->
-      <button
-        @click="closeLightbox"
-        class="absolute top-4 right-6 text-white text-3xl font-bold"
-      >
+      <button @click="closeLightbox" class="absolute top-4 right-6 text-white text-3xl font-bold">
         ×
       </button>
 
       <!-- PREV -->
-      <button
-        @click="prevMedia"
-        class="absolute left-4 text-white text-4xl font-bold px-3 py-1 bg-black/40 rounded-full hover:bg-black/70"
-      >
+      <button @click="prevMedia"
+        class="absolute left-4 text-white text-4xl font-bold px-3 py-1 bg-black/40 rounded-full hover:bg-black/70">
         ‹
       </button>
 
       <!-- NEXT -->
-      <button
-        @click="nextMedia"
-        class="absolute right-4 text-white text-4xl font-bold px-3 py-1 bg-black/40 rounded-full hover:bg-black/70"
-      >
+      <button @click="nextMedia"
+        class="absolute right-4 text-white text-4xl font-bold px-3 py-1 bg-black/40 rounded-full hover:bg-black/70">
         ›
       </button>
 
       <!-- Gambar -->
-      <img
-        v-if="lightbox.type === 'image'"
-        :src="currentMediaSrc"
-        class="max-h-[90%] max-w-[90%] rounded-lg shadow-lg"
-      />
+      <img v-if="lightbox.type === 'image'" :src="currentMediaSrc"
+        class="max-h-[90%] max-w-[90%] rounded-lg shadow-lg" />
 
       <!-- Video -->
-      <video
-        v-else-if="lightbox.type === 'video'"
-        controls
-        autoplay
-        class="max-h-[90%] max-w-[90%] rounded-lg shadow-lg"
-      >
+      <video v-else-if="lightbox.type === 'video'" controls autoplay
+        class="max-h-[90%] max-w-[90%] rounded-lg shadow-lg">
         <source :src="currentMediaSrc" type="video/mp4" />
       </video>
     </div>
@@ -150,6 +141,7 @@ export default {
         type: null,
         index: 0,
       },
+      documentSizes: {}, // Store file sizes by document index
     };
   },
   computed: {
@@ -166,7 +158,62 @@ export default {
       return this.currentMedia ? this.currentMedia.src : "";
     },
   },
+  watch: {
+    documents: {
+      immediate: true,
+      handler(newDocuments) {
+        if (newDocuments && newDocuments.length > 0) {
+          this.fetchAllDocumentSizes(newDocuments);
+        }
+      },
+    },
+  },
   methods: {
+    async fetchFileSize(url) {
+      try {
+        const response = await fetch(url, { method: 'HEAD' });
+        const size = response.headers.get('content-length');
+        if (size) {
+          return this.formatFileSize(parseInt(size, 10));
+        }
+        return "0 B";
+      } catch (error) {
+        console.error('Failed to fetch file size:', error);
+        return "Unknown";
+      }
+    },
+    async fetchAllDocumentSizes(documents) {
+      // Reset document sizes
+      this.documentSizes = {};
+
+      // Fetch sizes for all documents
+      const promises = documents.map(async (doc, index) => {
+        const url = this.getFileUrl(doc.file);
+        if (url) {
+          try {
+            const size = await this.fetchFileSize(url);
+            // Use Vue.set for reactivity
+            this.$set(this.documentSizes, index, size);
+          } catch (error) {
+            console.error(`Failed to fetch size for document ${index}:`, error);
+            this.$set(this.documentSizes, index, "Unknown");
+          }
+        } else {
+          this.$set(this.documentSizes, index, "N/A");
+        }
+      });
+
+      await Promise.all(promises);
+    },
+    formatFileSize(bytes) {
+      if (bytes === 0) {
+        return '0 B';
+      }
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    },
     formatDate(date) {
       if (!date) return "-";
       const d = new Date(date);
@@ -329,7 +376,8 @@ export default {
 .photo-item {
   position: relative;
   width: 100%;
-  padding-top: 100%; /* Ratio 1:1 */
+  padding-top: 100%;
+  /* Ratio 1:1 */
   cursor: pointer;
   overflow: hidden;
   border-radius: 8px;
@@ -348,7 +396,7 @@ export default {
 /* Video Section */
 .video-item {
   margin-bottom: 24px;
-   display: grid;
+  display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 16px;
   margin-bottom: 24px;
@@ -357,7 +405,8 @@ export default {
 .video-thumbnail {
   position: relative;
   width: 100%;
-  padding-top: 56.25%; /* Ratio 16:9 */
+  padding-top: 56.25%;
+  /* Ratio 16:9 */
   cursor: pointer;
   overflow: hidden;
   border-radius: 8px;
