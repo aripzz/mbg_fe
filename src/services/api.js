@@ -209,6 +209,22 @@ class ApiService {
     }
     return this.request(url);
   }
+
+  // User management methods
+  async createUser(data) {
+    return this.request("/dynamic/user_default", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
+
+  // Dapur management methods
+  async createDapur(data) {
+    return this.request("/dynamic/m_dapur", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
 }
 
 export default new ApiService();
