@@ -1,110 +1,223 @@
 <template>
-    <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-        <div class="relative w-full max-w-xl mx-4 bg-white rounded-lg shadow-lg dark:bg-gray-800">
-            <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                    Detail Progress
-                </h3>
-                <button @click="$emit('close')" type="button"
-                    class="inline-flex items-center justify-center w-8 h-8 text-sm text-gray-400 bg-transparent rounded-lg hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white">
-                    <i class="fas fa-times"></i>
-                    <span class="sr-only">Close modal</span>
-                </button>
-            </div>
+  <div
+    v-if="isOpen"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div class="bg-white rounded-lg shadow-lg w-[800px] max-h-[90vh] overflow-y-auto relative">
+      <!-- CLOSE BUTTON -->
+      <button
+        @click="$emit('close')"
+        class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-2xl font-bold"
+      >
+        ×
+      </button>
 
-            <div v-if="progressData" class="p-6 space-y-6">
-                <div class="flex items-center space-x-4 p-4 bg-gray-100 rounded-lg dark:bg-gray-700">
-                    <div
-                        class="flex flex-col items-center justify-center px-4 py-2 bg-white rounded-lg dark:bg-gray-800">
-                        <span class="text-xs text-gray-500 dark:text-gray-400">{{ getMonthAndDate(progressData.date)
-                            }}</span>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-lg font-semibold text-gray-900 dark:text-white">Progress <span
-                                class="text-green-600">{{ progressData.progress }}%</span></p>
-                    </div>
-                    <span v-if="progressData.increase"
-                        class="px-2 py-1 text-xs font-semibold text-green-700 bg-green-200 rounded-full dark:bg-green-800 dark:text-green-300">
-                        +{{ progressData.increase }}
-                    </span>
-                </div>
+      <!-- HEADER -->
+      <div class="p-5 border-b">
+        <h2 class="text-xl font-semibold text-gray-800">Detail Progress</h2>
+        <p class="text-sm text-gray-500 mt-1">
+          Progress: <span class="font-medium">{{ progress?.progress || 0 }}%</span>
+        </p>
+        <p class="text-sm text-gray-400">
+          Dibuat: {{ formatDate(progress?.createdAt) }}
+        </p>
+      </div>
 
-                <div v-if="progressData.notes">
-                    <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Catatan</h4>
-                    <p class="text-gray-600 dark:text-gray-400">{{ progressData.notes }}</p>
-                </div>
-
-                <div v-if="progressData.documents && progressData.documents.length">
-                    <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Dokumen</h4>
-                    <div v-for="doc in progressData.documents" :key="doc.name"
-                        class="flex items-center justify-between p-3 border border-gray-200 rounded-lg dark:border-gray-600">
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-file-alt text-gray-500 text-lg"></i>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ doc.name }}</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ doc.size }}</p>
-                            </div>
-                        </div>
-                        <a :href="doc.url" download
-                            class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600">
-                            <i class="fas fa-download text-lg"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div v-if="progressData.photos && progressData.photos.length">
-                    <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Foto</h4>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div v-for="photo in progressData.photos" :key="photo" class="rounded-lg overflow-hidden">
-                            <img :src="photo" alt="Progress Photo" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                </div>
-
-                <div v-if="progressData.video">
-                    <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Video</h4>
-                    <div class="relative w-full aspect-video rounded-lg overflow-hidden">
-                        <video :src="progressData.video" controls class="w-full h-full object-cover"></video>
-                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <i class="fas fa-play-circle text-white text-5xl opacity-80"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex flex-col items-end text-sm text-gray-500 dark:text-gray-400 mt-6">
-                    <p>Dibuat oleh {{ progressData.author }}</p>
-                    <p>Dibuat pada {{ progressData.date }} {{ progressData.time }}</p>
-                </div>
-            </div>
+      <!-- BODY -->
+      <div class="p-5 space-y-6">
+        <!-- CATATAN -->
+        <div>
+          <h3 class="text-lg font-semibold text-gray-700 mb-2">Catatan</h3>
+          <p v-if="notes" class="text-gray-600 whitespace-pre-line">
+            {{ notes }}
+          </p>
+          <p v-else class="text-gray-400">-</p>
         </div>
+
+        <!-- FOTO -->
+        <div>
+          <h3 class="text-lg font-semibold text-gray-700 mb-2">Foto</h3>
+          <div v-if="photos.length" class="grid grid-cols-3 gap-3">
+            <img
+              v-for="(photo, index) in photos"
+              :key="index"
+              :src="getFileUrl(photo.image)"
+              class="w-full h-32 object-cover rounded-lg shadow cursor-pointer hover:opacity-90"
+              @click="openLightbox('image', index)"
+            />
+          </div>
+          <p v-else class="text-gray-400">Tidak ada foto</p>
+        </div>
+
+        <!-- VIDEO -->
+        <div>
+          <h3 class="text-lg font-semibold text-gray-700 mb-2">Video</h3>
+          <div v-if="videos.length" class="space-y-3">
+            <video
+              v-for="(video, index) in videos"
+              :key="index"
+              controls
+              class="w-full rounded-lg shadow cursor-pointer"
+              @click.prevent="openLightbox('video', index)"
+            >
+              <source :src="getFileUrl(video.video)" type="video/mp4" />
+              Browser kamu tidak mendukung video.
+            </video>
+          </div>
+          <p v-else class="text-gray-400">Tidak ada video</p>
+        </div>
+
+        <!-- DOKUMEN -->
+        <div>
+          <h3 class="text-lg font-semibold text-gray-700 mb-2">Dokumen</h3>
+          <ul v-if="documents.length" class="list-disc list-inside space-y-2">
+            <li v-for="(doc, index) in documents" :key="index">
+              <a
+                :href="getFileUrl(doc.file)"
+                target="_blank"
+                class="text-blue-600 hover:underline"
+              >
+                {{ getFileName(doc.file) }}
+              </a>
+            </li>
+          </ul>
+          <p v-else class="text-gray-400">Tidak ada dokumen</p>
+        </div>
+      </div>
     </div>
+
+    <!-- LIGHTBOX -->
+    <div
+      v-if="lightbox.isOpen"
+      class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[100]"
+    >
+      <!-- CLOSE -->
+      <button
+        @click="closeLightbox"
+        class="absolute top-4 right-6 text-white text-3xl font-bold"
+      >
+        ×
+      </button>
+
+      <!-- PREV -->
+      <button
+        @click="prevMedia"
+        class="absolute left-4 text-white text-4xl font-bold px-3 py-1 bg-black/40 rounded-full hover:bg-black/70"
+      >
+        ‹
+      </button>
+
+      <!-- NEXT -->
+      <button
+        @click="nextMedia"
+        class="absolute right-4 text-white text-4xl font-bold px-3 py-1 bg-black/40 rounded-full hover:bg-black/70"
+      >
+        ›
+      </button>
+
+      <!-- Gambar -->
+      <img
+        v-if="lightbox.type === 'image'"
+        :src="currentMediaSrc"
+        class="max-h-[90%] max-w-[90%] rounded-lg shadow-lg"
+      />
+
+      <!-- Video -->
+      <video
+        v-else-if="lightbox.type === 'video'"
+        controls
+        autoplay
+        class="max-h-[90%] max-w-[90%] rounded-lg shadow-lg"
+      >
+        <source :src="currentMediaSrc" type="video/mp4" />
+      </video>
+    </div>
+  </div>
 </template>
 
-<script setup>
-import { defineProps, defineEmits } from 'vue';
-
-const props = defineProps({
-    isOpen: {
-        type: Boolean,
-        required: true
-    },
-    progressData: {
-        type: Object,
-        required: true,
-        default: () => ({}),
-    }
-});
-
-defineEmits(['close']);
-
-// Function to format date from '05 Juli 2025' to 'Jul 05'
-const getMonthAndDate = (dateString) => {
-    const [day, month, year] = dateString.split(' ');
-    const monthNames = {
-        'Januari': 'Jan', 'Februari': 'Feb', 'Maret': 'Mar', 'April': 'Apr',
-        'Mei': 'Mei', 'Juni': 'Jun', 'Juli': 'Jul', 'Agustus': 'Ags',
-        'September': 'Sep', 'Oktober': 'Okt', 'November': 'Nov', 'Desember': 'Des'
+<script>
+export default {
+  name: "ProgressDetailModal",
+  props: {
+    isOpen: { type: Boolean, default: false },
+    progress: { type: Object, default: () => ({}) },
+    notes: { type: [String, Object], default: "" },
+    photos: { type: Array, default: () => [] },
+    videos: { type: Array, default: () => [] },
+    documents: { type: Array, default: () => [] },
+  },
+  data() {
+    return {
+      lightbox: {
+        isOpen: false,
+        type: null,
+        index: 0,
+      },
     };
-    return `${monthNames[month] || month} ${day}`;
+  },
+  computed: {
+    mediaList() {
+      return [
+        ...this.photos.map((p) => ({ type: "image", src: this.getFileUrl(p.image) })),
+        ...this.videos.map((v) => ({ type: "video", src: this.getFileUrl(v.video) })),
+      ];
+    },
+    currentMedia() {
+      return this.mediaList[this.lightbox.index] || null;
+    },
+    currentMediaSrc() {
+      return this.currentMedia ? this.currentMedia.src : "";
+    },
+  },
+  methods: {
+    formatDate(date) {
+      if (!date) return "-";
+      const d = new Date(date);
+      return d.toLocaleString("id-ID", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    },
+    getFileUrl(path) {
+      return path ? `/${path}` : "";
+    },
+    getFileName(path) {
+      return path ? path.split("/").pop() : "dokumen";
+    },
+    openLightbox(type, index) {
+      let offset = type === "video" ? this.photos.length : 0;
+      this.lightbox = { isOpen: true, type, index: offset + index };
+      document.addEventListener("keydown", this.handleKeydown);
+    },
+    closeLightbox() {
+      this.lightbox = { isOpen: false, type: null, index: 0 };
+      document.removeEventListener("keydown", this.handleKeydown);
+    },
+    nextMedia() {
+      if (this.lightbox.index < this.mediaList.length - 1) {
+        this.lightbox.index++;
+        this.lightbox.type = this.currentMedia.type;
+      }
+    },
+    prevMedia() {
+      if (this.lightbox.index > 0) {
+        this.lightbox.index--;
+        this.lightbox.type = this.currentMedia.type;
+      }
+    },
+    handleKeydown(e) {
+      if (!this.lightbox.isOpen) return;
+      if (e.key === "ArrowRight") {
+        this.nextMedia();
+      } else if (e.key === "ArrowLeft") {
+        this.prevMedia();
+      } else if (e.key === "Escape") {
+        this.closeLightbox();
+      }
+    },
+  },
 };
 </script>

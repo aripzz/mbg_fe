@@ -1,16 +1,8 @@
-<style>
-select:focus {
-  outline: none;
-  border-color: transparent;
-  /* Atau warna lain jika Anda ingin tetap ada border */
-  box-shadow: none;
-} /* Menghilangkan shadow yang mungkin muncul */
-</style>
 <template>
   <div>
     <Header />
     <div class="">
-      <div className="grid grid-cols-1 grid-rows-1 gap-4">
+      <div class="grid grid-cols-1 grid-rows-1 gap-4">
         <div>
           <div class="flex items-center space-x-2 m-4">
             <!-- Provinsi Search Dropdown -->
@@ -210,9 +202,9 @@ select:focus {
         </div>
       </div>
 
-      <div className="grid grid-cols-8 grid-rows-6 gap-4">
+      <div class="grid grid-cols-8 grid-rows-6 gap-4">
         <div
-          className="col-span-2 row-span-6 bg-white p-6 h-[85%] rounded-lg shadow-sm"
+          class="col-span-2 row-span-6 bg-white p-6 h-[85%] rounded-lg shadow-sm"
         >
           <div class="mb-6">
             <h3 class="text-sm font-medium text-gray-800 mb-4">Riwayat</h3>
@@ -286,6 +278,7 @@ select:focus {
                 </div>
                 <button
                   class="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 focus:outline-none dark:text-gray-500 dark:hover:text-gray-300"
+                  @click="openProgressDetail(history)"
                 >
                   <svg
                     class="w-5 h-5"
@@ -310,10 +303,20 @@ select:focus {
                 <i class="fas fa-history text-gray-400 text-2xl mb-2"></i>
                 <p class="text-sm text-gray-500">No history data available</p>
               </div>
+              <!-- Modal Detail Progress -->
+              <ProgressDetailModal
+                :isOpen="showDetailModal"
+                :progress="selectedProgress"
+                :notes="selectedNotes"
+                :photos="selectedPhotos"
+                :videos="selectedVideos"
+                :documents="selectedDocuments"
+                @close="showDetailModal = false"
+              />
             </div>
           </div>
         </div>
-        <div className="col-span-2 row-span-2 col-start-3">
+        <div class="col-span-2 row-span-2 col-start-3">
           <div class="bg-white rounded-lg p-4 shadow-sm">
             <h3 class="text-lg font-semibold text-gray-800 mb-6">
               Akumulasi Progres
@@ -343,7 +346,7 @@ select:focus {
             </p>
           </div>
         </div>
-        <div className="col-span-4 row-span-2 col-start-5">
+        <div class="col-span-4 row-span-2 col-start-5">
           <!-- Perkembangan Pembangunan -->
           <div class="bg-white rounded-lg p-6 shadow-sm">
             <div class="flex items-center justify-between mb-4">
@@ -380,18 +383,10 @@ select:focus {
                 <span class="text-sm text-gray-500">Target</span>
                 <span class="m-4 text-blue-600 font-medium">
                   Minggu
-                  {{
-                    Number(
-                      historyData[0]?.percentage / 12.5
-                    ).toFixed(0)
-                  }}
+                  {{ Number(historyData[0]?.percentage / 12.5).toFixed(0) }}
                 </span>
                 <span class="text-blue-600 font-bold">
-                  {{
-                    Number(
-                      historyData[0]?.percentage || 0
-                    ).toFixed(0) || 0
-                  }}
+                  {{ Number(historyData[0]?.percentage || 0).toFixed(0) || 0 }}
                   %
                 </span>
               </div>
@@ -402,9 +397,7 @@ select:focus {
               <Timeline
                 :totalSteps="8"
                 :currentStep="
-                  Number(
-                    historyData[0]?.percentage / 12.5
-                  ).toFixed(0)
+                  Number(historyData[0]?.percentage / 12.5).toFixed(0)
                 "
                 :percent="historyData[0]?.percentage || 0"
               />
@@ -412,7 +405,7 @@ select:focus {
           </div>
         </div>
 
-        <div className="col-span-3 row-span-3 col-start-3 row-start-4">
+        <div class="col-span-3 row-span-3 col-start-3 row-start-4">
           <!-- foto -->
           <MediaGallery
             :show-counts="true"
@@ -428,7 +421,7 @@ select:focus {
             @video-click="openVideoLightbox"
           />
         </div>
-        <div className="col-span-3 row-span-3 col-start-6 row-start-4">
+        <div class="col-span-3 row-span-3 col-start-6 row-start-4">
           <!-- note -->
           <div class="bg-white shadow-sm rounded-lg">
             <div class="p-6">
@@ -519,16 +512,18 @@ import Footer from "@/components/Footer.vue";
 import CircleWilayah from "@/components/CircleWilayah.vue";
 // import ProgressCircle from "@/components/ProgressCircle.vue";
 import ProgressChart from "@/components/ProgressChart.vue";
+import ProgressDetailModal from "@/components/ProgressDetailModal.vue";
 import MediaGallery from "@/components/MediaGallery.vue";
 import Timeline from "@/components/Timeline.vue";
 import ApiService from "@/services/api.js";
-import { ref } from 'vue';
+import { ref } from "vue";
 export default {
   name: "Wilayah",
   components: {
     Header,
     Footer,
     // ProgressCircle,
+    ProgressDetailModal,
     ProgressChart,
     MediaGallery,
     CircleWilayah,
@@ -554,6 +549,12 @@ export default {
       areas: [],
       regions: [],
       loadingRegions: false,
+      showDetailModal: false,
+      selectedProgress: null,
+      selectedNotes: [],
+      selectedPhotos: [],
+      selectedVideos: [],
+      selectedDocuments: [],
       regionsError: null,
       loadingCities: false,
       citiesError: null,
@@ -763,11 +764,10 @@ export default {
     },
   },
   methods: {
-
-      truncateText(text) {
+    truncateText(text) {
       const maxLength = 81;
       if (text.length > maxLength) {
-        return text.substring(0, maxLength) + '...';
+        return text.substring(0, maxLength) + "...";
       }
       return text;
     },
@@ -897,23 +897,58 @@ export default {
     },
 
     // Process media data and map to mediaCounts and mediaData
+    // processMediaData(imageData, docData, videoData) {
+    //   const dataImage = imageData || [];
+    //   const dataDoc = docData || [];
+    //   const dataVideo = videoData || [];
+
+    //   // mapping ke mediaCounts
+    //   this.mediaCounts = {
+    //     photos: dataImage.length || 0,
+    //     videos: dataVideo.length || 0,
+    //     documents: dataDoc.length || 0,
+    //   };
+
+    //   // mapping ke mediaData
+    //   this.mediaData = {
+    //     photos: dataImage || [],
+    //     videos: dataVideo || [],
+    //     documents: dataDoc || [],
+    //   };
+    // },
     processMediaData(imageData, docData, videoData) {
-      const dataImage = imageData || [];
-      const dataDoc = docData || [];
-      const dataVideo = videoData || [];
+      const BASE_URL = "https://server.qqltech.com:7113/api/docs"; // ganti sesuai backend kamu
+
+      const dataImage = (imageData || []).map((item) => ({
+        id: item.id,
+        url: item.image ? `${BASE_URL}${item.image}` : null,
+        name: item.nama || "Foto",
+      }));
+
+      const dataVideo = (videoData || []).map((item) => ({
+        id: item.id,
+        url: item.video ? `${BASE_URL}${item.video}` : null,
+        name: item.nama || "Video",
+      }));
+
+      const dataDoc = (docData || []).map((item) => ({
+        id: item.id,
+        url: item.file ? `${BASE_URL}${item.file}` : null,
+        name: item.nama || item.file?.split("/").pop() || "Dokumen",
+      }));
 
       // mapping ke mediaCounts
       this.mediaCounts = {
-        photos: dataImage.length || 0,
-        videos: dataVideo.length || 0,
-        documents: dataDoc.length || 0,
+        photos: dataImage.length,
+        videos: dataVideo.length,
+        documents: dataDoc.length,
       };
 
       // mapping ke mediaData
       this.mediaData = {
-        photos: dataImage || [],
-        videos: dataVideo || [],
-        documents: dataDoc || [],
+        photos: dataImage,
+        videos: dataVideo,
+        documents: dataDoc,
       };
     },
 
@@ -1124,6 +1159,30 @@ export default {
 
     async refreshData() {
       await this.fetchProgressData();
+    },
+
+    async openProgressDetail(progress) {
+      try {
+        // Panggil API dengan include
+        const res = await ApiService.request(
+          `/dynamic/t_progress_dapur?where=id=${progress.id}&include=t_progress_image,t_progress_video,t_progress_doc`,
+          { method: "GET" }
+        );
+
+        if (res?.data?.length > 0) {
+          const detail = res.data[0];
+
+          this.selectedProgress = detail; // progress utama
+          this.selectedNotes = detail.catatan || "-"; // catatan langsung dari field
+          this.selectedPhotos = detail.t_progress_images || [];
+          this.selectedVideos = detail.t_progress_videos || [];
+          this.selectedDocuments = detail.t_progress_docs || [];
+        }
+
+        this.showDetailModal = true;
+      } catch (err) {
+        console.error("Gagal fetch detail progress:", err);
+      }
     },
 
     openLightbox(image) {
