@@ -4,6 +4,21 @@
     @close="closeModal"
     @save="handleSave"
   />
+  <AllActivitiesModal
+    :is-open="isActivitiesModalOpen"
+    :activities="activities"
+    @close="closeActivitiesModal"
+  />
+  <AllNotesModal
+    :is-open="isNotesModalOpen"
+    :notes="noteData"
+    @close="closeNotesModal"
+  />
+  <AllProgressModal
+    :is-open="isRegionModalOpen"
+    :data="activities"
+    @close="closeRegionModal"
+  />
   <div>
     <Header />
     <div class="flex">
@@ -52,8 +67,8 @@
           <!-- Region Cards (col-5) -->
           <div class="col-span-5 flex flex-col">
             <div class="flex justify-end mb-4">
-              <a href="#" class="text-sm text-gray-500 mt-7"></a>
-              <!-- Lihat Semua -->
+              <a href="#" class="text-sm text-gray-500 mt-7" @click="openRegionModal">Lihat Semua</a>
+              
             </div>
             <div class="grid grid-cols-2 gap-4 w-full h-full">
               <RegionCard
@@ -175,7 +190,12 @@
               <div class="p-4 bg-white shadow-sm rounded-lg">
                 <div class="flex items-center justify-between mb-6">
                   <span class="text-sm text-gray-500">Catatan</span>
-                  <!-- <span class="text-sm text-gray-500">Lihat Semua</span> -->
+                  <span 
+                    class="text-sm text-gray-500 cursor-pointer hover:text-blue-600 transition-colors"
+                    @click="openNotesModal"
+                  >
+                    Lihat Semua
+                  </span>
                 </div>
 
                 <!-- Regional Information Cards -->
@@ -218,7 +238,12 @@
             <div class="bg-white rounded-lg p-8 shadow-sm">
               <div class="flex justify-between items-center mb-4">
                 <h3 class="font-medium text-gray-800">Aktivitas</h3>
-                <!-- <span class="text-sm text-gray-500">Lihat Semua</span> -->
+                <span 
+                  class="text-sm text-gray-500 cursor-pointer hover:text-blue-600 transition-colors"
+                  @click="openActivitiesModal"
+                >
+                  Lihat Semua
+                </span>
               </div>
               <div class="space-y-3">
                 <ActivityItem
@@ -258,6 +283,9 @@
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 import AddTargetModal from "@/components/AddTargetModal.vue";
+import AllActivitiesModal from "@/components/AllActivitiesModal.vue";
+import AllNotesModal from "@/components/AllNotesModal.vue";
+import AllProgressModal from "@/components/AllProgressModal.vue";
 import ProgressCircle from "@/components/ProgressCircle.vue";
 import RegionCard from "@/components/RegionCard.vue";
 import ActivityItem from "@/components/ActivityItem.vue";
@@ -271,6 +299,9 @@ export default {
     Header,
     Footer,
     AddTargetModal,
+    AllActivitiesModal,
+    AllNotesModal,
+    AllProgressModal,
     ProgressCircle,
     RegionCard,
     ActivityItem,
@@ -280,6 +311,9 @@ export default {
   data() {
     return {
       isModalOpen: false,
+      isActivitiesModalOpen: false,
+      isNotesModalOpen: false,
+      isRegionModalOpen: false,
       isBusinessHours: true,
       progress: 0,
       lastUpdated: "",
@@ -320,6 +354,7 @@ export default {
         { name: "Surabaya", percentage: 79 },
         { name: "Magelang", percentage: 79 },
       ],
+      activities: [],
       averageProgressData: [],
       noteData: [],
       notes: [
@@ -432,7 +467,7 @@ export default {
             },
           };
         });
-
+        this.activities = dataAvg;
         this.averageProgressData = dataAvg.slice(0, 4);
         this.noteData = dataNote.map(note => ({
           ...note,
@@ -493,6 +528,24 @@ export default {
     },
     handleSave() {
       this.closeModal();
+    },
+    openActivitiesModal() {
+      this.isActivitiesModalOpen = true;
+    },
+    closeActivitiesModal() {
+      this.isActivitiesModalOpen = false;
+    },
+     openRegionModal() {
+      this.isRegionModalOpen = true;
+    },
+    closeRegionModal() {
+      this.isRegionModalOpen = false;
+    },
+    openNotesModal() {
+      this.isNotesModalOpen = true;
+    },
+    closeNotesModal() {
+      this.isNotesModalOpen = false;
     },
     openLightbox(image) {
       this.lightbox.currentImage = image;
