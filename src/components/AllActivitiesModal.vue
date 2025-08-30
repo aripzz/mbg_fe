@@ -42,8 +42,12 @@
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-2">
                 <span class="text-lg font-semibold text-gray-900 dark:text-white">{{ Number(activity.rata_rata_progress).toFixed(0) }}%</span>
-                <img src="/asset/up.png" class="w-4 h-4" />
-                <span class="text-sm font-semibold text-green-600 dark:text-green-300">+0</span>
+           <img src="/asset/up.png" />
+                  <span
+                    class="text-sm font-semibold text-green-600 dark:text-green-300"
+                  >
+                    +0
+                  </span>
               </div>
             </div>
             
