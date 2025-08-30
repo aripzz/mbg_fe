@@ -172,19 +172,6 @@ const fetchWilayah = async () => {
 };
 
 const submitForm = async () => {
-    // emit('save', {
-    //     name: formData.value.name,
-    //     latitude: formData.value.latitude,
-    //     longitude: formData.value.longitude,
-    // });
-
-    // formData.value.name = '';
-    // formData.value.wilayah = '';
-    // formData.value.locationSearch = '';
-    // formData.value.latitude = null;
-    // formData.value.longitude = null;
-
-    // emit('close');
 
       try {
         // Prepare user data for API
