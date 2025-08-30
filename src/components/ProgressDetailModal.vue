@@ -13,15 +13,25 @@
       </button>
 
       <!-- HEADER -->
-      <div class="p-5 border-b">
+      <div class="p-5">
         <h2 class="text-xl font-semibold text-gray-800">Detail Progress</h2>
-        <p class="text-sm text-gray-500 mt-1">
-          Progress: <span class="font-medium">{{ progress?.progress || 0 }}%</span>
-        </p>
-        <p class="text-sm text-gray-400">
-          Dibuat: {{ formatDate(progress?.createdAt) }}
-        </p>
       </div>
+
+      <div class="p-4 bg-white rounded-xl flex items-center gap-4">
+    <div class="w-16 h-16 bg-blue-900 rounded-xl flex flex-col items-center justify-center text-white font-bold">
+      <span class="text-xs -mb-1">Ags</span>
+      <span class="text-2xl">01</span>
+    </div>
+
+    <div class="flex-grow">
+      <span class="text-gray-600 font-semibold text-2xl">Progres</span>
+      <span class="text-2xl font-bold ml-4">{{ progress?.progress || 0 }}%</span>
+    </div>
+
+    <div class="py-1 px-3 bg-green-100 rounded-full text-green-600 font-bold text-sm">
+      +{{ 0 }}
+    </div>
+  </div>
 
       <!-- BODY -->
       <div class="p-5 space-y-6">
@@ -37,13 +47,13 @@
          <div v-if="documents.length">
           <p class="section-title">Dokumen</p>
           <div class="attachment-item document-item" v-for="(doc, index) in documents" :key="index">
-            <span class="file-icon">&#128441;</span>
+            <img class="file-icon" src="/asset/file.png" />
             <div class="file-info">
               <span class="file-name">File Laporan {{ index+1 }}</span>
               <span class="file-size">Size XXX</span>
             </div>
             <a :href="'https://server.qqltech.com:7113/' + doc.file" target="_blank" class="download-button" download>
-              <span class="download-icon">&#10515;</span>
+              <img class="download-icon" src="/asset/download.png" />
             </a>
           </div>
         </div>
@@ -67,6 +77,9 @@
             </div>
           </div>
         </div>
+
+        <p class="created-by float-left">Dibuat oleh Admin</p>
+        <p class="created-at">Dibuat pada Admin</p>
       </div>
     </div>
 
