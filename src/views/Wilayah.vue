@@ -191,7 +191,7 @@
                   @mousedown="selectKitchen(kitchen)"
                   :class="[
                     'search-dropdown-item',
-                    { selected: selectedKitchenId === kitchen.id },
+                    { selected: selectedKitchen === kitchen.id },
                   ]"
                 >
                   {{ kitchen.nama }}
@@ -259,23 +259,29 @@
                   </p>
                 </div>
 
-                <div
-                  class="flex-shrink-0 flex items-center px-3 py-1 bg-[#00B1320D] w-[50px] rounded-md"
-                >
-                  <img src="/asset/up.png" />
-                  <span
-                    class="text-sm font-semibold text-green-600 dark:text-green-300"
-                  >
-                    +{{
-                      sortedHistory[index + 1]?.percentage !== undefined
-                        ? (
-                            history.percentage -
-                            sortedHistory[index + 1].percentage
-                          ).toFixed(0)
-                        : 0
-                    }}
-                  </span>
-                </div>
+           <div
+  class="flex-shrink-0 flex items-center px-3 py-1 w-[50px] rounded-md"
+  :class="{ 
+    'bg-[#00B1320D]': sortedHistory[index + 1]?.percentage !== undefined && (history.percentage - sortedHistory[index + 1].percentage).toFixed(0) > 0, 
+    'bg-[#e037210d]': sortedHistory[index + 1]?.percentage !== undefined && (history.percentage - sortedHistory[index + 1].percentage).toFixed(0) < 0 
+  }"
+>
+  <img src="/asset/up.png" />
+  <span
+    class="text-sm font-semibold " :class="{ 
+    'text-green-600': sortedHistory[index + 1]?.percentage !== undefined && (history.percentage - sortedHistory[index + 1].percentage).toFixed(0) >= 0, 
+    'text-red-600': sortedHistory[index + 1]?.percentage !== undefined && (history.percentage - sortedHistory[index + 1].percentage).toFixed(0) < 0 
+}"
+  >
+    {{
+      sortedHistory[index + 1]?.percentage !== undefined
+        ? (history.percentage - sortedHistory[index + 1].percentage).toFixed(0) > 0 
+          ? `+${(history.percentage - sortedHistory[index + 1].percentage).toFixed(0)}`
+          : (history.percentage - sortedHistory[index + 1].percentage).toFixed(0)
+        : 0
+    }}
+  </span>
+</div>
                 <button
                   class="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 focus:outline-none dark:text-gray-500 dark:hover:text-gray-300"
                   @click="openProgressDetail(history)"
@@ -341,9 +347,6 @@
                 Terakhir diupdate {{ lastUpdate }}
               </p>
             </div>
-            <p class="text-center text-sm text-gray-600">
-              Tercapai akumulasi 1 Agustus - 31Agustus 2025
-            </p>
           </div>
         </div>
         <div class="col-span-4 row-span-2 col-start-5">
@@ -383,7 +386,7 @@
                 <span class="text-sm text-gray-500">Target</span>
                 <span class="m-4 text-blue-600 font-medium">
                   Minggu
-                  {{ Number(historyData[0]?.percentage / 12.5).toFixed(0) }}
+                  {{ Number((historyData[0]?.percentage || 0) / 12.5).toFixed(0) }}
                 </span>
                 <span class="text-blue-600 font-bold">
                   {{ Number(historyData[0]?.percentage || 0).toFixed(0) || 0 }}
@@ -516,7 +519,6 @@ import ProgressDetailModal from "@/components/ProgressDetailModal.vue";
 import MediaGallery from "@/components/MediaGallery.vue";
 import Timeline from "@/components/Timeline.vue";
 import ApiService from "@/services/api.js";
-import { ref } from "vue";
 export default {
   name: "Wilayah",
   components: {
@@ -538,7 +540,7 @@ export default {
   data() {
     return {
       selectedRegion: null,
-      selectedKitchenId: "",
+      selectedKitchen: "",
       selectedCity: null,
       selectedArea: null,
       currentPage: 1,
@@ -562,8 +564,8 @@ export default {
       areasError: null,
       kitchens: [],
       historyData: [],
-      labels: ["Data 1", "Data 2", "Data 3"],
-      values: [15, 6, 40],
+      labels: [],
+      values: [],
       notes: [],
       lightbox: {
         isOpen: false,
@@ -595,7 +597,6 @@ export default {
         next_page: null,
         prev_page: null,
       },
-      // Search dropdown states
       searchProvinsi: "",
       searchKota: "",
       searchArea: "",
@@ -737,30 +738,62 @@ export default {
     await this.loadRegions();
   },
   watch: {
-    selectedRegion() {
-      this.selectedCity = "";
+    selectedRegion(newRegion) {
+      this.selectedCity = null;
       this.selectedArea = null;
-      this.selectedKitchenId = "";
-      this.loadCity();
-      this.loadKitchens();
+      this.selectedKitchen = "";
+      this.searchKota = "";
+      this.searchArea = "";
+      this.searchDapur = "";
+      
+      if (newRegion) {
+        this.loadCity();
+        this.triggerDataFetch(); // Fetch data for province level
+      } else {
+        this.resetAllData();
+      }
     },
+    
     selectedCity(newCity) {
       this.selectedArea = null;
-      this.selectedKitchenId = "";
-      this.loadAreas(newCity);
-      this.loadKitchens();
+      this.selectedKitchen = "";
+      this.searchArea = "";
+      this.searchDapur = "";
+      
+      if (newCity) {
+        this.loadAreas(newCity);
+        this.triggerDataFetch(); // Fetch data for city level
+      } else if (this.selectedRegion) {
+        this.triggerDataFetch(); // Back to province level
+      }
     },
+    
     selectedArea(newArea) {
-      this.selectedKitchenId = "";
-      this.loadKitchens(newArea);
+      this.selectedKitchen = "";
+      this.searchDapur = "";
+      
+      if (newArea) {
+        this.loadKitchens(newArea);
+        this.triggerDataFetch(); // Fetch data for area level
+      } else if (this.selectedCity) {
+        this.triggerDataFetch(); // Back to city level
+      }
     },
+    
+    selectedKitchen(newKitchenId) {
+      if (newKitchenId) {
+        this.triggerDataFetch(); // Fetch data for specific kitchen
+      } else if (this.selectedArea) {
+        this.triggerDataFetch(); // Back to area level
+      }
+    },
+    
     currentPage() {
-      this.fetchProgressData();
+      this.triggerDataFetch();
     },
-    selectedKitchenId(newVal) {
-      console.log("selectedKitchenId berubah:", newVal);
-      this.fetchProgressData();
-      this.loading = false;
+    
+    currentPageNote() {
+      this.fetchProgressNotes();
     },
   },
   methods: {
@@ -771,31 +804,341 @@ export default {
       }
       return text;
     },
-    // Fetch progress data per dapur
-    async fetchProgressDapur() {
+    async fetchProgressData() {
       try {
-        const response = await ApiService.getProgressDapur(
-          this.currentPage,
-          8,
-          this.selectedKitchenId
-        );
+        let response;
+        if (this.selectedKitchen) {
+          response = await ApiService.getProgressDapur(
+            this.currentPage,
+            8,
+            this.selectedKitchen
+          );
+        } else if (this.selectedArea) {
+           response = await ApiService.getProgressDapurByArea(
+            this.currentPage,
+            100,
+            this.selectedArea.area_id,
+            this.selectedCity.id,
+            this.selectedRegion.id,
+          );
+            if (response && response.data) {
+            // Lakukan iterasi (loop) pada setiap item di dalam array data
+            response.data = response.data.map(item => {
+              // Pastikan item memiliki properti createdAt
+              if (item.createdAt) {
+                const originalDate = item.createdAt;
+                const parts = originalDate.split(/[- :]/);
+
+                const year = parts[2];
+                const month = parts[1];
+                const day = parts[0];
+                const hour = parts[3];
+                const minute = parts[4];
+                const second = "00";
+
+                // Gabungkan kembali dalam format baru
+                const newDate = `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+
+                // Ubah nilai createdAt pada item tersebut
+                item.createdAt = newDate;
+              }
+              // Kembalikan item yang sudah diubah atau yang tidak memiliki createdAt
+              return item;
+            });
+          }
+        } else if (this.selectedCity) {
+          response = await ApiService.getProgressDapurByCity(
+            this.currentPage,
+            100,
+            this.selectedCity.id
+          );
+            if (response && response.data) {
+            // Lakukan iterasi (loop) pada setiap item di dalam array data
+            response.data = response.data.map(item => {
+              // Pastikan item memiliki properti createdAt
+              if (item.createdAt) {
+                const originalDate = item.createdAt;
+                const parts = originalDate.split(/[- :]/);
+
+                const year = parts[2];
+                const month = parts[1];
+                const day = parts[0];
+                const hour = parts[3];
+                const minute = parts[4];
+                const second = "00";
+
+                // Gabungkan kembali dalam format baru
+                const newDate = `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+
+                // Ubah nilai createdAt pada item tersebut
+                item.createdAt = newDate;
+              }
+              // Kembalikan item yang sudah diubah atau yang tidak memiliki createdAt
+              return item;
+            });
+          }
+        } else if (this.selectedRegion) {
+          // Level 1: Province selected - get all cities in this province
+          // response = await this.fetchProgressByProvince();
+          response = await ApiService.getProgressDapurByProvince(
+            this.currentPage,
+            100,
+            this.selectedRegion.id
+          );
+
+          if (response && response.data) {
+            // Lakukan iterasi (loop) pada setiap item di dalam array data
+            response.data = response.data.map(item => {
+              // Pastikan item memiliki properti createdAt
+              if (item.createdAt) {
+                const originalDate = item.createdAt;
+                const parts = originalDate.split(/[- :]/);
+
+                const year = parts[2];
+                const month = parts[1];
+                const day = parts[0];
+                const hour = parts[3];
+                const minute = parts[4];
+                const second = "00";
+
+                // Gabungkan kembali dalam format baru
+                const newDate = `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+
+                // Ubah nilai createdAt pada item tersebut
+                item.createdAt = newDate;
+              }
+              // Kembalikan item yang sudah diubah atau yang tidak memiliki createdAt
+              return item;
+            });
+          }
+
+          
+        } else {
+          // No filter - return empty data
+          return { data: [], pagination: {} };
+        }
+        
         return response;
       } catch (error) {
-        console.error("Error fetching progress dapur:", error);
+        console.error("Error fetching progress data:", error);
         throw error;
       }
     },
 
-    // Fetch notes/catatan data
+    // Fetch progress data by province (aggregated from all cities)
+    async fetchProgressByProvince() {
+      try {
+        // Get all kitchens in the selected province
+        const kitchensInProvince = await this.getKitchensInProvince();
+        
+        if (kitchensInProvince.length === 0) {
+          return { data: [], pagination: {} };
+        }
+
+        // Get progress data for all kitchens in the province
+        const progressPromises = kitchensInProvince.map(kitchen => 
+          ApiService.getProgressDapur(1, 100, kitchen.id)
+        );
+        
+        const progressResponses = await Promise.all(progressPromises);
+        
+        // Aggregate the data
+        const aggregatedData = this.aggregateProgressData(progressResponses);
+        
+        return {
+          data: aggregatedData,
+          pagination: { totalPages: 1, page: 1 }
+        };
+      } catch (error) {
+        console.error("Error fetching progress by province:", error);
+        throw error;
+      }
+    },
+
+    // Fetch progress data by city (aggregated from all areas)
+    async fetchProgressByCity() {
+      try {
+        // Get all kitchens in the selected city
+        const kitchensInCity = await this.getKitchensInCity();
+        
+        if (kitchensInCity.length === 0) {
+          return { data: [], pagination: {} };
+        }
+
+        // Get progress data for all kitchens in the city
+        const progressPromises = kitchensInCity.map(kitchen => 
+          ApiService.getProgressDapur(1, 100, kitchen.id)
+        );
+        
+        const progressResponses = await Promise.all(progressPromises);
+        
+        // Aggregate the data
+        const aggregatedData = this.aggregateProgressData(progressResponses);
+        
+        return {
+          data: aggregatedData,
+          pagination: { totalPages: 1, page: 1 }
+        };
+      } catch (error) {
+        console.error("Error fetching progress by city:", error);
+        throw error;
+      }
+    },
+
+    // Fetch progress data by area (aggregated from all kitchens in area)
+    async fetchProgressByArea() {
+      try {
+        // Get all kitchens in the selected area
+        const kitchensInArea = await this.getKitchensInArea();
+        
+        if (kitchensInArea.length === 0) {
+          return { data: [], pagination: {} };
+        }
+
+        // Get progress data for all kitchens in the area
+        const progressPromises = kitchensInArea.map(kitchen => 
+          ApiService.getProgressDapur(1, 100, kitchen.id)
+        );
+        
+        const progressResponses = await Promise.all(progressPromises);
+        
+        // Aggregate the data
+        const aggregatedData = this.aggregateProgressData(progressResponses);
+        
+        return {
+          data: aggregatedData,
+          pagination: { totalPages: 1, page: 1 }
+        };
+      } catch (error) {
+        console.error("Error fetching progress by area:", error);
+        throw error;
+      }
+    },
+
+    // Helper function to get all kitchens in selected province
+    async getKitchensInProvince() {
+      try {
+        // First get all cities in the province
+        const citiesResponse = await ApiService.getCities(this.selectedRegion.id);
+        const cities = citiesResponse.data || [];
+        
+        // Then get all areas in those cities
+        const areasPromises = cities.map(city => 
+          ApiService.getAreas(city.id)
+        );
+        const areasResponses = await Promise.all(areasPromises);
+        
+        // Flatten all areas
+        const allAreas = areasResponses.flatMap(response => response.data || []);
+        
+        // Get all kitchens in those areas
+        const kitchensPromises = allAreas.map(area => 
+          ApiService.getKitchens(area.id)
+        );
+        const kitchensResponses = await Promise.all(kitchensPromises);
+        
+        // Flatten all kitchens
+        return kitchensResponses.flatMap(response => response.data || []);
+      } catch (error) {
+        console.error("Error getting kitchens in province:", error);
+        return [];
+      }
+    },
+
+    // Helper function to get all kitchens in selected city
+    async getKitchensInCity() {
+      try {
+        // Get all areas in the city
+        const areasResponse = await ApiService.getAreas(this.selectedCity.id);
+        const areas = areasResponse.data || [];
+        
+        // Get all kitchens in those areas
+        const kitchensPromises = areas.map(area => 
+          ApiService.getKitchens(area.id)
+        );
+        const kitchensResponses = await Promise.all(kitchensPromises);
+        
+        // Flatten all kitchens
+        return kitchensResponses.flatMap(response => response.data || []);
+      } catch (error) {
+        console.error("Error getting kitchens in city:", error);
+        return [];
+      }
+    },
+
+    // Helper function to get all kitchens in selected area
+    async getKitchensInArea() {
+      try {
+        const response = await ApiService.getKitchens(this.selectedArea.id);
+        return response.data || [];
+      } catch (error) {
+        console.error("Error getting kitchens in area:", error);
+        return [];
+      }
+    },
+
+    // Helper function to aggregate progress data from multiple responses
+    aggregateProgressData(progressResponses) {
+      const allProgressData = progressResponses.flatMap(response => response.data || []);
+      
+      if (allProgressData.length === 0) {
+        return [];
+      }
+
+      // Group by date and calculate average progress
+      const groupedByDate = {};
+      
+      allProgressData.forEach(item => {
+        const date = item.createdAt ? item.createdAt.split('T')[0] : 'unknown';
+        
+        if (!groupedByDate[date]) {
+          groupedByDate[date] = {
+            totalProgress: 0,
+            count: 0,
+            createdAt: item.createdAt,
+            items: []
+          };
+        }
+        
+        groupedByDate[date].totalProgress += Number(item.progress || 0);
+        groupedByDate[date].count += 1;
+        groupedByDate[date].items.push(item);
+      });
+
+      // Convert to array and calculate averages
+      return Object.keys(groupedByDate).map((date, index) => {
+        const group = groupedByDate[date];
+        return {
+          id: index + 1,
+          progress: group.totalProgress / group.count,
+          createdAt: group.createdAt,
+          catatan: `Agregasi dari ${group.count} dapur`,
+          aggregated: true,
+          itemCount: group.count
+        };
+      }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    },
+
+    // Fetch notes/catatan data based on current filter level
     async fetchProgressNotes() {
       try {
-        const response = await ApiService.getProgressDapurCatatan(
-          this.currentPageNote,
-          4,
-          this.selectedKitchenId
-        );
-        this.totalPagesNote = response.pagination.totalPages;
-        this.processNotesData(response.data);
+        let response;
+        
+        if (this.selectedKitchen) {
+          // Specific kitchen selected
+          response = await ApiService.getProgressDapurCatatan(
+            this.currentPageNote,
+            4,
+            this.selectedKitchen
+          );
+        } else {
+          // For aggregated levels, get notes from all relevant kitchens
+          response = await this.fetchAggregatedNotes(this.currentPageNote,
+            4);
+        }
+        
+        this.totalPagesNote = response.pagination?.totalPages || 1;
+        this.processNotesData(response.data || []);
         return response;
       } catch (error) {
         console.error("Error fetching progress notes:", error);
@@ -803,48 +1146,193 @@ export default {
       }
     },
 
-    // Fetch images data
+    // Fetch aggregated notes based on current filter level
+    async fetchAggregatedNotes(page = 1, limit = 4) {
+      try {
+        let response;
+        
+        if (this.selectedArea) {
+          response = await ApiService.getCatatanByArea(page, limit, this.selectedArea.id_area);
+        } else if (this.selectedCity) {
+          response = await ApiService.getCatatanByKota(page, limit, this.selectedCity.id);
+        } else if (this.selectedRegion) {
+          response = await ApiService.getCatatanByProvince(page, limit, this.selectedRegion.id);
+        }
+
+        if (response.data.length === 0) {
+          return { data: [], pagination: {} };
+        }
+
+        return response;
+      } catch (error) {
+        console.error("Error fetching aggregated notes:", error);
+        return { data: [], pagination: {} };
+      }
+    },
+
+    // Fetch images data based on current filter level
     async fetchMediaImages() {
       try {
-        const response = await ApiService.getImageByDapurID(
-          this.selectedKitchenId,
-          this.currentPage,
-          100
-        );
-        return response;
+        if (this.selectedKitchen) {
+          return await ApiService.getImageByDapurID(
+            this.selectedKitchen,
+            this.currentPage,
+            100
+          );
+        } else {
+          return await this.fetchAggregatedImages();
+        }
       } catch (error) {
         console.error("Error fetching media images:", error);
         throw error;
       }
     },
 
-    // Fetch documents data
+    // Fetch aggregated images based on current filter level
+    async fetchAggregatedImages() {
+      try {
+        // let kitchens = [];
+        let response;
+        
+        if (this.selectedArea) {
+          response = await ApiService.getImageByDapurID(this.selectedArea.area_id, 1, 20)
+        } else if (this.selectedCity) {
+          response = await ApiService.getImageByDapurID(this.selectedCity.id, 1, 20)
+        } else if (this.selectedRegion) {
+          response = await ApiService.getImageByProvID(this.selectedRegion.id, 1, 20)
+        }
+
+        if (response.data.length === 0) {
+          return { data: [] };
+        }
+
+        // // Limit to prevent too many requests
+        // const limitedKitchens = kitchens.slice(0, 5);
+        // const imagesPromises = limitedKitchens.map(kitchen => 
+        //   ApiService.getImageByDapurID(kitchen.id, 1, 20)
+        // );
+        
+        // const imagesResponses = await Promise.all(imagesPromises);
+        // const allImages = imagesResponses.flatMap(response => response.data || []);
+        
+        return { data: response.data };
+      } catch (error) {
+        console.error("Error fetching aggregated images:", error);
+        return { data: [] };
+      }
+    },
+
+    // Fetch documents data based on current filter level
     async fetchMediaDocuments() {
       try {
-        const response = await ApiService.getDocByDapurID(
-          this.selectedKitchenId,
-          this.currentPage,
-          100
-        );
-        return response;
+        if (this.selectedKitchen) {
+          return await ApiService.getDocByDapurID(
+            this.selectedKitchen,
+            this.currentPage,
+            100
+          );
+        } else {
+          return await this.fetchAggregatedDocuments();
+        }
       } catch (error) {
         console.error("Error fetching media documents:", error);
         throw error;
       }
     },
 
-    // Fetch videos data
+    // Fetch aggregated documents based on current filter level
+    async fetchAggregatedDocuments() {
+      try {
+        // let kitchens = [];
+        let response;
+        if (this.selectedArea) {
+          response = await ApiService.getDocByAreaID(
+            this.selectedArea.area_id,
+            this.currentPage,
+            100
+          );
+        } else if (this.selectedCity) {
+           response = await ApiService.getDocByKotaID(
+            this.selectedCity.id,
+            this.currentPage,
+            100
+          );
+        } else if (this.selectedRegion) {
+            response = await ApiService.getDocByProvID(
+            this.selectedRegion.id,
+            this.currentPage,
+            100
+          );
+        }
+        console.log("doc ",response)
+
+        if (response.data.length === 0) {
+          return { data: [] };
+        }
+
+        return { data: response.data };
+      } catch (error) {
+        console.error("Error fetching aggregated documents:", error);
+        return { data: [] };
+      }
+    },
+
+    // Fetch videos data based on current filter level
     async fetchMediaVideos() {
       try {
-        const response = await ApiService.getVideoByDapurID(
-          this.selectedKitchenId,
-          this.currentPage,
-          100
-        );
-        return response;
+        if (this.selectedKitchen) {
+          return await ApiService.getVideoByDapurID(
+            this.selectedKitchen,
+            this.currentPage,
+            100
+          );
+        } else {
+          return await this.fetchAggregatedVideos();
+        }
       } catch (error) {
         console.error("Error fetching media videos:", error);
         throw error;
+      }
+    },
+
+    // Fetch aggregated videos based on current filter level
+    async fetchAggregatedVideos() {
+      try {
+        let response;
+
+        if (this.selectedArea) {
+          response = await ApiService.getVideoByAreaID(
+            this.selectedArea.area_id,
+            this.currentPage,
+            100
+          );
+        } else if (this.selectedCity) {
+           response = await ApiService.getVideoByKotaID(
+            this.selectedCity.id,
+            this.currentPage,
+            100
+          );
+        } else if (this.selectedRegion) {
+          
+            response = await ApiService.getVideoByProvID(
+            this.selectedRegion.id,
+            this.currentPage,
+            100
+          );
+
+          console.log("getVideoByProvID ",response);
+        }
+
+        console.log("video ",response)
+
+        if (response.data.length === 0) {
+          return { data: [] };
+        }
+
+        return { data: response.data };
+      } catch (error) {
+        console.error("Error fetching aggregated videos:", error);
+        return { data: [] };
       }
     },
 
@@ -875,10 +1363,16 @@ export default {
 
       this.notes = notesData.map((item, index) => {
         const dateObj = item.createdAt ? new Date(item.createdAt) : null;
+        
+        // Handle aggregated notes differently
+        let noteText = item.catatan || "-";
+        if (item.aggregated) {
+          noteText = `Agregasi dari ${item.itemCount} dapur: ${noteText}`;
+        }
 
         return {
           id: item.id || index,
-          text: item.catatan || "-", // asumsi backend ada field catatan
+          text: noteText,
           date: dateObj
             ? dateObj.toLocaleDateString("id-ID", {
                 day: "2-digit",
@@ -892,63 +1386,24 @@ export default {
                 minute: "2-digit",
               })
             : "-",
+          aggregated: item.aggregated || false,
         };
       });
     },
 
-    // Process media data and map to mediaCounts and mediaData
-    // processMediaData(imageData, docData, videoData) {
-    //   const dataImage = imageData || [];
-    //   const dataDoc = docData || [];
-    //   const dataVideo = videoData || [];
-
-    //   // mapping ke mediaCounts
-    //   this.mediaCounts = {
-    //     photos: dataImage.length || 0,
-    //     videos: dataVideo.length || 0,
-    //     documents: dataDoc.length || 0,
-    //   };
-
-    //   // mapping ke mediaData
-    //   this.mediaData = {
-    //     photos: dataImage || [],
-    //     videos: dataVideo || [],
-    //     documents: dataDoc || [],
-    //   };
-    // },
     processMediaData(imageData, docData, videoData) {
-      const BASE_URL = "https://server.qqltech.com:7113/api/docs"; // ganti sesuai backend kamu
-
-      const dataImage = (imageData || []).map((item) => ({
-        id: item.id,
-        url: item.image ? `${BASE_URL}${item.image}` : null,
-        name: item.nama || "Foto",
-      }));
-
-      const dataVideo = (videoData || []).map((item) => ({
-        id: item.id,
-        url: item.video ? `${BASE_URL}${item.video}` : null,
-        name: item.nama || "Video",
-      }));
-
-      const dataDoc = (docData || []).map((item) => ({
-        id: item.id,
-        url: item.file ? `${BASE_URL}${item.file}` : null,
-        name: item.nama || item.file?.split("/").pop() || "Dokumen",
-      }));
-
       // mapping ke mediaCounts
       this.mediaCounts = {
-        photos: dataImage.length,
-        videos: dataVideo.length,
-        documents: dataDoc.length,
+        photos: imageData.length,
+        videos: videoData.length,
+        documents: docData.length,
       };
 
       // mapping ke mediaData
       this.mediaData = {
-        photos: dataImage,
-        videos: dataVideo,
-        documents: dataDoc,
+        photos: imageData,
+        videos: videoData,
+        documents: docData,
       };
     },
 
@@ -974,11 +1429,17 @@ export default {
 
     // Main function to orchestrate all data fetching
     async fetchAllData() {
+      // Don't fetch data if no filter is selected
+      if (!this.selectedRegion) {
+        this.resetAllData();
+        return;
+      }
+
       this.loading = true;
       this.error = null;
 
       try {
-        // Ambil semua data paralel
+        // Fetch all data in parallel
         const [
           progressResponse,
           notesResponse,
@@ -986,7 +1447,7 @@ export default {
           documentsResponse,
           videosResponse,
         ] = await Promise.all([
-          this.fetchProgressDapur(),
+          this.fetchProgressData(),
           this.fetchProgressNotes(),
           this.fetchMediaImages(),
           this.fetchMediaDocuments(),
@@ -997,22 +1458,16 @@ export default {
         this.pagination = progressResponse.pagination || {};
         this.totalPages = this.pagination.totalPages || 1;
 
-        // Isi progress & notes
-        this.processProgressData(progressResponse.data);
-        this.processNotesData(notesResponse.data);
+        // Process progress & notes data
+        this.processProgressData(progressResponse.data || []);
+        
+        // Process media data
+        this.processMediaData(
+          imagesResponse?.data || [],
+          documentsResponse?.data || [],
+          videosResponse?.data || []
+        );
 
-        // Isi mediaData & mediaCounts → persis dengan dashboard.vue
-        this.mediaCounts = {
-          photos: (imagesResponse?.data || []).length,
-          videos: (videosResponse?.data || []).length,
-          documents: (documentsResponse?.data || []).length,
-        };
-
-        this.mediaData = {
-          photos: imagesResponse?.data || [],
-          videos: videosResponse?.data || [],
-          documents: documentsResponse?.data || [],
-        };
       } catch (error) {
         console.error("Error fetching all data:", error);
         this.error = error.message;
@@ -1022,7 +1477,8 @@ export default {
       }
     },
 
-    async fetchProgressData() {
+    // Trigger data fetch when any filter changes
+    async triggerDataFetch() {
       await this.fetchAllData();
     },
 
@@ -1107,6 +1563,7 @@ export default {
               uniqueAreas.push({
                 id: item.id,
                 nama: areaName,
+                id_area: item.m_area.id,
               });
             }
           });
@@ -1152,7 +1609,6 @@ export default {
     async nextPage() {
       if (this.currentPageNote < this.totalPagesNote) {
         this.currentPageNote++;
-        console.log(this.currentPageNote);
         await this.fetchProgressNotes();
       }
     },
@@ -1208,25 +1664,29 @@ export default {
       this.selectedRegion = region;
       this.searchProvinsi = region.nama;
       this.showProvinsiDropdown = false;
+      // Data will be fetched automatically via watcher
     },
 
     selectCity(city) {
       this.selectedCity = city;
       this.searchKota = city.m_kotum?.nama || city.nama;
       this.showKotaDropdown = false;
-    },
-
-    selectKitchen(kitchen) {
-      this.selectedKitchenId = kitchen.id;
-      this.searchDapur = kitchen.nama;
-      this.showDapurDropdown = false;
-      this.fetchProgressData();
+      // Data will be fetched automatically via watcher
     },
 
     selectArea(area) {
+      console.log("select area",area);
       this.selectedArea = area;
       this.searchArea = area.nama;
       this.showAreaDropdown = false;
+      // Data will be fetched automatically via watcher
+    },
+
+    selectKitchen(kitchen) {
+      this.selectedKitchen = kitchen.id;
+      this.searchDapur = kitchen.nama;
+      this.showDapurDropdown = false;
+      // Data will be fetched automatically via watcher
     },
 
     clearSearch(type) {
@@ -1235,23 +1695,27 @@ export default {
         this.selectedRegion = null;
         this.selectedCity = null;
         this.selectedArea = null;
-        this.selectedKitchenId = "";
+        this.selectedKitchen = "";
         this.showProvinsiDropdown = true;
+        this.resetAllData(); // Clear all data when province is cleared
       } else if (type === "kota") {
         this.searchKota = "";
         this.selectedCity = null;
         this.selectedArea = null;
-        this.selectedKitchenId = "";
+        this.selectedKitchen = "";
         this.showKotaDropdown = true;
+        // Data will be fetched for province level via watcher
       } else if (type === "area") {
         this.searchArea = "";
         this.selectedArea = null;
-        this.selectedKitchenId = "";
+        this.selectedKitchen = "";
         this.showAreaDropdown = true;
+        // Data will be fetched for city level via watcher
       } else if (type === "dapur") {
         this.searchDapur = "";
-        this.selectedKitchenId = "";
+        this.selectedKitchen = "";
         this.showDapurDropdown = true;
+        // Data will be fetched for area level via watcher
       }
     },
 

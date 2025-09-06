@@ -120,12 +120,64 @@ class ApiService {
     return this.request(url);
   }
 
+  async getProgressDapurByProvince(page = 1, limit = 8, id_prov = null) {
+    let url = `/fn/m_dapur/getRiwayatProgress?page=${page}&paginate=${limit}`;
+    if (id_prov) {
+      url += `&id_prov=${id_prov}`;
+    }
+    return this.request(url);
+  }
+
+  async getProgressDapurByCity(page = 1, limit = 8, id_kota = null) {
+    let url = `/fn/m_dapur/getRiwayatProgress?page=${page}&paginate=${limit}`;
+    if (id_kota) {
+      url += `&id_kota=${id_kota}`;
+    }
+    return this.request(url);
+  }
+
+  async getProgressDapurByArea(page = 1, limit = 8, id_area = null, id_kota = null, id_prov = null) {
+    let url = `/fn/m_dapur/getRiwayatProgress?page=${page}&paginate=${limit}`;
+    if (id_area) {
+      url += `&id_area=${id_area}`;
+    }
+    if (id_kota) {
+      url += `&id_kota=${id_kota}`;
+    }
+    if (id_prov) {
+      url += `&id_prov=${id_prov}`;
+    }
+    return this.request(url);
+  }
+
+  
+
   async getProgressDapurCatatan(page = 1, limit = 4, id_dapur = null) {
     let url = `/dynamic/t_progress_dapur?page=${page}&paginate=${limit}`;
     if (id_dapur) {
       url += `&where=id_dapur=${id_dapur}`;
     }
-    console.log("API Request URL:", url);
+    return this.request(url);
+  }
+  async getCatatanByProvince(page = 1, limit = 4, id_prov = null) {
+    let url = `/dynamic/t_progress_dapur?include=m_dapur%3Em_wilayah&page=${page}&paginate=${limit}`;
+    if (id_prov) {
+      url += `&filter_column_m_dapur.m_wilayah.id_prov=${id_prov}`;
+    }
+    return this.request(url);
+  }
+  async getCatatanByKota(page = 1, limit = 4, id_kota = null) {
+    let url = `/dynamic/t_progress_dapur?include=m_dapur%3Em_wilayah&page=${page}&paginate=${limit}`;
+    if (id_kota) {
+      url += `&filter_column_m_dapur.m_wilayah.id_kota=${id_kota}`;
+    }
+    return this.request(url);
+  }
+  async getCatatanByArea(page = 1, limit = 4, id_area = null) {
+    let url = `/dynamic/t_progress_dapur?include=m_dapur%3Em_wilayah&page=${page}&paginate=${limit}`;
+    if (id_area) {
+      url += `&filter_column_m_dapur.m_wilayah.id_area=${id_area}`;
+    }
     return this.request(url);
   }
 
@@ -134,6 +186,26 @@ class ApiService {
       `/dynamic/t_progress_doc?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}&page=${page}&paginate=${limit}`
     );
   }
+
+
+
+  async getDocByProvID(id_prov = null, page = 1, limit = 20) {
+    return this.request(`/dynamic/t_progress_doc?include=t_progress_dapur%3Em_dapur%3Em_wilayah&filter_column_t_progress_dapur.m_dapur.m_wilayah.id_prov=${id_prov}&page=${page}&paginate=${limit}`
+    );
+  }
+
+  async getDocByKotaID(id_kota = null, page = 1, limit = 20) {
+    return this.request(
+      `/dynamic/t_progress_doc?include=t_progress_dapur%3Em_dapur%3Em_wilayah&filter_column_t_progress_dapur.m_dapur.m_wilayah.id_kota=${id_kota}&page=${page}&paginate=${limit}`
+    );
+  }
+
+  async getDocByAreaID(id_area = null, page = 1, limit = 20) {
+    return this.request(
+      `/dynamic/t_progress_doc?include=t_progress_dapur%3Em_dapur%3Em_wilayah&filter_column_t_progress_dapur.m_dapur.m_wilayah.id_area=${id_area}&page=${page}&paginate=${limit}`
+    );
+  }
+
 
   async getDocDashboard(page = 1, limit = 8) {
     return this.request(`/dynamic/t_progress_doc?page=${page}&limit=${limit}`);
@@ -144,6 +216,26 @@ class ApiService {
       `/dynamic/t_progress_image?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}&page=${page}&paginate=${limit}`
     );
   }
+
+  async getImageByProvID(id_prov = null, page = 1, limit = 20) {
+    return this.request(
+      `/dynamic/t_progress_image?include=t_progress_dapur%3Em_dapur%3Em_wilayah&filter_column_t_progress_dapur.m_dapur.m_wilayah.id_prov=${id_prov}&page=${page}&paginate=${limit}`
+    );
+  }
+
+  async getImageByKotaID(id_kota = null, page = 1, limit = 20) {
+    return this.request(
+      `/dynamic/t_progress_image?include=t_progress_dapur%3Em_dapur%3Em_wilayah&filter_column_t_progress_dapur.m_dapur.m_wilayah.id_kota=${id_kota}&page=${page}&paginate=${limit}`
+    );
+  }
+
+  async getImageByAreaID(id_area = null, page = 1, limit = 20) {
+    return this.request(
+      `/dynamic/t_progress_image?include=t_progress_dapur%3Em_dapur%3Em_wilayah&filter_column_t_progress_dapur.m_dapur.m_wilayah.id_area=${id_area}&page=${page}&paginate=${limit}`
+    );
+  }
+
+  
 
   async getImageDashboard(page = 1, paginate =100) {
     return this.request(
@@ -160,6 +252,25 @@ class ApiService {
   async getVideoByDapurID(id_dapur = null, page = 1, limit = 20) {
     return this.request(
       `/dynamic/t_progress_video?include=t_progress_dapur&filter_column_t_progress_dapur.id_dapur=${id_dapur}&page=${page}&paginate=${limit}`
+    );
+  }
+
+
+  async getVideoByProvID(id_prov = null, page = 1, limit = 20) {
+    return this.request(
+      `/dynamic/t_progress_video?include=t_progress_dapur%3Em_dapur%3Em_wilayah&filter_column_t_progress_dapur.m_dapur.m_wilayah.id_prov=${id_prov}&page=${page}&paginate=${limit}`
+    );
+  }
+
+  async getVideoByKotaID(id_kota = null, page = 1, limit = 20) {
+    return this.request(
+      `/dynamic/t_progress_video?include=t_progress_dapur%3Em_dapur%3Em_wilayah&filter_column_t_progress_dapur.m_dapur.m_wilayah.id_kota=${id_kota}&page=${page}&paginate=${limit}`
+    );
+  }
+
+  async getVideoByAreaID(id_area = null, page = 1, limit = 20) {
+    return this.request(
+      `/dynamic/t_progress_video?include=t_progress_dapur%3Em_dapur%3Em_wilayah&filter_column_t_progress_dapur.m_dapur.m_wilayah.id_area=${id_area}&page=${page}&paginate=${limit}`
     );
   }
 

@@ -344,56 +344,16 @@ export default {
       },
       markers: [],
       regions: [
-        { name: "Solo", percentage: 73 },
-        { name: "Surabaya", percentage: 79 },
-        { name: "Magelang", percentage: 76 },
-        { name: "Kupang", percentage: 74 },
+        
       ],
       activities: [
-        { name: "Solo", percentage: 73 },
-        { name: "Surabaya", percentage: 79 },
-        { name: "Magelang", percentage: 79 },
+        
       ],
       activities: [],
       averageProgressData: [],
       noteData: [],
       notes: [
-        {
-          region: "Surabaya",
-          description:
-            "Operasional berjangka karena cuaca buruk. Perlu penyesuaian jadwal kerja.",
-          borderColor: "border-purple-500", // masih bisa kamu ubah ke hex jika perlu
-          iconColor: "#A855F7", // purple-500
-          date: "2024-08-04",
-          time: "14:30",
-        },
-        {
-          region: "Solo",
-          description:
-            "Distribusi berjangka karena gangguan jaringan. Perlu ditindak lanjut oleh kerja.",
-          borderColor: "border-green-500",
-          iconColor: "#22C55E", // green-500
-          date: "2024-08-04",
-          time: "14:30",
-        },
-        {
-          region: "Magelang",
-          description:
-            "Aktivitas berjangka sesuai kendala teknis sistem. Operasional penyesuaian sementara.",
-          borderColor: "border-blue-500",
-          iconColor: "#3B82F6", // blue-500
-          date: "2024-08-04",
-          time: "14:30",
-        },
-        {
-          region: "Kupang",
-          description:
-            "Kegiatan berjangka dengan sementara karena kondisi tidak ideal. Penyesuaian waktu kerja dibutuhkan.",
-          borderColor: "border-yellow-500",
-          iconColor: "#EAB308", // yellow-500
-          date: "2024-08-04",
-          time: "14:30",
-        },
+       
       ],
     };
   },
