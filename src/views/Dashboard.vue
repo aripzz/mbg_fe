@@ -200,7 +200,7 @@
 
                 <!-- Regional Information Cards -->
                 <div class="space-y-4">
-                  <div v-for="note in noteData" :key="note.nama_dapur">
+                  <div v-for="note in noteData.slice(0, 6)" :key="note.nama_dapur">
                     <div class="flex items-center space-x-2 mb-2">
                       <svg
                         width="40"
@@ -429,7 +429,7 @@ export default {
         });
         this.activities = dataAvg;
         this.averageProgressData = dataAvg.slice(0, 4);
-        this.noteData = dataNote.slice(0, 6).map(note => ({
+        this.noteData = dataNote.map(note => ({
           ...note,
           iconColor: this.getConsistentColor(note.nama_dapur),
         }));
