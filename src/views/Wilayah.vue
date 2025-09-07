@@ -798,7 +798,7 @@ export default {
   },
   methods: {
     truncateText(text) {
-      const maxLength = 81;
+      const maxLength = 300;
       if (text.length > maxLength) {
         return text.substring(0, maxLength) + "...";
       }
