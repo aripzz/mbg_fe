@@ -223,7 +223,7 @@
                         >{{ note.kota }} - {{ note.nama_dapur }}</span
                       >
                     </div>
-                    <p class="text-sm text-gray-600">{{ note.catatan_terakhir || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut." }}</p>
+                    <p class="text-sm text-gray-600">{{ note.catatan_terakhir || "belum ada pembaruan atau catatan progres." }}</p>
                     <div class="flex items-start justify-start">
                       <div class="text-xs text-[#CCD2E3]">
                         {{ note.updated_at }}
@@ -429,7 +429,7 @@ export default {
         });
         this.activities = dataAvg;
         this.averageProgressData = dataAvg.slice(0, 4);
-        this.noteData = dataNote.map(note => ({
+        this.noteData = dataNote.slice(0, 6).map(note => ({
           ...note,
           iconColor: this.getConsistentColor(note.nama_dapur),
         }));
