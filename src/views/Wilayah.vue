@@ -1549,7 +1549,7 @@ export default {
       this.areasError = null;
 
       try {
-        const response = await ApiService.getAreas(cityId.id_prov || cityId.id);
+        const response = await ApiService.getAreas(cityId.id || cityId.id);
         console.log("Areas API response:", response);
 
         if (response.status === "success" && Array.isArray(response.data)) {

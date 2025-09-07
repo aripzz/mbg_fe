@@ -297,10 +297,10 @@ class ApiService {
     return this.request(`/dynamic/m_prov?page=${page}&paginate=${limit}`);
   }
 
-  async getAreas(regionId = null, page = 1, limit = 100) {
+  async getAreas(cityId = null, page = 1, limit = 100) {
     let url = `/dynamic/m_wilayah?include=m_area,m_kota&page=${page}&paginate=${limit}`;
-    if (regionId) {
-      url += `&where=id_prov=${regionId}`;
+    if (cityId) {
+      url += `&where=id_kota=${cityId}`;
     }
     return this.request(url);
   }
