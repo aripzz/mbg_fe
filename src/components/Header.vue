@@ -212,12 +212,10 @@ export default {
     },
     handleSave(kitchenData) {
       console.log("Data dapur yang disimpan:", kitchenData);
-      // Di sini Anda bisa memanggil API untuk menyimpan data ke database
-      // Misalnya:
-      // saveKitchenToApi(kitchenData).then(() => { ... });
-
-      // Close modal after saving
       this.closeModal();
+        setTimeout(() => {
+        window.location.reload();
+      }, 500);
     },
   },
 };
